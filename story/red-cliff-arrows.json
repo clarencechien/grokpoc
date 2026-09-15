@@ -12,7 +12,8 @@
       "duration": 6,
       "beat": "paper fog drifts slowly across the river behind the straw boat"
     },
-    "only": "ZHUGE LIANG alone at the bow, plus anonymous straw-bundle soldier figures"
+    "only": "exactly ONE Zhuge Liang (the one on the character sheet) and four little straw-bundle soldiers; no other people",
+    "sheet": "cast/sheet_cover.jpg"
   },
   "chapters": [
     {
@@ -25,7 +26,8 @@
         "duration": 6,
         "beat": "a thin curl of incense smoke rises past the small paper lanterns"
       },
-      "only": "ZHOU YU and ZHUGE LIANG only — exactly two figures"
+      "only": "exactly TWO figures: Zhou Yu (the armoured general on the sheet, dark plume) and Zhuge Liang; nobody else, no duplicates",
+      "sheet": "cast/sheet_c1.jpg"
     },
     {
       "id": "c2",
@@ -134,7 +136,7 @@
       "prompt": "Same book, same table, same camera, same lamp. One change: the book is now CLOSED, front cover up, in the same place on the table. Because it hinges along its far edge, the closed book shows the ragged stack of tan page edges on THREE sides — bottom (nearest the camera), left end and right end; the only side without page edges is the far edge, where the worn indigo cloth spine runs left-to-right. The front cover is faded threadbare indigo cloth, corners rubbed pale, with one aged, slightly scuffed debossed panel of a misty ink-wash river; no lettering. Nothing else on the table."
     }
   },
-  "scene_edit": "The FIRST reference image is the exact book to keep: the same old torn-parchment pop-up storybook on the same dark walnut table, open at ninety degrees — far page standing, near page flat, horizontal hinge — the same straight-on camera, the same warm lamp and cool blue room, the same tears, foxing and chipped corners on the pages. The SECOND reference image is the character sheet: every person is one of these CHIBI cut-paper puppets, drawn exactly as on the sheet.\n\nOne change: the pop-up scene appears. The standing far page becomes the painted cut-paper backdrop of the scene, its torn edges still visible; the chibi figures and props stand on the flat near page in front, each on a small paper tab, with real shadows on the parchment. The scene shows {scene} {only} Any lantern is a small paper lantern that is part of the diorama. Everything stays inside the outline of the two pages; the worn indigo edges, the ragged page block along the bottom and the table remain exactly as in the reference. Camera and lamp do not move. Style words to keep in every image: chibi cut-paper puppets, old torn parchment pages, faded indigo cloth, warm lamp, cool blue room, real photograph of a paper craft book.",
+  "scene_edit": "The FIRST reference image is the exact book to keep: the same old torn-parchment pop-up storybook on the same dark walnut table, open at ninety degrees — far page standing, near page flat, horizontal hinge — the same straight-on camera, the same warm lamp and cool blue room, the same tears, foxing and chipped corners on the pages. The SECOND reference image shows ONLY the characters allowed in this scene, as CHIBI cut-paper puppets; use each of them once, drawn exactly as shown, and add no one else.\n\nOne change: the pop-up scene appears. The standing far page becomes the painted cut-paper backdrop of the scene, its torn edges still visible; the chibi figures and props stand on the flat near page in front, each on a small paper tab, with real shadows on the parchment. The scene shows {scene} {only} Any lantern is a small paper lantern that is part of the diorama. Everything stays inside the outline of the two pages; the worn indigo edges, the ragged page block along the bottom and the table remain exactly as in the reference. Camera and lamp do not move. Style words to keep in every image: chibi cut-paper puppets, old torn parchment pages, faded indigo cloth, warm lamp, cool blue room, real photograph of a paper craft book.",
   "or_page_up": "Lift the entire right-hand page of this book so that it stands straight up, as if a hand has just turned it: the whole page swings on the centre fold and is now vertical, a large flat rectangle of paper towering above the right half of the spread, its straight outer edge and square corners clear against the dark background. Its printed ink-wash scenery is visible on the face turned toward us. It is an ordinary book page mid-turn — flat, rigid, not folded, not curved, and not part of the pop-up sculpture. Keep everything else identical: same book, same table, same camera angle, same lighting, same pop-up diorama, same figures in the same poses.",
   "or_page_down": "Use the FIRST reference image as the exact book, camera and lighting, and the SECOND reference image as the exact character designs.\n\nProduce a photograph of that same blue cloth-bound pop-up storybook, open flat on the same dark walnut table, shot from the identical three-quarter angle with the identical warm-lamp-on-indigo night grade. Both flat pages stay fully printed with ink-wash scenery — no blank paper.\n\nThe pop-up rising from the centre fold shows: {scene} {only} Every figure is a flat cut-paper puppet drawn exactly as on the character sheet — paper craft, never a real person. Any lantern is a small paper lantern built into the diorama.",
   "or_turn_motion": "The raised page turns smoothly from right to left and settles flat onto the book, uncovering the paper diorama. The camera holds still.",
