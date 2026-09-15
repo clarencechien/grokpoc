@@ -124,12 +124,6 @@
     color:#fff7ea; text-shadow:0 3px 0 #0004, 0 12px 30px #0007;
   }
   .cover .sub{margin:14px 0 0; font-size:clamp(12px,2.2vw,15px); letter-spacing:.34em; color:#ffe9c9cc}
-  .cover .seal{
-    margin:22px auto 0; width:clamp(54px,9vw,74px); aspect-ratio:1; border-radius:50%;
-    background:radial-gradient(circle at 38% 32%,#f7d89b,#c98b3a); color:#5b3211;
-    display:grid; place-items:center; font-size:clamp(20px,4vw,30px);
-    box-shadow:0 8px 20px -8px #000a, 0 0 0 3px #ffffff40 inset;
-  }
 
   /* ---------- captions: kaori-style reveals in a fixed overlay ---------- */
   .captions{position:fixed; left:0; right:0; bottom:0; z-index:20; pointer-events:none;
@@ -248,7 +242,6 @@ cover.className = 'cover';
     `<div class="band">
        <h1>${STORY.title}</h1>
        <p class="sub">${STORY.subtitle || ''}</p>
-       <div class="seal">✦</div>
      </div>`;
 }
 book.appendChild(cover);
