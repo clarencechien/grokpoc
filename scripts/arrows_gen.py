@@ -62,6 +62,44 @@ def vid_prompt(story: dict, motion: str) -> str:
     return f"{story['page_motion']} {motion}. Style: {story['style']}. {story['cast']}"
 
 
+def edit_instruction(prompt: str, source: Path, out: Path) -> str:
+    return (f"Use your image_edit tool with the source image {source} and the prompt below, then "
+            f"save the result to {out}. Overwrite if it exists. Do not modify the prompt. "
+            f"Do not ask questions; edit and save.\n\n"
+            f"Prompt: {prompt}\n\nWhen finished, print only: SAVED {out}")
+
+
+def make_edit(prompt: str, source: Path, out: Path, dry: bool, force: bool, timeout: int) -> bool:
+    if out.exists() and out.stat().st_size > 20_000 and not force:
+        print(f"    skip {out.name} ({out.stat().st_size//1024} KB)"); return True
+    if dry:
+        print(f"    DRY image_edit {source.name} -> {out.name}"); return True
+    if not source.exists():
+        print(f"    skip {out.name} (source {source.name} missing)"); return False
+    ok, tail = run_agent(edit_instruction(prompt, source, out), timeout)
+    if ok and out.exists() and out.stat().st_size > 20_000:
+        print(f"    ok  {out.name} ({out.stat().st_size//1024} KB)"); return True
+    print(f"    FAIL {out.name}: {tail[-200:]}")
+    return False
+
+
+def join_clips(parts: list[Path], out: Path) -> bool:
+    """Concat shots with stream copy (no re-encode), per the imagine skill."""
+    import subprocess, tempfile
+    if not all(p.exists() for p in parts):
+        return False
+    with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as fh:
+        for p in parts:
+            fh.write(f"file '{p.resolve()}'\n")
+        listing = fh.name
+    r = subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0",
+                        "-i", listing, "-c", "copy", str(out)], capture_output=True, text=True)
+    if r.returncode != 0 or not out.exists():
+        print(f"    FAIL concat: {r.stderr[-200:]}"); return False
+    print(f"    ok  {out.name} ({out.stat().st_size//1024} KB, stream copy)")
+    return True
+
+
 def image_instruction(prompt: str, out: Path, aspect: str) -> str:
     return (f"Use your image_gen tool to generate ONE cinematic image and save it to {out} as JPEG. "
             f"Overwrite if it exists. Aspect ratio {aspect}. Do not ask questions; generate and save.\n\n"
@@ -122,10 +160,10 @@ def units(story: dict):
     """Yield (id, image_prompt, motion_prompt, duration) for cover + chapters."""
     if story.get("cover"):
         cov = story["cover"]
-        yield "cover", cov["prompt"], (cov.get("video") or {}).get("prompt"), (cov.get("video") or {}).get("duration", 6), cov.get("only", "")
+        yield "cover", cov["prompt"], (cov.get("video") or {}).get("beat"), 6, cov.get("only", "")
     for ch in story["chapters"]:
         v = ch.get("video") or {}
-        yield ch["id"], ch["prompt"], v.get("prompt"), v.get("duration", 5), ch.get("only", "")
+        yield ch["id"], ch["prompt"], v.get("beat"), 6, ch.get("only", "")
 
 
 def main() -> int:
@@ -166,12 +204,30 @@ def main() -> int:
             else:
                 failures.append(f"{uid}/img")
         if do_vid and motion:
+            # Two shots, one action each (imagine skill): A = the page turn, B = the scene alive.
+            open_still = ASSETS / f"{uid}_open.jpg"
+            clip_a = ASSETS / f"{uid}_a.mp4"
+            clip_b = ASSETS / f"{uid}_b.mp4"
             clip = ASSETS / f"{uid}.mp4"
-            if make_video(vid_prompt(story, motion), still, clip, int(dur), args.dry_run, args.force, args.vid_timeout):
-                if not args.dry_run and clip.exists():
-                    manifest["videos"][uid] = clip.name; save_manifest(manifest)
+
+            if not make_edit(story["page_open_edit"], still, open_still,
+                             args.dry_run, args.force, args.img_timeout):
+                failures.append(f"{uid}/open-still")
+            ok_a = make_video(story["page_motion"], still, clip_a, 6,
+                              args.dry_run, args.force, args.vid_timeout)
+            shot_b = f"{motion}. {story['scene_motion_suffix']}"
+            ok_b = make_video(shot_b, open_still, clip_b, 6,
+                              args.dry_run, args.force, args.vid_timeout)
+            if not ok_a:
+                failures.append(f"{uid}/shotA")
+            if not ok_b:
+                failures.append(f"{uid}/shotB")
+            if args.dry_run:
+                print(f"    DRY concat {clip_a.name} + {clip_b.name} -> {clip.name}")
+            elif ok_a and ok_b and join_clips([clip_a, clip_b], clip):
+                manifest["videos"][uid] = clip.name; save_manifest(manifest)
             else:
-                failures.append(f"{uid}/video")
+                failures.append(f"{uid}/join")
 
     if not args.dry_run:
         save_manifest(manifest)

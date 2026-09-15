@@ -9,7 +9,8 @@
     "prompt": "cover key art: a paper-diorama of a long straw-lined riverboat gliding through thick blue night fog on a wide river, a calm robed strategist with a white feather fan standing at the bow, faint warm lantern glow, distant paper mountains, cinematic and mysterious, clear space at the top for a title",
     "video": {
       "prompt": "the storybook cover breathes to life: paper fog drifting slowly across the river, the lantern flickering, gentle ripples spreading from the boat, the feather fan swaying softly",
-      "duration": 6
+      "duration": 6,
+      "beat": "paper fog drifts slowly across the river behind the straw boat"
     },
     "only": "ZHUGE LIANG alone at the bow, plus anonymous straw-bundle soldier figures"
   },
@@ -21,7 +22,8 @@
       "prompt": "inside a lamplit military tent of layered cut paper, a proud young general in dark armour with a crimson sash gestures sternly across a low table at a calm robed strategist holding a white feather fan, tense confrontation, warm lantern light and long paper shadows",
       "video": {
         "prompt": "lantern flames flickering and casting shifting paper shadows across the tent, the general's sash stirring, the strategist calmly waving his feather fan, a thin curl of incense smoke rising",
-        "duration": 6
+        "duration": 6,
+        "beat": "a thin curl of incense smoke rises past the small paper lanterns"
       },
       "only": "ZHOU YU and ZHUGE LIANG only — exactly two figures"
     },
@@ -32,7 +34,8 @@
       "prompt": "the calm strategist in a pale robe presses his seal onto a paper military pledge on a low table while the armoured general watches with a hidden smug smile, officials in the background lean in, dramatic candlelight, layered paper figures",
       "video": {
         "prompt": "candle flames dancing, the paper pledge document trembling slightly as the seal presses down, the general's smug smile deepening, smoke and shadows shifting",
-        "duration": 6
+        "duration": 6,
+        "beat": "a candle flame wavers, throwing shifting paper shadows across the table"
       },
       "only": "ZHUGE LIANG and ZHOU YU, plus two or three anonymous minor officials in the background"
     },
@@ -43,7 +46,8 @@
       "prompt": "at a misty night riverbank of torn paper, the robed strategist quietly instructs a kindly round-faced official in blue beside a row of long wooden boats lined with straw-bundle figures and covered with blue-grey cloth canopies, secretive mood, cold moonlight and warm lantern accents",
       "video": {
         "prompt": "night fog drifting over the moored boats, cloth canopies rippling in the breeze, lantern light glinting on the water, the two figures leaning in to whisper, reeds swaying",
-        "duration": 6
+        "duration": 6,
+        "beat": "night fog drifts slowly over the moored boats"
       },
       "only": "ZHUGE LIANG and LU SU only — exactly two figures, plus anonymous straw-bundle figures on the boats"
     },
@@ -54,7 +58,8 @@
       "prompt": "a quiet paper-diorama study at night, the calm strategist reclines reading a scroll and sipping tea with a serene smile, while the round-faced official paces anxiously by the window, moonlit river visible outside, warm interior glow against cold blue night",
       "video": {
         "prompt": "steam curling gently from the teacup, the scroll edges fluttering, the anxious official pacing back and forth, moonlight shimmering on the river outside the window",
-        "duration": 6
+        "duration": 6,
+        "beat": "steam curls gently upward from the teacup"
       },
       "only": "ZHUGE LIANG and LU SU only — exactly two figures"
     },
@@ -65,7 +70,8 @@
       "prompt": "a wide cinematic paper river swallowed by thick rolling fog before dawn, twenty long straw-lined boats roped together in a line gliding north, tiny lanterns glowing in the mist, the robed strategist and the official seated calmly at the lead boat, layers of cotton-paper fog",
       "video": {
         "prompt": "vast walls of paper fog rolling and swirling across the river, the line of boats gliding forward, lanterns pulsing softly in the haze, water rippling under the hulls, an eerie calm",
-        "duration": 6
+        "duration": 6,
+        "beat": "a wall of paper fog rolls slowly across the river"
       },
       "only": "ZHUGE LIANG and LU SU seated on the lead boat, plus anonymous straw-bundle figures"
     },
@@ -76,7 +82,8 @@
       "prompt": "the line of straw boats spread out facing a towering paper water-fortress in the fog, soldiers on deck beating war drums and shouting with open mouths, banners waving, the strategist laughing calmly while the official looks terrified, dynamic dramatic energy, drum-blur motion",
       "video": {
         "prompt": "war drums pounding with visible vibration, banners whipping, soldiers' mouths open in shouts, ripples and spray around the boats, fog glowing with the din, the strategist laughing while the official trembles",
-        "duration": 6
+        "duration": 6,
+        "beat": "the war banners whip and ripple above the boats"
       },
       "only": "ZHUGE LIANG and LU SU on the lead boat, plus anonymous drumming soldier figures"
     },
@@ -87,7 +94,8 @@
       "prompt": "from a tall paper watchtower an old armoured warlord orders volleys of arrows into the fog, a dense storm of paper arrows streaking down and thudding into the straw-bundle figures and boat hulls, arrows bristling everywhere, cold blue fog lit by muzzle-like flashes, epic scale",
       "video": {
         "prompt": "a dense rain of arrows streaking through the fog and thudding into the straw figures one after another, the boats bristling with more and more arrows, then slowly turning to present the other side, ripples and drifting mist",
-        "duration": 6
+        "duration": 6,
+        "beat": "a dense rain of paper arrows streaks down into the straw figures"
       },
       "only": "CAO CAO on the watchtower and anonymous archer figures, plus the straw-bundle figures taking the arrows"
     },
@@ -98,7 +106,8 @@
       "prompt": "dawn breaking as the fog lifts, twenty boats returning downstream utterly covered in thousands of arrows glinting in golden morning light, soldiers cheering with raised fists, the calm strategist smiling with his feather fan at the bow, warm triumphant glow over the paper river",
       "video": {
         "prompt": "morning fog dissolving into golden light, thousands of arrows glinting as the boats drift home, soldiers cheering and pumping fists, water sparkling, the feather fan waving gently, a warm triumphant shimmer",
-        "duration": 6
+        "duration": 6,
+        "beat": "the arrow-covered boats drift slowly forward as the mist thins"
       },
       "only": "ZHUGE LIANG at the bow, plus anonymous cheering soldier figures"
     }
@@ -106,5 +115,6 @@
   "page_still": "one full-size page of the book — as tall and wide as half the spread, and printed on both faces with the same ink-wash scenery so it is clearly a storybook page and not a blank sheet — is caught mid-turn: hinged along the centre fold, swung up off the right-hand side to stand at a steep angle and arc over the spread so that it screens part of the diorama behind it, warm lamplight glowing through its printed paper and its soft shadow falling across the pages below",
   "page_motion": "The raised printed page swings down from right to left in one slow, weighted arc and settles flat onto the open book, uncovering the paper diorama behind it. The camera holds completely still.",
   "scene_motion_suffix": "The camera pushes in very slowly.",
-  "resolution": "720p"
+  "resolution": "720p",
+  "page_open_edit": "Keep this exact scene unchanged — the same book on the same table, the same printed ink-wash pages, the same paper diorama, the same figures in the same poses and costumes, the same lanterns, the same camera angle, the same colours and paper textures. Change only one thing: the raised page that was standing up has now fallen all the way down and lies flat, so the spread is fully uncovered and the paper diorama stands clear and unobstructed."
 }
