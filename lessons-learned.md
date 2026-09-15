@@ -46,7 +46,17 @@
 ## 3. 影片：ZDR（零資料保留 / `/privacy`）會間歇性擋掉 `image_to_video`
 
 - 症狀：部分影片成功、部分回 `Video generation was blocked by zero data retention`。
-- 成因：ZDR 開啟時影片輸出需要一個可存放的 bucket。
+- 成因：**保留設定為 opt-out 時，影片輸出沒有可落地的儲存**，於是被擋。
+- **關鍵：有兩個獨立旗標，別搞混**：
+  - **帳號 `/privacy`**：`~/.grok/auth.json` 的 `coding_data_retention_opt_out`（TUI `/privacy` 控制）。
+  - **團隊/組織 ZDR**：xAI Console 的 admin 設定（`console.x.ai` 團隊設定）。
+- **本專案的實測釐清**：團隊 ZDR **本來就是 Disabled**、不是原因；真正造成 `p1` 被擋的是
+  **帳號層級 `coding_data_retention_opt_out = True`（Opt out）**。所以「去把團隊 ZDR 設 Disable」
+  沒有效果——那本來就關著。要根治得改**帳號 `/privacy` → Opt in**。
+- 而且它是**軟性/間歇**阻擋：本次 9 段影片最後全數生成（`p1` 重試一次就過），
+  不是一段都生不出來的硬阻擋——**先重試，通常就過**。
+- 診斷法：直接讀 `~/.grok/auth.json` 看 `coding_data_retention_opt_out` 布林值，最準；
+  別只憑錯誤訊息裡的 "ZDR" 字樣就假設是團隊層級。
 - 解法（由輕到重）：
   1. **重試**（最有效，本次 `p1.mp4` 第一次失敗、重試就過）——所以管線要能單章重生。
   2. **關閉 `/privacy`（ZDR）**。它是 **TUI 的 slash 指令、寫入「帳號層級」選擇，不是 `config.toml` 的鍵**：
