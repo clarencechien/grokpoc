@@ -62,6 +62,41 @@ def vid_prompt(story: dict, motion: str) -> str:
     return f"{story['page_motion']} {motion}. Style: {story['style']}. {story['cast']}"
 
 
+def multi_edit_instruction(prompt: str, sources: list[Path], out: Path, aspect: str) -> str:
+    refs = ", ".join(str(p) for p in sources)
+    return (f"Use your image_edit tool with these reference images, in this order: {refs}. "
+            f"Apply the prompt below and save the result to {out}. Overwrite if it exists. "
+            f"Aspect ratio {aspect}. Do not modify the prompt. Do not ask questions; edit and save."
+            f"\n\nPrompt: {prompt}\n\nWhen finished, print only: SAVED {out}")
+
+
+def make_multi_edit(prompt: str, sources: list[Path], out: Path, aspect: str,
+                    dry: bool, force: bool, timeout: int) -> bool:
+    if out.exists() and out.stat().st_size > 20_000 and not force:
+        print(f"    skip {out.name} ({out.stat().st_size//1024} KB)"); return True
+    if dry:
+        print(f"    DRY image_edit [{', '.join(p.name for p in sources)}] -> {out.name}"); return True
+    missing = [p for p in sources if not p.exists()]
+    if missing:
+        print(f"    skip {out.name} (missing refs: {', '.join(p.name for p in missing)})"); return False
+    ok, tail = run_agent(multi_edit_instruction(prompt, sources, out, aspect), timeout)
+    if ok and out.exists() and out.stat().st_size > 20_000:
+        print(f"    ok  {out.name} ({out.stat().st_size//1024} KB)"); return True
+    print(f"    FAIL {out.name}: {tail[-200:]}")
+    return False
+
+
+def last_frame(clip: Path, out: Path) -> bool:
+    """Grab a clip's final frame — the imagine skill's way to make the next shot continuous."""
+    import subprocess
+    r = subprocess.run(["ffmpeg", "-v", "error", "-y", "-sseof", "-0.2", "-i", str(clip),
+                        "-update", "1", "-q:v", "2", str(out)], capture_output=True, text=True)
+    if r.returncode != 0 or not out.exists():
+        print(f"    FAIL last-frame: {r.stderr[-200:]}"); return False
+    print(f"    ok  {out.name} (last frame of {clip.name})")
+    return True
+
+
 def edit_instruction(prompt: str, source: Path, out: Path) -> str:
     return (f"Use your image_edit tool with the source image {source} and the prompt below, then "
             f"save the result to {out}. Overwrite if it exists. Do not modify the prompt. "
@@ -169,6 +204,7 @@ def units(story: dict):
 def main() -> int:
     ap = argparse.ArgumentParser(description="Render 草船借箭 stills + clips via the Grok CLI agent.")
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--refs", action="store_true", help="build the canonical book/cast references")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--stills", action="store_true")
     ap.add_argument("--videos", action="store_true")
@@ -178,6 +214,20 @@ def main() -> int:
     ap.add_argument("--img-timeout", type=int, default=420)
     ap.add_argument("--vid-timeout", type=int, default=900)
     args = ap.parse_args()
+
+    if args.refs:
+        story = json.loads(STORY.read_text(encoding="utf-8"))
+        ASSETS.mkdir(parents=True, exist_ok=True)
+        rc = 0
+        for key, ref in story["refs"].items():
+            out = ASSETS / ref["file"]
+            print(f"\n[ref:{key}]")
+            prompt = ref["prompt"]
+            if key == "book":
+                prompt = f"{prompt} Camera: {story['camera']}. Lighting: {story['grade']}."
+            if not make_image(prompt, out, args.aspect, args.dry_run, args.force, args.img_timeout):
+                rc = 1
+        return rc
 
     if args.check:
         ok, tail = run_agent("List your media tools (image_gen, image_to_video). One line, names only. Generate nothing.", 120)
@@ -198,7 +248,11 @@ def main() -> int:
         print(f"\n[{uid}] {title}")
         still = ASSETS / f"{uid}.jpg"
         if do_img:
-            if make_image(img_prompt(story, iprompt, only), still, args.aspect, args.dry_run, args.force, args.img_timeout):
+            limit = (f"Only these characters appear: {only}. No other named characters." if only else "")
+            scene_prompt = story["scene_edit"].format(scene=iprompt, only=limit)
+            refs = [ASSETS / story["refs"]["book"]["file"], ASSETS / story["refs"]["cast"]["file"]]
+            if make_multi_edit(scene_prompt, refs, still, args.aspect,
+                               args.dry_run, args.force, args.img_timeout):
                 if not args.dry_run and still.exists():
                     manifest["images"][uid] = still.name; save_manifest(manifest)
             else:
@@ -210,11 +264,15 @@ def main() -> int:
             clip_b = ASSETS / f"{uid}_b.mp4"
             clip = ASSETS / f"{uid}.mp4"
 
-            if not make_edit(story["page_open_edit"], still, open_still,
-                             args.dry_run, args.force, args.img_timeout):
-                failures.append(f"{uid}/open-still")
             ok_a = make_video(story["page_motion"], still, clip_a, 6,
                               args.dry_run, args.force, args.vid_timeout)
+            # Continuity: shot B starts from the exact frame shot A ended on, so the
+            # camera, light and page position carry over instead of being re-imagined.
+            if args.dry_run:
+                print(f"    DRY last-frame {clip_a.name} -> {open_still.name}")
+            elif ok_a and (args.force or not open_still.exists()):
+                if not last_frame(clip_a, open_still):
+                    failures.append(f"{uid}/last-frame")
             shot_b = f"{motion}. {story['scene_motion_suffix']}"
             ok_b = make_video(shot_b, open_still, clip_b, 6,
                               args.dry_run, args.force, args.vid_timeout)
