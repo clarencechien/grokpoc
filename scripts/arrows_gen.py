@@ -223,7 +223,7 @@ def main() -> int:
             out = ASSETS / ref["file"]
             print(f"\n[ref:{key}]")
             prompt = ref["prompt"]
-            if key == "book":
+            if key != "cast":
                 prompt = f"{prompt} Camera: {story['camera']}. Lighting: {story['grade']}."
             if not make_image(prompt, out, args.aspect, args.dry_run, args.force, args.img_timeout):
                 rc = 1
