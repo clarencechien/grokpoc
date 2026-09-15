@@ -18,6 +18,7 @@ Stages, in order (each skips outputs that already exist unless --force):
            <id>_collapse.mp4 -> _rise    scene folds flat; reversed = scene rises from blank
            <id>_ambient.mp4              one gentle motion (video.beat)
   compose  book.mp4                      ambient -> turn -> rise -> ambient ... (xfade)
+  publish  re-encode in place            720p crf27 +faststart; keeps <name>.orig.* beside
   check    contact sheets + a pass/fail table for everything above
 
 Usage
@@ -183,6 +184,55 @@ def stage_compose(ids: list[str], dry: bool) -> bool:
     print(r.stdout[-600:]); return r.returncode == 0
 
 
+
+def stage_publish(story: dict, ids: set[str], dry: bool, force: bool) -> bool:
+    """Re-encode clips and stills for the web: smaller, faststart, same names in dist/.
+
+    Originals stay untouched in arrows/assets/; the site serves arrows/assets/ too,
+    so publishing overwrites in place only when --force is given (we keep a copy of
+    the original beside it the first time, as <name>.orig.mp4, so it is reversible).
+    """
+    total_before = total_after = 0
+    for uid, _ in units(story, ids):
+        for name in (f"{uid}_turn.mp4", f"{uid}_rise.mp4", f"{uid}_ambient.mp4"):
+            src = ASSETS / name
+            if not have(src, MIN_VID):
+                continue
+            orig = src.with_suffix(".orig.mp4")
+            before = src.stat().st_size
+            if orig.exists() and not force:
+                print(f"  skip {name} (already published, {before // 1024} KB)")
+                total_before += before; total_after += before
+                continue
+            if dry:
+                print(f"  DRY re-encode {name} ({before // 1024} KB)"); continue
+            if not orig.exists():
+                orig.write_bytes(src.read_bytes())
+            tmp = src.with_suffix(".tmp.mp4")
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(orig),
+                            "-vf", "scale=1280:720:flags=lanczos", "-r", "24",
+                            "-c:v", "libx264", "-profile:v", "high", "-preset", "slow",
+                            "-crf", "27", "-pix_fmt", "yuv420p", "-an",
+                            "-movflags", "+faststart", str(tmp)], check=True)
+            tmp.replace(src)
+            after = src.stat().st_size
+            total_before += before; total_after += after
+            print(f"  ok  {name}  {before // 1024} KB -> {after // 1024} KB")
+        still = ASSETS / f"{uid}.jpg"
+        if have(still, MIN_IMG) and not dry:
+            orig = still.with_suffix(".orig.jpg")
+            if not orig.exists() or force:
+                if not orig.exists():
+                    orig.write_bytes(still.read_bytes())
+                tmp = still.with_suffix(".tmp.jpg")
+                subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(orig),
+                                "-vf", "scale=1280:-1:flags=lanczos", "-q:v", "4", str(tmp)], check=True)
+                tmp.replace(still)
+    if not dry and total_before:
+        print(f"\nvideo total {total_before // 1024 // 1024} MB -> {total_after // 1024 // 1024} MB")
+    return True
+
+
 def stage_check(story: dict, ids: set[str]) -> bool:
     rows: list[tuple[str, str, str]] = []
     def img(p: Path, label: str):
@@ -218,7 +268,7 @@ def stage_check(story: dict, ids: set[str]) -> bool:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("stage", choices=["refs", "sheets", "spreads", "clips", "compose", "check", "all"])
+    ap.add_argument("stage", choices=["refs", "sheets", "spreads", "clips", "compose", "publish", "check", "all"])
     ap.add_argument("--ids", default="", help="cover,c1,... (default: every unit)")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--force", action="store_true")
@@ -233,6 +283,7 @@ def main() -> int:
     if a.stage in ("spreads", "all"):   ok &= stage_spreads(story, ids, a.dry_run, a.force)
     if a.stage in ("clips", "all"):     ok &= stage_clips(story, ids, a.dry_run, a.force)
     if a.stage in ("compose", "all"):   ok &= stage_compose(order, a.dry_run)
+    if a.stage == "publish":            ok &= stage_publish(story, ids, a.dry_run, a.force)
     if a.stage in ("check", "all") and not a.dry_run:
         ok &= stage_check(story, ids)
     return 0 if ok else 1
