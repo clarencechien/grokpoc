@@ -7,7 +7,7 @@
     "cover": "cover.mp4",
     "c1": "c1.mp4"
   },
-  "generated_at": "2026-09-15T11:39:38Z",
+  "generated_at": "2026-09-15T11:41:14Z",
   "models": {
     "image": "grok image_gen (cli)",
     "video": "grok image_to_video (cli)"
