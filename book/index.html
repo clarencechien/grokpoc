@@ -310,7 +310,13 @@ document.getElementById('foot').textContent = nImg
 
 /* ---------- scroll → drive the 3D ---------- */
 const track = document.getElementById('track');
-function layout(){ track.style.height = ((N + 2) * SEG_VH * 100) + 'vh'; }
+// Scroll ends with the last chapter at rest: cover+chapters span scrollY 0..N*seg
+// (chapter i is active at scrollY=(i+1)*seg), plus one viewport height so the last
+// spread can sit centred, plus a small tail so it settles instead of hard-clamping.
+// The old (N+2)*SEG_VH height overshot by ~1.1 chapters, scrolling past chapter 8
+// into a blank desk.
+const TAIL_VH = 16;
+function layout(){ track.style.height = (N * SEG_VH * 100 + 100 + TAIL_VH) + 'vh'; }
 layout();
 
 let currentVideo = -1;
