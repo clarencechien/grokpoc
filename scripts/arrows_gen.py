@@ -223,8 +223,12 @@ def main() -> int:
             out = ASSETS / ref["file"]
             print(f"\n[ref:{key}]")
             prompt = ref["prompt"]
-            if key != "cast":
-                prompt = f"{prompt} Camera: {story['camera']}. Lighting: {story['grade']}."
+            if ref.get("from"):
+                # edit-chain: derive from an earlier reference so camera/light are inherited
+                src = ASSETS / ref["from"]
+                if not make_edit(prompt, src, out, args.dry_run, args.force, args.img_timeout):
+                    rc = 1
+                continue
             if not make_image(prompt, out, args.aspect, args.dry_run, args.force, args.img_timeout):
                 rc = 1
         return rc
