@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>三隻小豬 · 立體繪本</title>
+<style>
+  :root{
+    --paper:#f6ead2; --ink:#3a2c21; --edge:#d8c3a0;
+    --room-1:#241a14; --room-2:#3c2a1e;
+    --accent:#c4562f; --accent-2:#6b8f5e;
+    --rx:0deg; --ry:0deg;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family:"Noto Serif TC","Songti TC",ui-serif,Georgia,serif;
+    color:var(--paper);
+    background:radial-gradient(120% 90% at 50% 0%,var(--room-2),var(--room-1) 70%);
+    display:flex; flex-direction:column; align-items:center;
+    padding:clamp(12px,3vw,28px) clamp(16px,4vw,32px) 28px;
+    min-height:100%;
+  }
+  header{text-align:center; margin-bottom:clamp(10px,2vh,18px)}
+  h1{margin:0; font-size:clamp(22px,4.2vw,36px); letter-spacing:.22em; text-indent:.22em}
+  .sub{margin:6px 0 0; font-size:clamp(11px,2vw,13px); letter-spacing:.16em; opacity:.6}
+
+  /* ---------- the pop-up stage ---------- */
+  .stage{
+    width:min(100%,960px); aspect-ratio:3/2; position:relative;
+    perspective:1500px; perspective-origin:50% 42%;
+    touch-action:pan-y;
+  }
+  .book{
+    position:absolute; inset:0; transform-style:preserve-3d;
+    transform:rotateX(var(--rx)) rotateY(var(--ry));
+    transition:transform .5s cubic-bezier(.22,.9,.3,1);
+  }
+  /* the open spread = the flat page the diorama sits on */
+  .spread{
+    position:absolute; inset:0; transform-style:preserve-3d;
+    background:linear-gradient(90deg,#e9d9ba,var(--paper) 8%,var(--paper) 46%,#dcc9a6 50%,var(--paper) 54%,var(--paper) 92%,#e9d9ba);
+    border-radius:6px;
+    box-shadow:0 40px 70px -20px #000a, 0 0 0 1px var(--edge) inset;
+    overflow:hidden;
+  }
+  .spread::after{ /* centre gutter shadow */
+    content:""; position:absolute; top:0; bottom:0; left:50%; width:44px;
+    transform:translateX(-50%);
+    background:linear-gradient(90deg,#0000,#00000024 45%,#00000030 50%,#00000024 55%,#0000);
+    pointer-events:none; z-index:6;
+  }
+  /* each pop-up layer */
+  .layer{
+    position:absolute; left:50%; bottom:8%; width:var(--w);
+    transform-style:preserve-3d; will-change:transform; transform-origin:50% 100%;
+    transform:translateX(-50%) translate(var(--dx),var(--dy)) translateZ(var(--z)) rotateX(var(--fold,0deg));
+    transition:transform .8s cubic-bezier(.2,1.2,.3,1), opacity .45s ease;
+  }
+  .layer img,.layer video{display:block; width:100%; height:auto}
+  /* a standing paper card - cream mount, rounded top, shadow cast onto the page */
+  .layer.cut{
+    background:var(--paper); padding:2.4% 2.4% 0; border-radius:14px 14px 3px 3px;
+    box-shadow:0 20px 26px -14px #00000075, 0 0 0 1px #00000014;
+  }
+  .layer.cut img,.layer.cut video{border-radius:9px 9px 0 0}
+  /* the backdrop plate fills the whole spread */
+  .layer.plate{left:0; bottom:0; width:100%; height:100%; transform:translateZ(0)}
+  .layer.plate img,.layer.plate video{width:100%; height:100%; object-fit:cover}
+  /* closed state: every card folded flat down into the page */
+  .book.closed .layer.cut{--fold:-86deg; opacity:0}
+  .flipping .spread{animation:flip .62s cubic-bezier(.45,.05,.3,1)}
+  @keyframes flip{
+    0%{transform:rotateY(0deg)}
+    48%{transform:rotateY(-14deg) translateZ(-40px)}
+    100%{transform:rotateY(0deg)}
+  }
+
+  /* ---------- caption ---------- */
+  .caption{
+    width:min(100%,960px); margin-top:clamp(14px,2.4vh,22px);
+    background:#0000002e; border:1px solid #ffffff14; border-radius:10px;
+    padding:clamp(14px,2.4vw,20px) clamp(16px,3vw,24px);
+  }
+  .caption h2{margin:0 0 8px; font-size:clamp(15px,2.6vw,19px); color:#f0c98b; letter-spacing:.1em}
+  .caption p{margin:0; font-size:clamp(14px,2.4vw,16.5px); line-height:1.95; white-space:pre-line}
+
+  /* ---------- controls ---------- */
+  nav{
+    width:min(100%,960px); margin-top:16px; display:flex; flex-wrap:wrap; gap:10px;
+    align-items:center; justify-content:center;
+  }
+  button{
+    font:inherit; font-size:14px; color:var(--paper); cursor:pointer;
+    background:#ffffff12; border:1px solid #ffffff24; border-radius:999px;
+    padding:9px 18px; transition:background .18s,border-color .18s,opacity .18s;
+  }
+  button:hover:not(:disabled){background:#ffffff22; border-color:#ffffff44}
+  button:disabled{opacity:.34; cursor:default}
+  button.primary{background:var(--accent); border-color:#0000; color:#fff8f0}
+  button.primary:hover{background:#d4622f}
+  button.on{background:var(--accent-2); border-color:#0000}
+  .count{font-size:13px; letter-spacing:.14em; opacity:.7; min-width:72px; text-align:center}
+  .dots{display:flex; gap:7px; margin-top:4px}
+  .dot{width:8px; height:8px; border-radius:50%; background:#ffffff2e; border:0; padding:0; cursor:pointer}
+  .dot[aria-current="true"]{background:#f0c98b}
+  .note{
+    width:min(100%,960px); margin-top:14px; font-size:12px; line-height:1.8;
+    opacity:.5; text-align:center;
+  }
+  @media (max-width:560px){ .stage{aspect-ratio:4/3} }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">三隻小豬</h1>
+  <p class="sub" id="subtitle">立體繪本</p>
+</header>
+
+<div class="stage" id="stage">
+  <div class="book closed" id="book">
+    <div class="spread" id="spread"></div>
+  </div>
+</div>
+
+<div class="caption">
+  <h2 id="pageTitle"></h2>
+  <p id="pageText"></p>
+</div>
+
+<nav>
+  <button id="prev">← 上一頁</button>
+  <span class="count" id="count"></span>
+  <button id="next">下一頁 →</button>
+  <button id="play" class="primary">▶ 播放動畫</button>
+  <button id="auto">自動翻頁</button>
+</nav>
+<div class="dots" id="dots"></div>
+<p class="note" id="note"></p>
+
+<script>
+const STORY = {"title": "三隻小豬", "subtitle": "立體繪本 · Grok Imagine 生成實驗", "pages": [{"id": "p1", "title": "出發的那天早上", "text": "從前，有三隻小豬住在媽媽的小屋裡。有一天媽媽說：「你們長大了，該去蓋自己的房子啦。」\n阿草戴上草帽，阿木背起工具，最小的阿磚把小鏟子插進口袋，三隻小豬就這樣出發了。", "layers": [{"id": "bg", "depth": 0, "blend": "normal", "x": 0, "y": 0, "cut": false, "width": 100}, {"id": "mid", "depth": 80, "blend": "normal", "x": 2, "y": -4, "cut": true, "width": 66}, {"id": "fg", "depth": 170, "blend": "normal", "x": -30, "y": 6, "cut": true, "width": 30}], "video": {"from": "bg", "duration": 6}}, {"id": "p2", "title": "阿草的稻草屋", "text": "阿草最怕累。他抱來一大捆稻草，唏哩唏哩堆了一個下午，房子就蓋好了。\n「這樣就夠啦！」阿草打了個呵欠，躺在稻草堆上睡著了。", "layers": [{"id": "bg", "depth": 0, "blend": "normal", "x": 0, "y": 0, "cut": false, "width": 100}, {"id": "mid", "depth": 80, "blend": "normal", "x": 2, "y": -4, "cut": true, "width": 66}, {"id": "fg", "depth": 170, "blend": "normal", "x": -30, "y": 6, "cut": true, "width": 30}], "video": {"from": "bg", "duration": 6}}, {"id": "p3", "title": "阿木的木頭屋", "text": "阿木比較勤快。他鋸了木板，叮叮咚咚敲了一整天，蓋出一間木頭小屋。\n「比稻草牢固多了吧？」阿木很得意，也回屋裡休息了。", "layers": [{"id": "bg", "depth": 0, "blend": "normal", "x": 0, "y": 0, "cut": false, "width": 100}, {"id": "mid", "depth": 80, "blend": "normal", "x": 2, "y": -4, "cut": true, "width": 66}, {"id": "fg", "depth": 170, "blend": "normal", "x": -30, "y": 6, "cut": true, "width": 30}], "video": {"from": "bg", "duration": 6}}, {"id": "p4", "title": "阿磚的磚頭屋", "text": "最小的阿磚不急。他一塊一塊地抹上水泥、疊上磚頭，蓋了好久好久。\n哥哥們笑他傻，阿磚只是擦擦汗說：「慢慢蓋，才蓋得穩。」", "layers": [{"id": "bg", "depth": 0, "blend": "normal", "x": 0, "y": 0, "cut": false, "width": 100}, {"id": "mid", "depth": 80, "blend": "normal", "x": 2, "y": -4, "cut": true, "width": 66}, {"id": "fg", "depth": 170, "blend": "normal", "x": -30, "y": 6, "cut": true, "width": 30}], "video": {"from": "bg", "duration": 6}}, {"id": "p5", "title": "大野狼來了", "text": "夜裡，一隻又餓又瘦的大野狼聞到了小豬的味道。他走到稻草屋前，敲敲門。\n「小豬小豬，讓我進去。」「不行不行！」\n野狼深深吸一口氣——呼！稻草屋整個飛了起來。阿草拔腿就往木頭屋跑。", "layers": [{"id": "bg", "depth": 0, "blend": "normal", "x": 0, "y": 0, "cut": false, "width": 100}, {"id": "mid", "depth": 80, "blend": "normal", "x": 2, "y": -4, "cut": true, "width": 66}, {"id": "fg", "depth": 170, "blend": "normal", "x": -30, "y": 6, "cut": true, "width": 30}], "video": {"from": "bg", "duration": 8}}, {"id": "p6", "title": "木頭屋也倒了", "text": "野狼追到木頭屋前，又敲敲門。「小豬小豬，讓我進去。」「不行不行！」\n呼——！木板一片一片飛走了。阿草和阿木尖叫著，一起衝向弟弟的磚頭屋。", "layers": [{"id": "bg", "depth": 0, "blend": "normal", "x": 0, "y": 0, "cut": false, "width": 100}, {"id": "mid", "depth": 80, "blend": "normal", "x": 2, "y": -4, "cut": true, "width": 66}, {"id": "fg", "depth": 170, "blend": "normal", "x": -30, "y": 6, "cut": true, "width": 30}], "video": {"from": "bg", "duration": 8}}, {"id": "p7", "title": "吹不倒的房子", "text": "野狼來到磚頭屋前，用力吹！呼——呼——呼——\n磚頭屋一動也不動。野狼吹到頭昏眼花，氣得爬上屋頂，想從煙囪溜進去。\n可是阿磚早就在爐子上，架好了一鍋滾燙的熱水。", "layers": [{"id": "bg", "depth": 0, "blend": "normal", "x": 0, "y": 0, "cut": false, "width": 100}, {"id": "mid", "depth": 80, "blend": "normal", "x": 2, "y": -4, "cut": true, "width": 66}, {"id": "fg", "depth": 170, "blend": "normal", "x": -30, "y": 6, "cut": true, "width": 30}], "video": {"from": "bg", "duration": 8}}, {"id": "p8", "title": "從此平平安安", "text": "「哎呀燙燙燙！」野狼滾下屋頂，一路哭著跑進森林，再也沒有回來。\n三隻小豬擠在磚頭屋裡，煮了熱呼呼的湯。\n阿草說：「弟弟，下次我也要慢慢蓋。」窗外的月亮，笑得圓圓的。", "layers": [{"id": "bg", "depth": 0, "blend": "normal", "x": 0, "y": 0, "cut": false, "width": 100}, {"id": "mid", "depth": 80, "blend": "normal", "x": 2, "y": -4, "cut": true, "width": 66}, {"id": "fg", "depth": 170, "blend": "normal", "x": -30, "y": 6, "cut": true, "width": 30}], "video": {"from": "bg", "duration": 6}}]};
+const MANIFEST = {"images": {}, "videos": {}};
+
+/* ---- placeholder paper cut-outs, used until a Grok asset exists ---- */
+const PALETTE = {
+  bg:  ['#bcd9e8','#8fb98d','#e4d3ad'],
+  mid: ['#f2c9b4','#d98b6a','#8a5a3c'],
+  fg:  ['#e9d7a8','#b99a5e','#6f7f52'],
+};
+function placeholder(layerId, label){
+  const c = PALETTE[layerId] || PALETTE.fg;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 1024">
+    <rect width="1536" height="1024" fill="${layerId==='bg'?c[0]:'#fbf3e2'}"/>
+    ${layerId==='bg' ? `
+      <path d="M0 700 Q384 600 768 690 T1536 660 V1024 H0Z" fill="${c[1]}"/>
+      <circle cx="1240" cy="220" r="96" fill="#f6e6b4"/>
+      <ellipse cx="420" cy="230" rx="180" ry="66" fill="#ffffffcc"/>
+      <ellipse cx="760" cy="180" rx="130" ry="52" fill="#ffffffaa"/>` : `
+      <path d="M300 820 L500 300 L760 200 L1030 320 L1230 820Z" fill="${c[1]}" opacity=".92"/>
+      <circle cx="768" cy="470" r="150" fill="${c[0]}"/>
+      <rect x="640" y="620" width="256" height="200" rx="18" fill="${c[2]}" opacity=".85"/>`}
+    <text x="768" y="965" font-family="monospace" font-size="42" fill="#00000055"
+      text-anchor="middle">${label}</text>
+  </svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+const book    = document.getElementById('book');
+const spread  = document.getElementById('spread');
+const stage   = document.getElementById('stage');
+const elCount = document.getElementById('count');
+const elDots  = document.getElementById('dots');
+const btnPlay = document.getElementById('play');
+const btnAuto = document.getElementById('auto');
+
+let idx = 0, playing = false, autoTimer = null;
+
+function assetFor(pid, layerId){
+  const name = MANIFEST.images?.[`${pid}_${layerId}`];
+  return name ? `assets/${name}` : null;
+}
+function videoFor(pid){
+  const name = MANIFEST.videos?.[pid];
+  return name ? `assets/${name}` : null;
+}
+
+function render(){
+  const page = STORY.pages[idx];
+  spread.innerHTML = '';
+  book.classList.add('closed');
+
+  page.layers.forEach((layer, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'layer';
+    wrap.dataset.id = layer.id;
+    wrap.classList.add(layer.cut ? 'cut' : 'plate');
+    wrap.style.setProperty('--z', (layer.depth || 0) + 'px');
+    wrap.style.setProperty('--w', (layer.width ?? 100) + '%');
+    wrap.style.setProperty('--dx', (layer.x || 0) + '%');
+    wrap.style.setProperty('--dy', (layer.y || 0) + '%');
+    wrap.style.zIndex = String(i + 1);
+    wrap.style.transitionDelay = (i * 110) + 'ms';
+
+    const src = assetFor(page.id, layer.id);
+    const img = document.createElement('img');
+    img.alt = `${page.title} · ${layer.id}`;
+    img.decoding = 'async';
+    img.src = src || placeholder(layer.id, `${page.id}_${layer.id} · 尚未生成`);
+    if (src) img.onerror = () => { img.src = placeholder(layer.id, `${page.id}_${layer.id} · 缺檔`); };
+    wrap.appendChild(img);
+    spread.appendChild(wrap);
+  });
+
+  document.getElementById('pageTitle').textContent = `${idx + 1}. ${page.title}`;
+  document.getElementById('pageText').textContent = page.text;
+  elCount.textContent = `${idx + 1} / ${STORY.pages.length}`;
+  document.getElementById('prev').disabled = idx === 0;
+  document.getElementById('next').disabled = idx === STORY.pages.length - 1;
+
+  const hasVideo = !!videoFor(page.id);
+  btnPlay.disabled = !hasVideo;
+  btnPlay.textContent = hasVideo ? '▶ 播放動畫' : '（動畫尚未生成）';
+  playing = false;
+  btnPlay.classList.remove('on');
+
+  [...elDots.children].forEach((d, i) => d.setAttribute('aria-current', String(i === idx)));
+
+  // let the layers rise after the page settles — the pop-up moment
+  requestAnimationFrame(() => requestAnimationFrame(() => book.classList.remove('closed')));
+}
+
+function go(next){
+  if (next < 0 || next >= STORY.pages.length) return;
+  idx = next;
+  book.classList.add('flipping');
+  setTimeout(() => book.classList.remove('flipping'), 620);
+  render();
+}
+
+/* ---- swap the source layer for its generated clip ---- */
+btnPlay.addEventListener('click', () => {
+  const page = STORY.pages[idx];
+  const url = videoFor(page.id);
+  if (!url) return;
+  const target = page.video?.from || 'bg';
+  const wrap = spread.querySelector(`.layer[data-id="${target}"]`);
+  if (!wrap) return;
+
+  if (playing){ render(); return; }
+  playing = true;
+  btnPlay.textContent = '■ 回到插畫';
+  btnPlay.classList.add('on');
+
+  const v = document.createElement('video');
+  v.src = url; v.loop = true; v.muted = true; v.playsInline = true; v.autoplay = true;
+  v.onerror = () => { btnPlay.textContent = '（動畫檔讀取失敗）'; };
+  wrap.replaceChildren(v);
+  v.play().catch(() => {});
+});
+
+btnAuto.addEventListener('click', () => {
+  if (autoTimer){ clearInterval(autoTimer); autoTimer = null; btnAuto.classList.remove('on'); return; }
+  btnAuto.classList.add('on');
+  autoTimer = setInterval(() => {
+    if (idx < STORY.pages.length - 1) go(idx + 1);
+    else { clearInterval(autoTimer); autoTimer = null; btnAuto.classList.remove('on'); }
+  }, 7000);
+});
+
+document.getElementById('prev').addEventListener('click', () => go(idx - 1));
+document.getElementById('next').addEventListener('click', () => go(idx + 1));
+addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') go(idx - 1);
+  if (e.key === 'ArrowRight') go(idx + 1);
+  if (e.key === ' '){ e.preventDefault(); btnPlay.click(); }
+});
+
+/* ---- parallax: tilt the whole diorama toward the pointer ---- */
+stage.addEventListener('pointermove', e => {
+  const r = stage.getBoundingClientRect();
+  const px = (e.clientX - r.left) / r.width - .5;
+  const py = (e.clientY - r.top) / r.height - .5;
+  book.style.setProperty('--ry', (px * 16).toFixed(2) + 'deg');
+  book.style.setProperty('--rx', (-py * 10).toFixed(2) + 'deg');
+});
+stage.addEventListener('pointerleave', () => {
+  book.style.setProperty('--ry', '0deg');
+  book.style.setProperty('--rx', '0deg');
+});
+
+/* ---- boot ---- */
+document.getElementById('title').textContent = STORY.title;
+document.getElementById('subtitle').textContent = STORY.subtitle || '';
+STORY.pages.forEach((_, i) => {
+  const b = document.createElement('button');
+  b.className = 'dot'; b.type = 'button';
+  b.setAttribute('aria-label', `第 ${i + 1} 頁`);
+  b.addEventListener('click', () => go(i));
+  elDots.appendChild(b);
+});
+const nImg = Object.keys(MANIFEST.images || {}).length;
+const nVid = Object.keys(MANIFEST.videos || {}).length;
+const nWant = STORY.pages.reduce((a, p) => a + p.layers.length, 0);
+document.getElementById('note').textContent = nImg
+  ? `Grok Imagine 素材：${nImg}/${nWant} 張圖、${nVid}/${STORY.pages.length} 段影片（${MANIFEST.models?.image || ''}／${MANIFEST.models?.video || ''}）。滑動滑鼠可傾斜紙雕，空白鍵播放動畫。`
+  : `目前顯示的是紙雕佔位圖。設定 XAI_API_KEY 後執行 scripts/grok_gen.py 生成 ${nWant} 張圖與 ${STORY.pages.length} 段影片，再跑 scripts/build_book.py 即會自動換上。`;
+render();
+</script>
+</body>
+</html>

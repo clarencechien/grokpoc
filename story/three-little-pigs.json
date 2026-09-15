@@ -1,0 +1,345 @@
+{
+  "title": "三隻小豬",
+  "subtitle": "立體繪本 · Grok Imagine 生成實驗",
+  "lang": "zh-TW",
+  "style": "handcrafted paper-diorama children's storybook illustration, layered cut-paper shapes with visible torn paper edges and soft drop shadows, gouache-painted paper texture, warm storybook palette of butter yellow, moss green, terracotta and sky blue, soft rim lighting, clean readable silhouettes, no text, no words, no letters, no watermark",
+  "cast": "Cast (keep identical on every page): ASHLEY the eldest pig is a plump pink pig in a straw sun hat and mustard-yellow scarf; TIMBER the middle pig is a pink pig in blue denim dungarees with a moss-green scarf; BRICKY the youngest pig is the smallest, in a red scarf and teal overalls, always carrying a little trowel; THE WOLF is a lanky grey wolf in a shabby charcoal coat with a long snout and a patched elbow.",
+  "pages": [
+    {
+      "id": "p1",
+      "title": "出發的那天早上",
+      "text": "從前，有三隻小豬住在媽媽的小屋裡。有一天媽媽說：「你們長大了，該去蓋自己的房子啦。」\n阿草戴上草帽，阿木背起工具，最小的阿磚把小鏟子插進口袋，三隻小豬就這樣出發了。",
+      "layers": [
+        {
+          "id": "bg",
+          "depth": 0,
+          "prompt": "a winding dirt path leaving a cosy cottage, rolling green hills, morning sky with cut-paper clouds, wide establishing scene",
+          "blend": "normal",
+          "x": 0,
+          "y": 0,
+          "cut": false,
+          "width": 100
+        },
+        {
+          "id": "mid",
+          "depth": 80,
+          "prompt": "three little pigs walking away down a path with bundles over their shoulders, seen from behind, cheerful, close-up vignette composition, the subject fills the frame, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": 2,
+          "y": -4,
+          "cut": true,
+          "width": 66
+        },
+        {
+          "id": "fg",
+          "depth": 170,
+          "prompt": "a wooden signpost with a blank arrow board and a cluster of daisies, a single small prop, close-up, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": -30,
+          "y": 6,
+          "cut": true,
+          "width": 30
+        }
+      ],
+      "video": {
+        "from": "bg",
+        "prompt": "gentle breeze rippling the grass and the paper clouds drifting slowly across the sky, the path shimmering in morning light",
+        "duration": 6
+      }
+    },
+    {
+      "id": "p2",
+      "title": "阿草的稻草屋",
+      "text": "阿草最怕累。他抱來一大捆稻草，唏哩唏哩堆了一個下午，房子就蓋好了。\n「這樣就夠啦！」阿草打了個呵欠，躺在稻草堆上睡著了。",
+      "layers": [
+        {
+          "id": "bg",
+          "depth": 0,
+          "prompt": "a sunny meadow with a haystack field and a low stone wall, afternoon light, wide scene",
+          "blend": "normal",
+          "x": 0,
+          "y": 0,
+          "cut": false,
+          "width": 100
+        },
+        {
+          "id": "mid",
+          "depth": 80,
+          "prompt": "a lopsided little house made of golden straw bundles, a plump pig in a straw hat napping against its doorway, close-up vignette composition, the subject fills the frame, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": 2,
+          "y": -4,
+          "cut": true,
+          "width": 66
+        },
+        {
+          "id": "fg",
+          "depth": 170,
+          "prompt": "scattered loose straw and a tipped-over wicker basket, a single small prop, close-up, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": -30,
+          "y": 6,
+          "cut": true,
+          "width": 30
+        }
+      ],
+      "video": {
+        "from": "bg",
+        "prompt": "loose straw drifting in warm afternoon air, the straw house swaying ever so slightly, dust motes glowing",
+        "duration": 6
+      }
+    },
+    {
+      "id": "p3",
+      "title": "阿木的木頭屋",
+      "text": "阿木比較勤快。他鋸了木板，叮叮咚咚敲了一整天，蓋出一間木頭小屋。\n「比稻草牢固多了吧？」阿木很得意，也回屋裡休息了。",
+      "layers": [
+        {
+          "id": "bg",
+          "depth": 0,
+          "prompt": "edge of a pine forest at golden hour, tall trees, sawdust on the ground, wide scene",
+          "blend": "normal",
+          "x": 0,
+          "y": 0,
+          "cut": false,
+          "width": 100
+        },
+        {
+          "id": "mid",
+          "depth": 80,
+          "prompt": "a small plank house of fresh timber with a crooked chimney, a pig in blue denim dungarees hammering a board, close-up vignette composition, the subject fills the frame, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": 2,
+          "y": -4,
+          "cut": true,
+          "width": 66
+        },
+        {
+          "id": "fg",
+          "depth": 170,
+          "prompt": "a hand saw resting on a sawhorse with curled wood shavings, a single small prop, close-up, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": -30,
+          "y": 6,
+          "cut": true,
+          "width": 30
+        }
+      ],
+      "video": {
+        "from": "bg",
+        "prompt": "wood shavings fluttering down, warm golden light flickering between the pine trunks, the chimney puffing a thin wisp of smoke",
+        "duration": 6
+      }
+    },
+    {
+      "id": "p4",
+      "title": "阿磚的磚頭屋",
+      "text": "最小的阿磚不急。他一塊一塊地抹上水泥、疊上磚頭，蓋了好久好久。\n哥哥們笑他傻，阿磚只是擦擦汗說：「慢慢蓋，才蓋得穩。」",
+      "layers": [
+        {
+          "id": "bg",
+          "depth": 0,
+          "prompt": "a tidy garden plot with a low brick wall and a wheelbarrow, soft dusk sky, wide scene",
+          "blend": "normal",
+          "x": 0,
+          "y": 0,
+          "cut": false,
+          "width": 100
+        },
+        {
+          "id": "mid",
+          "depth": 80,
+          "prompt": "a sturdy little red brick house with a solid chimney, the smallest pig in a red scarf laying bricks with a trowel, close-up vignette composition, the subject fills the frame, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": 2,
+          "y": -4,
+          "cut": true,
+          "width": 66
+        },
+        {
+          "id": "fg",
+          "depth": 170,
+          "prompt": "a stack of red bricks beside a bucket of mortar and a spirit level, a single small prop, close-up, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": -30,
+          "y": 6,
+          "cut": true,
+          "width": 30
+        }
+      ],
+      "video": {
+        "from": "bg",
+        "prompt": "dusk light deepening over the brick house, a thin trail of chimney smoke curling upward, the wheelbarrow casting a long slow shadow",
+        "duration": 6
+      }
+    },
+    {
+      "id": "p5",
+      "title": "大野狼來了",
+      "text": "夜裡，一隻又餓又瘦的大野狼聞到了小豬的味道。他走到稻草屋前，敲敲門。\n「小豬小豬，讓我進去。」「不行不行！」\n野狼深深吸一口氣——呼！稻草屋整個飛了起來。阿草拔腿就往木頭屋跑。",
+      "layers": [
+        {
+          "id": "bg",
+          "depth": 0,
+          "prompt": "a moonlit night meadow, long blue shadows, stars as tiny paper punch-holes, wide dramatic scene",
+          "blend": "normal",
+          "x": 0,
+          "y": 0,
+          "cut": false,
+          "width": 100
+        },
+        {
+          "id": "mid",
+          "depth": 80,
+          "prompt": "a lanky grey wolf in a shabby charcoal coat blowing hard with puffed cheeks, straw exploding away from a collapsing straw house, close-up vignette composition, the subject fills the frame, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": 2,
+          "y": -4,
+          "cut": true,
+          "width": 66
+        },
+        {
+          "id": "fg",
+          "depth": 170,
+          "prompt": "straw flying through the air in a swirl, a single small prop, close-up, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": -30,
+          "y": 6,
+          "cut": true,
+          "width": 30
+        }
+      ],
+      "video": {
+        "from": "bg",
+        "prompt": "the wolf's mighty breath bursting outward as a swirl of straw tumbles and scatters into the night, moonlight flickering",
+        "duration": 8
+      }
+    },
+    {
+      "id": "p6",
+      "title": "木頭屋也倒了",
+      "text": "野狼追到木頭屋前，又敲敲門。「小豬小豬，讓我進去。」「不行不行！」\n呼——！木板一片一片飛走了。阿草和阿木尖叫著，一起衝向弟弟的磚頭屋。",
+      "layers": [
+        {
+          "id": "bg",
+          "depth": 0,
+          "prompt": "night pine forest clearing, cold moonlight through branches, wide dramatic scene",
+          "blend": "normal",
+          "x": 0,
+          "y": 0,
+          "cut": false,
+          "width": 100
+        },
+        {
+          "id": "mid",
+          "depth": 80,
+          "prompt": "the grey wolf blowing with all his might as timber planks fly apart from a breaking plank house, two pigs fleeing in panic, close-up vignette composition, the subject fills the frame, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": 2,
+          "y": -4,
+          "cut": true,
+          "width": 66
+        },
+        {
+          "id": "fg",
+          "depth": 170,
+          "prompt": "broken planks and bent nails tumbling, a single small prop, close-up, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": -30,
+          "y": 6,
+          "cut": true,
+          "width": 30
+        }
+      ],
+      "video": {
+        "from": "bg",
+        "prompt": "planks spinning away through cold moonlight as the two pigs dash out of frame, branches shaking in the gust",
+        "duration": 8
+      }
+    },
+    {
+      "id": "p7",
+      "title": "吹不倒的房子",
+      "text": "野狼來到磚頭屋前，用力吹！呼——呼——呼——\n磚頭屋一動也不動。野狼吹到頭昏眼花，氣得爬上屋頂，想從煙囪溜進去。\n可是阿磚早就在爐子上，架好了一鍋滾燙的熱水。",
+      "layers": [
+        {
+          "id": "bg",
+          "depth": 0,
+          "prompt": "the brick house standing firm at midnight, swirling wind lines, dramatic low angle, wide scene",
+          "blend": "normal",
+          "x": 0,
+          "y": 0,
+          "cut": false,
+          "width": 100
+        },
+        {
+          "id": "mid",
+          "depth": 80,
+          "prompt": "the grey wolf red-faced and dizzy from blowing, clambering up onto the roof toward the chimney, the brick house unmoved, close-up vignette composition, the subject fills the frame, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": 2,
+          "y": -4,
+          "cut": true,
+          "width": 66
+        },
+        {
+          "id": "fg",
+          "depth": 170,
+          "prompt": "a bubbling cauldron on a lit hearth with rising steam, a single small prop, close-up, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": -30,
+          "y": 6,
+          "cut": true,
+          "width": 30
+        }
+      ],
+      "video": {
+        "from": "bg",
+        "prompt": "swirling wind buffeting the brick house without moving it, the wolf scrambling up the roof tiles, steam rising from the chimney",
+        "duration": 8
+      }
+    },
+    {
+      "id": "p8",
+      "title": "從此平平安安",
+      "text": "「哎呀燙燙燙！」野狼滾下屋頂，一路哭著跑進森林，再也沒有回來。\n三隻小豬擠在磚頭屋裡，煮了熱呼呼的湯。\n阿草說：「弟弟，下次我也要慢慢蓋。」窗外的月亮，笑得圓圓的。",
+      "layers": [
+        {
+          "id": "bg",
+          "depth": 0,
+          "prompt": "warm lamplight glowing from the brick house windows at night, peaceful starry sky, a distant wolf silhouette running away, wide cosy scene",
+          "blend": "normal",
+          "x": 0,
+          "y": 0,
+          "cut": false,
+          "width": 100
+        },
+        {
+          "id": "mid",
+          "depth": 80,
+          "prompt": "three little pigs together inside a cosy room around a steaming pot of soup, laughing, warm lamplight, close-up vignette composition, the subject fills the frame, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": 2,
+          "y": -4,
+          "cut": true,
+          "width": 66
+        },
+        {
+          "id": "fg",
+          "depth": 170,
+          "prompt": "two bowls of soup and a round crusty loaf on a checked cloth, a single small prop, close-up, simple uncluttered backdrop",
+          "blend": "normal",
+          "x": -30,
+          "y": 6,
+          "cut": true,
+          "width": 30
+        }
+      ],
+      "video": {
+        "from": "bg",
+        "prompt": "warm lamplight flickering in the windows, steam curling from the soup pot, stars twinkling gently over the quiet hills",
+        "duration": 6
+      }
+    }
+  ]
+}
