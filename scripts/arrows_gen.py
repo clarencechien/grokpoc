@@ -47,14 +47,19 @@ def run_agent(instruction: str, timeout: int) -> tuple[bool, str]:
     return p.returncode == 0, ((p.stdout or "") + (p.stderr or "")).strip()[-600:]
 
 
-def img_prompt(story: dict, prompt: str) -> str:
-    return f"{prompt}. Style: {story['style']}. {story['cast']}"
+def img_prompt(story: dict, prompt: str, only: str = "") -> str:
+    # The still is frame 0 of the clip, so the page being turned has to exist HERE.
+    # image_to_video only animates what is already in the source image.
+    # `only` keeps the shared cast block from leaking extra characters into a scene.
+    cast_limit = (f" Only these characters appear in this scene: {only}. "
+                  f"No other named characters anywhere in the frame.") if only else ""
+    return (f"A pop-up book spread whose paper diorama shows: {prompt}. "
+            f"{story['page_still']}. Style: {story['style']}. {story['cast']}{cast_limit}")
 
 
 def vid_prompt(story: dict, motion: str) -> str:
-    # The page-turn is part of the clip: prefix the motion with the story's `turn`.
-    turn = story.get("turn", "")
-    return f"{turn} {motion}. Style: {story['style']}. {story['cast']}".strip()
+    # The clip completes the turn the still set up, then plays the scene's own motion.
+    return f"{story['page_motion']} {motion}. Style: {story['style']}. {story['cast']}"
 
 
 def image_instruction(prompt: str, out: Path, aspect: str) -> str:
@@ -65,7 +70,8 @@ def image_instruction(prompt: str, out: Path, aspect: str) -> str:
 
 def video_instruction(motion: str, source: Path, out: Path, duration: int) -> str:
     return (f"Use your image_to_video tool with the input image {source} to animate it into a "
-            f"cinematic paper-diorama clip, and save the MP4 to {out}. Overwrite if it exists. "
+            f"paper pop-up book clip that OPENS by completing the page-turn already begun in "
+            f"the source image, and save the MP4 to {out}. Overwrite if it exists. "
             f"Target about {duration} seconds. Do not ask questions; generate and save.\n\n"
             f"Motion: {motion}\n\nWhen finished, print only: SAVED {out}")
 
@@ -115,10 +121,10 @@ def units(story: dict):
     """Yield (id, image_prompt, motion_prompt, duration) for cover + chapters."""
     if story.get("cover"):
         cov = story["cover"]
-        yield "cover", cov["prompt"], (cov.get("video") or {}).get("prompt"), (cov.get("video") or {}).get("duration", 6)
+        yield "cover", cov["prompt"], (cov.get("video") or {}).get("prompt"), (cov.get("video") or {}).get("duration", 6), cov.get("only", "")
     for ch in story["chapters"]:
         v = ch.get("video") or {}
-        yield ch["id"], ch["prompt"], v.get("prompt"), v.get("duration", 5)
+        yield ch["id"], ch["prompt"], v.get("prompt"), v.get("duration", 5), ch.get("only", "")
 
 
 def main() -> int:
@@ -146,14 +152,14 @@ def main() -> int:
     do_vid = args.videos or not args.stills
     failures: list[str] = []
 
-    for uid, iprompt, motion, dur in units(story):
+    for uid, iprompt, motion, dur, only in units(story):
         if wanted and uid not in wanted:
             continue
         title = next((c["title"] for c in story["chapters"] if c["id"] == uid), "主視覺")
         print(f"\n[{uid}] {title}")
         still = ASSETS / f"{uid}.jpg"
         if do_img:
-            if make_image(img_prompt(story, iprompt), still, args.aspect, args.dry_run, args.force, args.img_timeout):
+            if make_image(img_prompt(story, iprompt, only), still, args.aspect, args.dry_run, args.force, args.img_timeout):
                 if not args.dry_run and still.exists():
                     manifest["images"][uid] = still.name; save_manifest(manifest)
             else:
