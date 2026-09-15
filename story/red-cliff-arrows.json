@@ -128,7 +128,7 @@
     "page_lifted": {
       "file": "ref_page_lifted.jpg",
       "from": "ref_spread_blank.jpg",
-      "prompt": "Same book, same table, same camera, same lamp. One change: the flat NEAR page has been lifted by its bottom edge — the edge nearest the camera — and is swinging up and back on the horizontal hinge, like a desk-calendar page mid-flip. It now stands tilted at about sixty degrees, leaning toward the upright far page: a single flat rigid sheet of cream card, its straight bottom edge and square corners clearly visible, its blank underside facing the camera. Beneath it, another completely blank cream page lies flat on the table. The upright far page is unchanged. Nothing else changes."
+      "prompt": "Same book, same table, same camera, same lamp. One change: the flat NEAR page is being turned. It is a bound page of the book, a stiff card attached along the horizontal hinge where it meets the upright far page. The whole page rotates about that hinge as ONE perfectly flat rectangle: its far edge stays on the hinge, its near edge — the one nearest the camera — has risen into the air, so the page is now a flat tilted plane leaning back toward the upright far page at about sixty degrees, like a ramp. All four corners stay square; the surface is dead flat; no part of the page bends, curls, folds or lifts at a corner. Its blank underside faces the camera. Beneath it, the next completely blank cream page lies flat on the table, fully bound in the book. It is not a loose sheet. The upright far page is unchanged. Nothing else changes."
     },
     "cover_closed": {
       "file": "ref_cover_closed.jpg",
