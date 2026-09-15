@@ -41,11 +41,11 @@
       "id": "c2",
       "title": "三日的軍令狀",
       "text": "「十天太久，只要三天就夠了。」諸葛亮竟當眾立下軍令狀：若造不出箭，甘願受罰。\n周瑜暗自得意，以為這回諸葛亮插翅難逃。",
-      "prompt": "the calm strategist in a pale robe presses his seal onto a paper military pledge on a low table while the armoured general watches with a hidden smug smile, officials in the background lean in, dramatic candlelight, layered paper figures",
+      "prompt": "inside a lamplit army tent painted on the backdrop, ZHUGE LIANG with a calm gentle smile pressing a red seal onto a paper pledge on a low table, ZHOU YU behind him with a smug satisfied smirk, LU SU at the side looking worried with raised eyebrows; a small paper lantern on the table",
       "video": {
         "prompt": "candle flames dancing, the paper pledge document trembling slightly as the seal presses down, the general's smug smile deepening, smoke and shadows shifting",
         "duration": 6,
-        "beat": "a candle flame wavers, throwing shifting paper shadows across the table"
+        "beat": "a candle flame wavers and the paper pledge trembles slightly"
       },
       "only": "exactly THREE figures: Zhuge Liang, Zhou Yu and Lu Su; nobody else",
       "cast_list": [
@@ -59,11 +59,11 @@
       "id": "c3",
       "title": "向魯肅借船",
       "text": "諸葛亮悄悄找來魯肅，借了二十艘快船，每船三十名軍士，船身兩側綁滿稻草人，再用青布幔子遮起來。\n「千萬別告訴都督。」諸葛亮低聲叮嚀。",
-      "prompt": "at a misty night riverbank of torn paper, the robed strategist quietly instructs a kindly round-faced official in blue beside a row of long wooden boats lined with straw-bundle figures and covered with blue-grey cloth canopies, secretive mood, cold moonlight and warm lantern accents",
+      "prompt": "a misty night riverbank painted on the backdrop with long paper boats lined with straw-bundle soldiers under cloth canopies, ZHUGE LIANG leaning in with a secretive smile whispering to LU SU, who looks puzzled and curious; one small paper lantern on a pole",
       "video": {
         "prompt": "night fog drifting over the moored boats, cloth canopies rippling in the breeze, lantern light glinting on the water, the two figures leaning in to whisper, reeds swaying",
         "duration": 6,
-        "beat": "night fog drifts slowly over the moored boats"
+        "beat": "night fog drifts slowly over the moored paper boats"
       },
       "only": "Zhuge Liang and Lu Su once each, plus straw-bundle soldiers on the boats; nobody else",
       "cast_list": [
@@ -77,11 +77,11 @@
       "id": "c4",
       "title": "按兵不動",
       "text": "第一天，諸葛亮沒有動靜。第二天，還是沒有動靜。\n魯肅急得團團轉，諸葛亮卻只是喝茶讀書，彷彿胸有成竹。",
-      "prompt": "a quiet paper-diorama study at night, the calm strategist reclines reading a scroll and sipping tea with a serene smile, while the round-faced official paces anxiously by the window, moonlit river visible outside, warm interior glow against cold blue night",
+      "prompt": "a quiet study at night painted on the backdrop, ZHUGE LIANG sitting relaxed with a serene smile sipping tea from a tiny cup, LU SU pacing beside him with an anxious frowning face and hands clasped; a small paper lantern glowing on a low table",
       "video": {
         "prompt": "steam curling gently from the teacup, the scroll edges fluttering, the anxious official pacing back and forth, moonlight shimmering on the river outside the window",
         "duration": 6,
-        "beat": "steam curls gently upward from the teacup"
+        "beat": "steam curls gently upward from the tiny teacup"
       },
       "only": "exactly TWO figures: Zhuge Liang and Lu Su; nobody else",
       "cast_list": [
@@ -94,11 +94,11 @@
       "id": "c5",
       "title": "大霧漫江",
       "text": "到了第三天四更，江上忽然起了漫天大霧，對面看不見人影。\n諸葛亮請魯肅一同上船，二十艘船用長索連成一線，趁著濃霧向北岸曹營划去。",
-      "prompt": "a wide cinematic paper river swallowed by thick rolling fog before dawn, twenty long straw-lined boats roped together in a line gliding north, tiny lanterns glowing in the mist, the robed strategist and the official seated calmly at the lead boat, layers of cotton-paper fog",
+      "prompt": "a wide river swallowed by thick cotton-paper fog before dawn painted on the backdrop, a long paper boat with straw-bundle soldiers, ZHUGE LIANG seated calmly with a gentle smile, LU SU beside him wide-eyed and nervous; one small paper lantern glowing in the mist",
       "video": {
         "prompt": "vast walls of paper fog rolling and swirling across the river, the line of boats gliding forward, lanterns pulsing softly in the haze, water rippling under the hulls, an eerie calm",
         "duration": 6,
-        "beat": "a wall of paper fog rolls slowly across the river"
+        "beat": "a wall of cotton-paper fog rolls slowly across the river"
       },
       "only": "Zhuge Liang and Lu Su once each on the lead boat, plus straw-bundle soldiers; nobody else",
       "cast_list": [
@@ -112,11 +112,11 @@
       "id": "c6",
       "title": "擂鼓吶喊",
       "text": "船隊逼近曹營水寨，諸葛亮下令一字排開，軍士一齊擂鼓吶喊，聲勢震天。\n魯肅嚇得臉色發白：「萬一曹兵殺出來怎麼辦？」諸葛亮大笑：「霧這麼大，曹操必不敢出。」",
-      "prompt": "the line of straw boats spread out facing a towering paper water-fortress in the fog, soldiers on deck beating war drums and shouting with open mouths, banners waving, the strategist laughing calmly while the official looks terrified, dynamic dramatic energy, drum-blur motion",
+      "prompt": "a towering fortress dim in the fog painted on the backdrop, straw-bundle soldiers beating little paper war drums with open mouths, ZHUGE LIANG laughing cheerfully with his fan raised, LU SU beside him looking terrified with round shocked eyes; a small paper lantern swinging",
       "video": {
         "prompt": "war drums pounding with visible vibration, banners whipping, soldiers' mouths open in shouts, ripples and spray around the boats, fog glowing with the din, the strategist laughing while the official trembles",
         "duration": 6,
-        "beat": "the war banners whip and ripple above the boats"
+        "beat": "the little paper war drums shake and the banners ripple"
       },
       "only": "Zhuge Liang and Lu Su once each, plus straw-bundle soldiers beating drums; nobody else",
       "cast_list": [
@@ -130,11 +130,11 @@
       "id": "c7",
       "title": "萬箭齊發",
       "text": "曹操聽見鼓聲，怕有埋伏，不敢出戰，只命一萬多名弓箭手朝江面猛射。\n箭如飛蝗，密密麻麻地插滿了草人和船身。諸葛亮又下令調頭，讓另一side也受滿了箭。",
-      "prompt": "from a tall paper watchtower an old armoured warlord orders volleys of arrows into the fog, a dense storm of paper arrows streaking down and thudding into the straw-bundle figures and boat hulls, arrows bristling everywhere, cold blue fog lit by muzzle-like flashes, epic scale",
+      "prompt": "a tall wooden watchtower and fog painted on the backdrop, CAO CAO standing on the tower with an angry frown pointing forward to order the volley, a dense rain of little paper arrows streaking down and sticking into straw-bundle soldiers on a paper boat below",
       "video": {
         "prompt": "a dense rain of arrows streaking through the fog and thudding into the straw figures one after another, the boats bristling with more and more arrows, then slowly turning to present the other side, ripples and drifting mist",
         "duration": 6,
-        "beat": "a dense rain of paper arrows streaks down into the straw figures"
+        "beat": "paper arrows keep streaking down into the straw-bundle soldiers"
       },
       "only": "Cao Cao once on the watchtower, plus straw-bundle soldiers taking the arrows; nobody else",
       "cast_list": [
@@ -147,11 +147,11 @@
       "id": "c8",
       "title": "滿載而歸",
       "text": "天快亮時，霧漸漸散去，二十艘船上插滿了箭，足足超過十萬支。\n軍士齊聲高喊：「謝丞相賜箭！」船隊順流而回。諸葛亮如期交箭，周瑜聽了，長長地嘆了一口氣：「我真的比不上他啊。」",
-      "prompt": "dawn breaking as the fog lifts, twenty boats returning downstream utterly covered in thousands of arrows glinting in golden morning light, soldiers cheering with raised fists, the calm strategist smiling with his feather fan at the bow, warm triumphant glow over the paper river",
+      "prompt": "dawn breaking over a calm river painted on the backdrop, a paper boat bristling all over with little paper arrows, ZHUGE LIANG standing at the bow with a triumphant gentle smile and his fan, straw-bundle soldiers cheering with arms raised",
       "video": {
         "prompt": "morning fog dissolving into golden light, thousands of arrows glinting as the boats drift home, soldiers cheering and pumping fists, water sparkling, the feather fan waving gently, a warm triumphant shimmer",
         "duration": 6,
-        "beat": "the arrow-covered boats drift slowly forward as the mist thins"
+        "beat": "the arrow-covered boat drifts slowly forward as the mist thins"
       },
       "only": "Zhuge Liang once at the bow, plus cheering straw-bundle soldiers; nobody else",
       "cast_list": [
