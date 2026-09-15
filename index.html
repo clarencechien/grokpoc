@@ -2,18 +2,61 @@
 <html lang="zh-TW">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>三隻小豬 · 立體繪本</title>
-<meta http-equiv="refresh" content="0; url=./book/">
-<link rel="canonical" href="./book/">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>立體繪本</title>
 <style>
+  :root{--ink:#f2e8d5;--dim:#9aa6bd;--gold:#e8b765}
+  *{box-sizing:border-box}
   html,body{height:100%;margin:0}
-  body{display:grid;place-items:center;font-family:ui-serif,Georgia,"Noto Serif TC",serif;
-    background:radial-gradient(120% 90% at 50% 0%,#3c2a1e,#15100b 70%);color:#f6ead2}
-  a{color:#f0c98b}
+  body{
+    background:radial-gradient(120% 90% at 50% 0%,#1d2740,#10141f 72%);
+    color:var(--ink); font-family:"Noto Serif TC","Songti TC",ui-serif,Georgia,serif;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:clamp(24px,6vh,56px) clamp(16px,5vw,40px); gap:clamp(20px,4vh,40px);
+  }
+  header{text-align:center}
+  h1{margin:0; font-size:clamp(20px,4vw,32px); letter-spacing:.34em; text-indent:.34em}
+  .sub{margin:8px 0 0; font-size:12px; letter-spacing:.2em; color:var(--dim)}
+  .shelf{
+    display:grid; gap:clamp(16px,3vw,28px); width:min(100%,940px);
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));
+  }
+  a.book{
+    display:block; text-decoration:none; color:inherit;
+    background:#ffffff0c; border:1px solid #ffffff1c; border-radius:12px; overflow:hidden;
+    transition:transform .22s ease, border-color .22s ease, background .22s ease;
+  }
+  a.book:hover{transform:translateY(-4px); border-color:#ffffff3a; background:#ffffff14}
+  a.book img{display:block; width:100%; aspect-ratio:16/9; object-fit:cover; background:#0b0e16}
+  .meta{padding:14px clamp(14px,2.4vw,20px) 18px}
+  .meta h2{margin:0; font-size:clamp(15px,2.6vw,19px); letter-spacing:.16em; color:var(--gold)}
+  .meta p{margin:6px 0 0; font-size:13px; line-height:1.85; color:#d9d2c4}
+  footer{font-size:11px; color:var(--dim); opacity:.7; text-align:center}
 </style>
 </head>
 <body>
-  <p>正在打開繪本…若沒有自動跳轉，請點 <a href="./book/">這裡進入《三隻小豬 · 立體繪本》</a>。</p>
+  <header>
+    <h1>立體繪本</h1>
+    <p class="sub">Grok 生成 · 紙雕動態繪本</p>
+  </header>
+
+  <div class="shelf">
+    <a class="book" href="./book/">
+      <img src="./book/assets/cover.jpg" alt="三隻小豬封面" loading="lazy">
+      <div class="meta">
+        <h2>三隻小豬</h2>
+        <p>稻草、木頭、磚頭——捲動頁面，紙雕會在桌上一層層立起來。</p>
+      </div>
+    </a>
+    <a class="book" href="./arrows/">
+      <img src="./arrows/assets/cover.jpg" alt="草船借箭封面" loading="lazy">
+      <div class="meta">
+        <h2>草船借箭</h2>
+        <p>一本翻舊了的老書。翻過一頁，下一章的紙雕就從空白頁上長出來。</p>
+      </div>
+    </a>
+  </div>
+
+  <footer>用鍵盤方向鍵、點擊或捲動翻頁</footer>
 </body>
 </html>

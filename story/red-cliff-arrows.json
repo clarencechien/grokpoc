@@ -2,73 +2,204 @@
   "title": "草船借箭",
   "subtitle": "紙雕動態繪本 · Grok Image-to-Video",
   "lang": "zh-TW",
-  "route": "image-to-video",
-  "style": "handcrafted cut-paper diorama in a cinematic Chinese ink-and-paper aesthetic, layered torn-paper mountains and a misty river, paper boats and paper figures with visible paper grain and soft drop shadows, dramatic low-key lighting with warm lantern glow against cold blue night fog, wisps of cotton-paper mist, ink-wash sky, deep atmospheric layers, full-bleed cinematic composition, no text, no words, no letters, no watermark",
-  "cast": "Keep these characters identical in every scene: ZHUGE LIANG is a calm strategist in a pale cream Taoist robe and a dark head-wrap, holding a white feather fan; ZHOU YU is a proud young general in dark lamellar armour with a crimson sash; LU SU is a kindly round-faced official in a soft blue robe; CAO CAO is an older warlord in heavy charcoal armour standing on a tall wooden watchtower; the straw boats are long wooden riverboats lined with rows of straw-bundle soldier figures under cloth canopies.",
-  "turn": "The clip opens with a large sheet of textured paper sweeping down from the top like a storybook page turning, settling to reveal the paper-diorama scene which then springs into layered depth;",
+  "route": "image-to-video (page-turn baked into the still's first frame)",
+  "style": "a close-up photograph of a beautifully made Chinese pop-up storybook lying open on a dark walnut table, the open book filling the frame almost edge to edge with only a sliver of table showing; BOTH flat pages are fully printed with soft ink-wash scenery — indigo river, grey mist and distant mountains on a warm ivory paper ground, no blank paper anywhere — and from the centre fold a layered cut-paper diorama rises in three tiers with visible paper grain, torn deckle edges and real shadows falling between the layers; warm lamplight rakes in from the upper left against a cold blue night, shallow depth of field, crisp macro detail, real object photography, no text, no words, no letters, no watermark",
+  "cast": "Every character is a CHIBI cut-paper puppet: head about one third of total height, big round simple eyes, tiny nose, small rounded body, stubby limbs — cute and readable, with a clear expression drawn in a few ink lines. They are flat hand-painted paper cut-outs on small paper tabs with visible paper grain and scissor edges; never realistic, never real people. ZHUGE LIANG: calm, gentle smile, pale cream Taoist robe, dark head-wrap, white feather fan. ZHOU YU: proud young general, dark lamellar armour, crimson sash, dark plume. LU SU: kindly round-faced official in a soft blue robe and black hat. CAO CAO: older warlord, heavy charcoal armour, red plume, short beard. Straw-boat soldiers: little straw-bundle figures with round straw heads under wide hats.",
   "cover": {
-    "prompt": "cover key art: a paper-diorama of a long straw-lined riverboat gliding through thick blue night fog on a wide river, a calm robed strategist with a white feather fan standing at the bow, faint warm lantern glow, distant paper mountains, cinematic and mysterious, clear space at the top for a title",
+    "prompt": "a paper straw boat gliding through cotton-paper mist on a misty ink-wash river with distant mountains, ZHUGE LIANG standing calmly at the bow with a gentle smile and his feather fan, a row of little straw-bundle soldiers with round straw heads under wide hats behind him, one small paper lantern glowing on a pole",
     "video": {
       "prompt": "the storybook cover breathes to life: paper fog drifting slowly across the river, the lantern flickering, gentle ripples spreading from the boat, the feather fan swaying softly",
-      "duration": 6
-    }
+      "duration": 6,
+      "beat": "paper fog drifts slowly across the river behind the straw boat"
+    },
+    "only": "exactly ONE Zhuge Liang and four little straw-bundle soldiers; no other people",
+    "sheet": "cast/sheet_cover.jpg",
+    "cast_list": [
+      "zhuge",
+      "straw"
+    ],
+    "text": "赤壁之前，江上大霧。\n三日之內，十萬支箭——這是一樁不可能的軍令，也是一個早已想好的計策。"
   },
   "chapters": [
     {
       "id": "c1",
       "title": "周瑜的刁難",
       "text": "赤壁大戰前，周瑜妒忌諸葛亮的才智，故意設下難題：「軍中缺箭，就請先生在十天內趕造十萬支箭吧。」\n這分明是要陷害他。諸葛亮卻只是搖著羽扇，微微一笑。",
-      "prompt": "inside a lamplit military tent of layered cut paper, a proud young general in dark armour with a crimson sash gestures sternly across a low table at a calm robed strategist holding a white feather fan, tense confrontation, warm lantern light and long paper shadows",
-      "video": { "prompt": "lantern flames flickering and casting shifting paper shadows across the tent, the general's sash stirring, the strategist calmly waving his feather fan, a thin curl of incense smoke rising", "duration": 5 }
+      "prompt": "inside a lamplit military tent painted on the backdrop, ZHOU YU standing stern with an angry frown, pointing sharply across a low table at ZHUGE LIANG, who stands calm with a gentle knowing smile, feather fan raised; a small paper lantern glows on the table",
+      "video": {
+        "prompt": "lantern flames flickering and casting shifting paper shadows across the tent, the general's sash stirring, the strategist calmly waving his feather fan, a thin curl of incense smoke rising",
+        "duration": 6,
+        "beat": "a thin curl of incense smoke rises past the small paper lanterns"
+      },
+      "only": "exactly TWO figures: Zhou Yu (dark plume) and Zhuge Liang; nobody else, no duplicates",
+      "sheet": "cast/sheet_c1.jpg",
+      "cast_list": [
+        "zhouyu",
+        "zhuge"
+      ]
     },
     {
       "id": "c2",
       "title": "三日的軍令狀",
       "text": "「十天太久，只要三天就夠了。」諸葛亮竟當眾立下軍令狀：若造不出箭，甘願受罰。\n周瑜暗自得意，以為這回諸葛亮插翅難逃。",
-      "prompt": "the calm strategist in a pale robe presses his seal onto a paper military pledge on a low table while the armoured general watches with a hidden smug smile, officials in the background lean in, dramatic candlelight, layered paper figures",
-      "video": { "prompt": "candle flames dancing, the paper pledge document trembling slightly as the seal presses down, the general's smug smile deepening, smoke and shadows shifting", "duration": 5 }
+      "prompt": "inside a lamplit army tent painted on the backdrop, ZHUGE LIANG with a calm gentle smile pressing a red seal onto a paper pledge on a low table, ZHOU YU behind him with a smug satisfied smirk, LU SU at the side looking worried with raised eyebrows; a small paper lantern on the table",
+      "video": {
+        "prompt": "candle flames dancing, the paper pledge document trembling slightly as the seal presses down, the general's smug smile deepening, smoke and shadows shifting",
+        "duration": 6,
+        "beat": "a candle flame wavers and the paper pledge trembles slightly"
+      },
+      "only": "exactly THREE figures: Zhuge Liang, Zhou Yu and Lu Su; nobody else",
+      "cast_list": [
+        "zhuge",
+        "zhouyu",
+        "lusu"
+      ],
+      "sheet": "cast/sheet_c2.jpg"
     },
     {
       "id": "c3",
       "title": "向魯肅借船",
       "text": "諸葛亮悄悄找來魯肅，借了二十艘快船，每船三十名軍士，船身兩側綁滿稻草人，再用青布幔子遮起來。\n「千萬別告訴都督。」諸葛亮低聲叮嚀。",
-      "prompt": "at a misty night riverbank of torn paper, the robed strategist quietly instructs a kindly round-faced official in blue beside a row of long wooden boats lined with straw-bundle figures and covered with blue-grey cloth canopies, secretive mood, cold moonlight and warm lantern accents",
-      "video": { "prompt": "night fog drifting over the moored boats, cloth canopies rippling in the breeze, lantern light glinting on the water, the two figures leaning in to whisper, reeds swaying", "duration": 5 }
+      "prompt": "a misty night riverbank painted on the backdrop with long paper boats lined with straw-bundle soldiers under cloth canopies, ZHUGE LIANG leaning in with a secretive smile whispering to LU SU, who looks puzzled and curious; one small paper lantern on a pole",
+      "video": {
+        "prompt": "night fog drifting over the moored boats, cloth canopies rippling in the breeze, lantern light glinting on the water, the two figures leaning in to whisper, reeds swaying",
+        "duration": 6,
+        "beat": "night fog drifts slowly over the moored paper boats"
+      },
+      "only": "Zhuge Liang and Lu Su once each, plus straw-bundle soldiers on the boats; nobody else",
+      "cast_list": [
+        "zhuge",
+        "lusu",
+        "straw"
+      ],
+      "sheet": "cast/sheet_c3.jpg"
     },
     {
       "id": "c4",
       "title": "按兵不動",
       "text": "第一天，諸葛亮沒有動靜。第二天，還是沒有動靜。\n魯肅急得團團轉，諸葛亮卻只是喝茶讀書，彷彿胸有成竹。",
-      "prompt": "a quiet paper-diorama study at night, the calm strategist reclines reading a scroll and sipping tea with a serene smile, while the round-faced official paces anxiously by the window, moonlit river visible outside, warm interior glow against cold blue night",
-      "video": { "prompt": "steam curling gently from the teacup, the scroll edges fluttering, the anxious official pacing back and forth, moonlight shimmering on the river outside the window", "duration": 5 }
+      "prompt": "a quiet study at night painted on the backdrop, ZHUGE LIANG sitting relaxed with a serene smile sipping tea from a tiny cup, LU SU pacing beside him with an anxious frowning face and hands clasped; a small paper lantern glowing on a low table",
+      "video": {
+        "prompt": "steam curling gently from the teacup, the scroll edges fluttering, the anxious official pacing back and forth, moonlight shimmering on the river outside the window",
+        "duration": 6,
+        "beat": "steam curls gently upward from the tiny teacup"
+      },
+      "only": "exactly TWO figures: Zhuge Liang and Lu Su; nobody else",
+      "cast_list": [
+        "zhuge",
+        "lusu"
+      ],
+      "sheet": "cast/sheet_c4.jpg"
     },
     {
       "id": "c5",
       "title": "大霧漫江",
       "text": "到了第三天四更，江上忽然起了漫天大霧，對面看不見人影。\n諸葛亮請魯肅一同上船，二十艘船用長索連成一線，趁著濃霧向北岸曹營划去。",
-      "prompt": "a wide cinematic paper river swallowed by thick rolling fog before dawn, twenty long straw-lined boats roped together in a line gliding north, tiny lanterns glowing in the mist, the robed strategist and the official seated calmly at the lead boat, layers of cotton-paper fog",
-      "video": { "prompt": "vast walls of paper fog rolling and swirling across the river, the line of boats gliding forward, lanterns pulsing softly in the haze, water rippling under the hulls, an eerie calm", "duration": 7 }
+      "prompt": "a wide river swallowed by thick cotton-paper fog before dawn painted on the backdrop, a long paper boat with straw-bundle soldiers, ZHUGE LIANG seated calmly with a gentle smile, LU SU beside him wide-eyed and nervous; one small paper lantern glowing in the mist",
+      "video": {
+        "prompt": "vast walls of paper fog rolling and swirling across the river, the line of boats gliding forward, lanterns pulsing softly in the haze, water rippling under the hulls, an eerie calm",
+        "duration": 6,
+        "beat": "a wall of cotton-paper fog rolls slowly across the river"
+      },
+      "only": "Zhuge Liang and Lu Su once each on the lead boat, plus straw-bundle soldiers; nobody else",
+      "cast_list": [
+        "zhuge",
+        "lusu",
+        "straw"
+      ],
+      "sheet": "cast/sheet_c5.jpg"
     },
     {
       "id": "c6",
       "title": "擂鼓吶喊",
       "text": "船隊逼近曹營水寨，諸葛亮下令一字排開，軍士一齊擂鼓吶喊，聲勢震天。\n魯肅嚇得臉色發白：「萬一曹兵殺出來怎麼辦？」諸葛亮大笑：「霧這麼大，曹操必不敢出。」",
-      "prompt": "the line of straw boats spread out facing a towering paper water-fortress in the fog, soldiers on deck beating war drums and shouting with open mouths, banners waving, the strategist laughing calmly while the official looks terrified, dynamic dramatic energy, drum-blur motion",
-      "video": { "prompt": "war drums pounding with visible vibration, banners whipping, soldiers' mouths open in shouts, ripples and spray around the boats, fog glowing with the din, the strategist laughing while the official trembles", "duration": 6 }
+      "prompt": "a towering fortress dim in the fog painted on the backdrop, straw-bundle soldiers beating little paper war drums with open mouths, ZHUGE LIANG laughing cheerfully with his fan raised, LU SU beside him looking terrified with round shocked eyes; a small paper lantern swinging",
+      "video": {
+        "prompt": "war drums pounding with visible vibration, banners whipping, soldiers' mouths open in shouts, ripples and spray around the boats, fog glowing with the din, the strategist laughing while the official trembles",
+        "duration": 6,
+        "beat": "the little paper war drums shake and the banners ripple"
+      },
+      "only": "Zhuge Liang and Lu Su once each, plus straw-bundle soldiers beating drums; nobody else",
+      "cast_list": [
+        "zhuge",
+        "lusu",
+        "straw"
+      ],
+      "sheet": "cast/sheet_c6.jpg"
     },
     {
       "id": "c7",
       "title": "萬箭齊發",
       "text": "曹操聽見鼓聲，怕有埋伏，不敢出戰，只命一萬多名弓箭手朝江面猛射。\n箭如飛蝗，密密麻麻地插滿了草人和船身。諸葛亮又下令調頭，讓另一side也受滿了箭。",
-      "prompt": "from a tall paper watchtower an old armoured warlord orders volleys of arrows into the fog, a dense storm of paper arrows streaking down and thudding into the straw-bundle figures and boat hulls, arrows bristling everywhere, cold blue fog lit by muzzle-like flashes, epic scale",
-      "video": { "prompt": "a dense rain of arrows streaking through the fog and thudding into the straw figures one after another, the boats bristling with more and more arrows, then slowly turning to present the other side, ripples and drifting mist", "duration": 8 }
+      "prompt": "a tall wooden watchtower and fog painted on the backdrop, CAO CAO standing on the tower with an angry frown pointing forward to order the volley, a dense rain of little paper arrows streaking down and sticking into straw-bundle soldiers on a paper boat below",
+      "video": {
+        "prompt": "a dense rain of arrows streaking through the fog and thudding into the straw figures one after another, the boats bristling with more and more arrows, then slowly turning to present the other side, ripples and drifting mist",
+        "duration": 6,
+        "beat": "paper arrows keep streaking down into the straw-bundle soldiers"
+      },
+      "only": "Cao Cao once on the watchtower, plus straw-bundle soldiers taking the arrows; nobody else",
+      "cast_list": [
+        "caocao",
+        "straw"
+      ],
+      "sheet": "cast/sheet_c7.jpg"
     },
     {
       "id": "c8",
       "title": "滿載而歸",
       "text": "天快亮時，霧漸漸散去，二十艘船上插滿了箭，足足超過十萬支。\n軍士齊聲高喊：「謝丞相賜箭！」船隊順流而回。諸葛亮如期交箭，周瑜聽了，長長地嘆了一口氣：「我真的比不上他啊。」",
-      "prompt": "dawn breaking as the fog lifts, twenty boats returning downstream utterly covered in thousands of arrows glinting in golden morning light, soldiers cheering with raised fists, the calm strategist smiling with his feather fan at the bow, warm triumphant glow over the paper river",
-      "video": { "prompt": "morning fog dissolving into golden light, thousands of arrows glinting as the boats drift home, soldiers cheering and pumping fists, water sparkling, the feather fan waving gently, a warm triumphant shimmer", "duration": 6 }
+      "prompt": "dawn breaking over a calm river painted on the backdrop, a paper boat bristling all over with little paper arrows, ZHUGE LIANG standing at the bow with a triumphant gentle smile and his fan, straw-bundle soldiers cheering with arms raised",
+      "video": {
+        "prompt": "morning fog dissolving into golden light, thousands of arrows glinting as the boats drift home, soldiers cheering and pumping fists, water sparkling, the feather fan waving gently, a warm triumphant shimmer",
+        "duration": 6,
+        "beat": "the arrow-covered boat drifts slowly forward as the mist thins"
+      },
+      "only": "Zhuge Liang once at the bow, plus cheering straw-bundle soldiers; nobody else",
+      "cast_list": [
+        "zhuge",
+        "straw"
+      ],
+      "sheet": "cast/sheet_c8.jpg"
     }
-  ]
+  ],
+  "page_still": "one full-size page of the book — as tall and wide as half the spread, and printed on both faces with the same ink-wash scenery so it is clearly a storybook page and not a blank sheet — is caught mid-turn: hinged along the centre fold, swung up off the right-hand side to stand at a steep angle and arc over the spread so that it screens part of the diorama behind it, warm lamplight glowing through its printed paper and its soft shadow falling across the pages below",
+  "page_motion": "The raised printed page swings down from right to left in one slow, weighted arc and settles flat onto the open book, uncovering the paper diorama behind it. The camera holds completely still.",
+  "scene_motion_suffix": "The camera pushes in very slowly.",
+  "resolution": "720p",
+  "page_open_edit": "Keep this exact scene unchanged — the same book on the same table, the same printed ink-wash pages, the same paper diorama, the same figures in the same poses and costumes, the same lanterns, the same camera angle, the same colours and paper textures. Change only one thing: the raised page that was standing up has now fallen all the way down and lies flat, so the spread is fully uncovered and the paper diorama stands clear and unobstructed.",
+  "camera": "photographed straight on from the front, camera a little above table height looking slightly down, the book centred and filling most of the frame",
+  "grade": "one warm desk lamp from the upper left, the rest of the room cool dark blue; shallow depth of field, crisp macro detail, real product photography; no text, letters, numbers or logos",
+  "refs": {
+    "cast": {
+      "file": "ref_cast.jpg",
+      "prompt": "A character reference sheet photographed flat on plain old parchment paper: five separate CHIBI cut-paper puppet figures standing in a row, evenly spaced, full length, facing the camera, with empty space between them. Each is a flat hand-painted paper cut-out with visible paper grain and scissor edges — big round head about one third of its height, big simple eyes, tiny body, a clear friendly expression in a few ink lines; never realistic. Left to right: a calm strategist with a gentle smile in a pale cream Taoist robe, dark head-wrap, holding a white feather fan; a proud young general in dark lamellar armour with a crimson sash and dark plume, chin up; a kindly round-faced official in a soft blue robe and black hat; an older warlord in heavy charcoal armour with a red plume and short beard, frowning; and one little straw-bundle soldier with a round straw head under a wide hat. Even soft light, no shadows between figures, no text."
+    },
+    "spread_blank": {
+      "file": "ref_spread_blank.jpg",
+      "prompt": "A photograph of an old, well-loved A3 landscape pop-up storybook that has been read for generations: hardcover boards in faded, threadbare indigo cloth worn pale at the corners and edges, the card pages yellowed to warm parchment tan with foxing spots, soft creases, and ragged, torn edges — a chipped corner here, a small tear there, a frayed deckle along the fore-edge — — the card pages are the FULL SIZE of the boards, their edges sitting flush with the cloth-covered boards so that only a two-millimetre rim of cloth shows around them — lying on a dark walnut tabletop, OPEN AT NINETY DEGREES like a desk calendar: the far page stands upright, the near page lies flat, and the two meet at a horizontal hinge running left-to-right across the frame. Both pages are otherwise EMPTY — no printing, no figures, no props — just the aged, foxed parchment card with torn, ragged edges: the standing far page fills its board edge to edge with a chipped top corner, the flat near page fills its board edge to edge with a frayed front edge. Almost no indigo cloth is visible except the thin worn rim and the hinge; the stack of ragged page edges shows along the bottom, as wide as the book itself. photographed straight on from the front, camera a little above table height looking slightly down, the book centred and filling most of the frame, one warm desk lamp from the upper left, the rest of the room cool dark blue; shallow depth of field, crisp macro detail, real product photography; no text, letters, numbers or logos."
+    },
+    "cover_closed": {
+      "file": "ref_cover_closed.jpg",
+      "from": "ref_spread_blank.jpg",
+      "prompt": "Same book, same table, same camera, same lamp. One change: the book is now CLOSED, front cover up, in the same place on the table. Because it hinges along its far edge, the closed book shows the ragged stack of tan page edges on THREE sides — bottom (nearest the camera), left end and right end; the only side without page edges is the far edge, where the worn indigo cloth spine runs left-to-right. The front cover is faded threadbare indigo cloth, corners rubbed pale, with one aged, slightly scuffed debossed panel of a misty ink-wash river; no lettering. Nothing else on the table."
+    }
+  },
+  "scene_edit": "The FIRST reference image is the exact book to keep: the same old torn-parchment pop-up storybook on the same dark walnut table, open at ninety degrees — far page standing, near page flat, horizontal hinge — the same straight-on camera, the same warm lamp and cool blue room, the same tears, foxing and chipped corners on the pages. The SECOND reference image shows ONLY the characters allowed in this scene, as CHIBI cut-paper puppets; use each of them once, drawn exactly as shown, and add no one else.\n\nOne change: the pop-up scene appears. The standing far page becomes the painted cut-paper backdrop of the scene, its torn edges still visible; the chibi figures and props stand on the flat near page in front, each on a small paper tab, with real shadows on the parchment. The scene shows {scene} {only} Any lantern is a small paper lantern that is part of the diorama. Everything stays inside the outline of the two pages; the worn indigo edges, the ragged page block along the bottom and the table remain exactly as in the reference. Camera and lamp do not move. Style words to keep in every image: chibi cut-paper puppets, old torn parchment pages, faded indigo cloth, warm lamp, cool blue room, real photograph of a paper craft book.",
+  "or_page_up": "Lift the entire right-hand page of this book so that it stands straight up, as if a hand has just turned it: the whole page swings on the centre fold and is now vertical, a large flat rectangle of paper towering above the right half of the spread, its straight outer edge and square corners clear against the dark background. Its printed ink-wash scenery is visible on the face turned toward us. It is an ordinary book page mid-turn — flat, rigid, not folded, not curved, and not part of the pop-up sculpture. Keep everything else identical: same book, same table, same camera angle, same lighting, same pop-up diorama, same figures in the same poses.",
+  "or_page_down": "Use the FIRST reference image as the exact book, camera and lighting, and the SECOND reference image as the exact character designs.\n\nProduce a photograph of that same blue cloth-bound pop-up storybook, open flat on the same dark walnut table, shot from the identical three-quarter angle with the identical warm-lamp-on-indigo night grade. Both flat pages stay fully printed with ink-wash scenery — no blank paper.\n\nThe pop-up rising from the centre fold shows: {scene} {only} Every figure is a flat cut-paper puppet drawn exactly as on the character sheet — paper craft, never a real person. Any lantern is a small paper lantern built into the diorama.",
+  "or_turn_motion": "The raised page turns smoothly from right to left and settles flat onto the book, uncovering the paper diorama. The camera holds still.",
+  "book_spec": "an old, well-loved A3 landscape pop-up storybook that has been read for generations: hardcover boards in faded, threadbare indigo cloth worn pale at the corners and edges, the card pages yellowed to warm parchment tan with foxing spots, soft creases, and ragged, torn edges — a chipped corner here, a small tear there, a frayed deckle along the fore-edge — — the card pages are the FULL SIZE of the boards, their edges sitting flush with the cloth-covered boards so that only a two-millimetre rim of cloth shows around them — lying on a dark walnut tabletop, OPEN AT NINETY DEGREES like a desk calendar: the far page stands upright, the near page lies flat, and the two meet at a horizontal hinge running left-to-right across the frame",
+  "binding_rule": "The book's ORIENTATION is fixed and must not change: the stitched indigo cloth binding runs HORIZONTALLY ACROSS THE TOP EDGE of the frame, at the far side of the book away from the viewer, and the thick block of ivory deckle-edged pages shows along the BOTTOM EDGE, nearest the viewer. There is no binding on the left and no binding on the right — the left and right sides show only the open page and the page block. ",
+  "cast_slots": {
+    "zhuge": 80,
+    "zhouyu": 320,
+    "lusu": 560,
+    "caocao": 790,
+    "straw": 1040
+  },
+  "cast_slot_width": 250,
+  "turn_motion": "The flat front page of the old pop-up book lifts by its torn bottom edge and swings up and back over the horizontal hinge, like a desk-calendar page being flipped; the paper figures fold flat against it as it rises, and it settles against the upright back page, uncovering the next blank, foxed parchment page beneath. The camera holds completely still.",
+  "collapse_motion": "The pop-up scene folds away: the chibi paper figures and props tip backward and lie flat on the parchment page, and the painted backdrop on the upright back page fades out to plain foxed parchment, until the open old book is completely blank. The book and the camera do not move.",
+  "ambient_motion": "{beat}. The chibi paper figures otherwise stay still. The book and the camera do not move.",
+  "fix_fan": "Keep everything exactly as it is. One change: Zhuge Liang holds ONE white feather fan, in his right hand only; his left hand is empty and relaxed at his side. Nothing else changes."
 }

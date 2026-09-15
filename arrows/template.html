@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>草船借箭 · 立體繪本</title>
+<style>
+  :root{
+    --room-1:#10141f; --room-2:#1d2740;
+    --ink:#f2e8d5; --dim:#9aa6bd; --gold:#e8b765;
+    --cap-h:clamp(116px,22vh,188px);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{
+    background:radial-gradient(120% 90% at 50% 0%,var(--room-2),var(--room-1) 72%);
+    color:var(--ink); font-family:"Noto Serif TC","Songti TC",ui-serif,Georgia,serif;
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+
+  header{padding:clamp(10px,2.2vh,20px) 16px 0; text-align:center; flex:none}
+  h1{margin:0; font-size:clamp(17px,3vw,26px); letter-spacing:.3em; text-indent:.3em}
+  .sub{margin:4px 0 0; font-size:11px; letter-spacing:.18em; color:var(--dim)}
+
+  /* ---------- stage ---------- */
+  /* The stage owns the leftover height; the media letterboxes inside it with
+     object-fit, so the book can never grow past its box and cover the caption. */
+  #stage{position:relative; flex:1 1 auto; min-height:0; padding:0 clamp(12px,3vw,28px)}
+  .frame{position:absolute; inset:0 clamp(12px,3vw,28px); margin:auto;
+         max-width:1180px; left:0; right:0}
+  .frame video,.frame img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:contain;
+    opacity:0; transition:opacity .45s ease; border-radius:4px;
+  }
+  .frame video.on,.frame img.on{opacity:1}
+
+  /* chapter card, shown over the blank book mid-turn */
+  #card{
+    position:absolute; inset:0; display:grid; place-items:center; text-align:center;
+    opacity:0; transition:opacity .5s ease; pointer-events:none;
+  }
+  #card.on{opacity:1}
+  #card .no{font-size:clamp(11px,2vw,13px); letter-spacing:.42em; color:var(--gold); text-indent:.42em}
+  #card .ti{margin-top:.5em; font-size:clamp(20px,4.4vw,38px); letter-spacing:.2em; text-indent:.2em;
+            color:#2f2416; text-shadow:0 1px 0 #ffffff55}
+  #card .no{color:#7a5c2e}
+
+  /* ---------- caption ---------- */
+  #cap{
+    flex:none; height:var(--cap-h); padding:10px clamp(16px,5vw,40px) 6px;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+    opacity:1; transition:opacity .4s ease;
+  }
+  #cap.hide{opacity:0}
+  #cap h2{margin:0 0 6px; font-size:clamp(13px,2.4vw,17px); letter-spacing:.14em; color:var(--gold)}
+  #cap p{margin:0; max-width:52em; font-size:clamp(12.5px,2.1vw,16px); line-height:1.95;
+         white-space:pre-line; color:#e2dbcd}
+
+  /* ---------- controls ---------- */
+  nav{flex:none; display:flex; gap:8px; align-items:center; justify-content:center;
+      padding:0 16px clamp(10px,2vh,18px); flex-wrap:wrap}
+  button{
+    font:inherit; font-size:13px; color:var(--ink); cursor:pointer;
+    background:#ffffff10; border:1px solid #ffffff20; border-radius:999px; padding:7px 15px;
+    transition:background .18s,border-color .18s,opacity .18s;
+  }
+  button:hover:not(:disabled){background:#ffffff1e; border-color:#ffffff3a}
+  button:disabled{opacity:.3; cursor:default}
+  .dots{display:flex; gap:6px; margin:0 4px}
+  .dot{width:7px;height:7px;border-radius:50%;background:#ffffff28;border:0;padding:0;cursor:pointer}
+  .dot[aria-current="true"]{background:var(--gold)}
+  .note{flex:none; text-align:center; font-size:11px; color:var(--dim); opacity:.7;
+        padding:0 16px clamp(8px,1.6vh,14px)}
+  @media (max-width:620px){ :root{--cap-h:clamp(132px,26vh,210px)} h1{letter-spacing:.2em} }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">草船借箭</h1>
+  <p class="sub" id="subtitle"></p>
+</header>
+
+<div id="stage">
+  <div class="frame" id="frame">
+    <img id="poster" alt="">
+    <video id="va" muted playsinline preload="auto"></video>
+    <video id="vb" muted playsinline preload="auto"></video>
+    <div id="card"><div><div class="no" id="cardNo"></div><div class="ti" id="cardTi"></div></div></div>
+  </div>
+</div>
+
+<div id="cap"><h2 id="capTitle"></h2><p id="capText"></p></div>
+
+<nav>
+  <button id="prev">← 上一頁</button>
+  <span class="dots" id="dots"></span>
+  <button id="next">翻下一頁 →</button>
+</nav>
+<p class="note" id="note"></p>
+
+<script>
+const DATA = /*__DATA__*/ {title:"草船借箭",subtitle:"",pages:[]};
+const A = "assets/";
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const frame = document.getElementById("frame");
+const poster = document.getElementById("poster");
+const vids = [document.getElementById("va"), document.getElementById("vb")];
+const card = document.getElementById("card");
+const capEl = document.getElementById("cap");
+const dotsEl = document.getElementById("dots");
+const btnPrev = document.getElementById("prev");
+const btnNext = document.getElementById("next");
+
+let idx = 0;        // current page index
+let busy = false;   // a transition is playing
+let slot = 0;       // which <video> is live
+
+const page = i => DATA.pages[i];
+const url = f => f ? A + f : null;
+
+function showOnly(el){
+  [poster, ...vids].forEach(n => n.classList.toggle("on", n === el));
+}
+
+/* Play one clip in the idle video element; resolve when it ends.
+   A clip that will not load must never leave a stale frame on screen or hang
+   the book, so every failure path falls back to the page's still. */
+function playClip(file, {loop = false, fallback = null} = {}){
+  return new Promise(resolve => {
+    const v = vids[slot ^ 1];
+    let done = false;
+    const finish = ok => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      if (!ok && fallback) showStill(fallback);
+      resolve(ok ? v : null);
+    };
+    v.loop = loop;
+    v.onended = null;
+    v.oncanplay = null;
+    v.onerror = () => finish(false);
+    const timer = setTimeout(() => finish(false), 6000);   // stalled load
+    const start = () => {
+      clearTimeout(timer);
+      showOnly(v);
+      slot ^= 1;
+      v.play().catch(() => {});
+      if (loop) finish(true); else v.onended = () => finish(true);
+    };
+    v.src = url(file);
+    if (v.readyState >= 2) start(); else v.oncanplay = () => { v.oncanplay = null; start(); };
+  });
+}
+
+function showStill(file){
+  poster.src = url(file);
+  showOnly(poster);
+}
+
+function paintCaption(i){
+  const p = page(i);
+  document.getElementById("capTitle").textContent = p.no ? `${p.no}. ${p.title}` : p.title;
+  document.getElementById("capText").textContent = p.text || "";
+  [...dotsEl.children].forEach((d, k) => d.setAttribute("aria-current", String(k === i)));
+  btnPrev.disabled = i === 0;
+  btnNext.disabled = i === DATA.pages.length - 1;
+}
+
+/* Settle on a page: loop its ambient clip, or hold its still. */
+async function settle(i){
+  idx = i;
+  paintCaption(i);
+  capEl.classList.remove("hide");
+  const p = page(i);
+  if (p.ambient && !reduce) await playClip(p.ambient, {loop: true, fallback: p.still});
+  else showStill(p.still);
+}
+
+/* Turn from page i to page j (j = i+1 or i-1). */
+async function turn(j){
+  if (busy || j < 0 || j >= DATA.pages.length) return;
+  busy = true;
+  const from = page(idx), to = page(j);
+  capEl.classList.add("hide");
+
+  if (reduce){ await settle(j); busy = false; return; }
+
+  // 1. the page flips up and the book goes blank
+  if (from.turn) await playClip(from.turn, {fallback: from.still});
+
+  // 2. over the blank book, name the chapter
+  document.getElementById("cardNo").textContent = to.no ? `第 ${to.no} 章` : "序";
+  document.getElementById("cardTi").textContent = to.title;
+  card.classList.add("on");
+  await new Promise(r => setTimeout(r, 1400));
+  card.classList.remove("on");
+
+  // 3. the new diorama rises out of the blank page
+  if (to.rise) await playClip(to.rise, {fallback: to.still});
+  await settle(j);
+  busy = false;
+}
+
+/* ---------- boot ---------- */
+document.getElementById("title").textContent = DATA.title;
+document.getElementById("subtitle").textContent = DATA.subtitle || "";
+DATA.pages.forEach((p, i) => {
+  const b = document.createElement("button");
+  b.className = "dot"; b.type = "button";
+  b.setAttribute("aria-label", p.title);
+  b.addEventListener("click", () => { if (i !== idx) turn(i > idx ? idx + 1 : idx - 1); });
+  dotsEl.appendChild(b);
+});
+
+btnNext.addEventListener("click", () => turn(idx + 1));
+btnPrev.addEventListener("click", () => turn(idx - 1));
+frame.addEventListener("click", () => turn(idx + 1));
+addEventListener("keydown", e => {
+  if (e.key === "ArrowRight" || e.key === " "){ e.preventDefault(); turn(idx + 1); }
+  if (e.key === "ArrowLeft") turn(idx - 1);
+});
+let wheelLock = 0;
+addEventListener("wheel", e => {
+  const now = Date.now();
+  if (busy || now - wheelLock < 900 || Math.abs(e.deltaY) < 24) return;
+  wheelLock = now;
+  turn(e.deltaY > 0 ? idx + 1 : idx - 1);
+}, {passive: true});
+
+const n = DATA.pages.length;
+const clips = DATA.pages.filter(p => p.ambient).length;
+document.getElementById("note").textContent = reduce
+  ? `${n} 頁 · 已依系統設定停用動態轉場`
+  : `${n} 頁 · ${clips} 頁有動態 · 點畫面、按空白鍵或向下捲動即可翻頁`;
+settle(0);
+</script>
+</body>
+</html>
