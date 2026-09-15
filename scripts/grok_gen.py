@@ -203,6 +203,41 @@ def main() -> int:
 
     failures: list[str] = []
 
+    # ---- cover / main key art (rendered first, wired in as manifest["images"]["cover"]) ----
+    cover = story.get("cover")
+    render_cover = cover and (not wanted_pages or "cover" in wanted_pages)
+    if render_cover and not args.video_only:
+        print("\n[cover] 主視覺")
+        out = ASSETS / "cover.jpg"
+        if out.exists() and not args.force:
+            print(f"    skip {out.name} (exists)")
+            manifest["images"]["cover"] = out.name
+        else:
+            try:
+                gen_image(build_prompt(story, cover["prompt"]), out, args.aspect, args.dry_run)
+                if not args.dry_run:
+                    manifest["images"]["cover"] = out.name
+            except RuntimeError as e:
+                print(f"    FAIL {out.name}: {e}", file=sys.stderr)
+                failures.append("cover")
+    if render_cover and not args.no_video and cover.get("video"):
+        out = ASSETS / "cover.mp4"
+        src = ASSETS / "cover.jpg"
+        if out.exists() and not args.force:
+            print(f"    skip {out.name} (exists)")
+            manifest["videos"]["cover"] = out.name
+        elif not src.exists() and not args.dry_run:
+            print(f"    skip {out.name} (source cover.jpg missing - render the cover image first)")
+        else:
+            try:
+                gen_video(build_prompt(story, cover["video"]["prompt"]), src, out,
+                          int(cover["video"].get("duration", 6)), args.dry_run)
+                if not args.dry_run:
+                    manifest["videos"]["cover"] = out.name
+            except RuntimeError as e:
+                print(f"    FAIL {out.name}: {e}", file=sys.stderr)
+                failures.append("cover/video")
+
     for page in story["pages"]:
         pid = page["id"]
         if wanted_pages and pid not in wanted_pages:

@@ -4,6 +4,13 @@
   "lang": "zh-TW",
   "style": "handcrafted paper-diorama children's storybook illustration, layered cut-paper shapes with visible torn paper edges and soft drop shadows, gouache-painted paper texture, warm storybook palette of butter yellow, moss green, terracotta and sky blue, soft rim lighting, clean readable silhouettes, no text, no words, no letters, no watermark",
   "cast": "Cast (keep identical on every page): ASHLEY the eldest pig is a plump pink pig in a straw sun hat and mustard-yellow scarf; TIMBER the middle pig is a pink pig in blue denim dungarees with a moss-green scarf; BRICKY the youngest pig is the smallest, in a red scarf and teal overalls, always carrying a little trowel; THE WOLF is a lanky grey wolf in a shabby charcoal coat with a long snout and a patched elbow.",
+  "cover": {
+    "prompt": "cover key art for a children's pop-up storybook: the three little pigs standing proudly together in front of a cosy hillside with a straw house, a timber house and a red brick house behind them, a friendly grey wolf peeking from behind a tree, warm golden hero lighting, centered heroic composition with clear space at the top for a title, no text",
+    "video": {
+      "prompt": "gentle parallax on the storybook cover: paper clouds drifting, grass swaying, warm light breathing over the three houses",
+      "duration": 6
+    }
+  },
   "pages": [
     {
       "id": "p1",

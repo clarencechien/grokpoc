@@ -1,0 +1,45 @@
+{
+  "images": {
+    "cover": "cover.jpg",
+    "p1_bg": "p1_bg.jpg",
+    "p1_mid": "p1_mid.jpg",
+    "p1_fg": "p1_fg.jpg",
+    "p2_bg": "p2_bg.jpg",
+    "p2_mid": "p2_mid.jpg",
+    "p2_fg": "p2_fg.jpg",
+    "p3_bg": "p3_bg.jpg",
+    "p3_mid": "p3_mid.jpg",
+    "p3_fg": "p3_fg.jpg",
+    "p4_bg": "p4_bg.jpg",
+    "p4_mid": "p4_mid.jpg",
+    "p4_fg": "p4_fg.jpg",
+    "p5_bg": "p5_bg.jpg",
+    "p5_mid": "p5_mid.jpg",
+    "p5_fg": "p5_fg.jpg",
+    "p6_bg": "p6_bg.jpg",
+    "p6_mid": "p6_mid.jpg",
+    "p6_fg": "p6_fg.jpg",
+    "p7_bg": "p7_bg.jpg",
+    "p7_mid": "p7_mid.jpg",
+    "p7_fg": "p7_fg.jpg",
+    "p8_bg": "p8_bg.jpg",
+    "p8_mid": "p8_mid.jpg",
+    "p8_fg": "p8_fg.jpg"
+  },
+  "videos": {
+    "cover": "cover.mp4",
+    "p2": "p2.mp4",
+    "p3": "p3.mp4",
+    "p4": "p4.mp4",
+    "p5": "p5.mp4",
+    "p6": "p6.mp4",
+    "p7": "p7.mp4",
+    "p8": "p8.mp4",
+    "p1": "p1.mp4"
+  },
+  "generated_at": "2026-09-15T07:21:45Z",
+  "models": {
+    "image": "grok image_gen (cli)",
+    "video": "grok image_to_video (cli)"
+  }
+}

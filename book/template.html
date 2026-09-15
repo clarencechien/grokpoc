@@ -7,142 +7,199 @@
 <style>
   :root{
     --paper:#f6ead2; --ink:#3a2c21; --edge:#d8c3a0;
-    --room-1:#241a14; --room-2:#3c2a1e;
-    --accent:#c4562f; --accent-2:#6b8f5e;
-    --rx:0deg; --ry:0deg;
+    --desk-1:#4a3524; --desk-2:#2a1d13; --desk-3:#15100b;
+    --accent:#c4562f; --accent-2:#6b8f5e; --gold:#f0c98b;
+    --tilt:15deg;          /* how far the book lies back on the desk        */
+    --rx:0deg; --ry:0deg;  /* pointer parallax, layered on top of the tilt  */
   }
   *{box-sizing:border-box}
-  html,body{height:100%}
+  html{scroll-behavior:smooth}
+  html,body{margin:0; height:100%}
   body{
-    margin:0; font-family:"Noto Serif TC","Songti TC",ui-serif,Georgia,serif;
+    font-family:"Noto Serif TC","Songti TC",ui-serif,Georgia,serif;
     color:var(--paper);
-    background:radial-gradient(120% 90% at 50% 0%,var(--room-2),var(--room-1) 70%);
-    display:flex; flex-direction:column; align-items:center;
-    padding:clamp(12px,3vw,28px) clamp(16px,4vw,32px) 28px;
-    min-height:100%;
+    /* the desk: warm wood, lit from above, deepening to the edges */
+    background:
+      radial-gradient(130% 100% at 50% -10%, #6a4a30 0%, var(--desk-1) 26%, var(--desk-2) 62%, var(--desk-3) 100%);
+    overflow-x:hidden;
   }
-  header{text-align:center; margin-bottom:clamp(10px,2vh,18px)}
-  h1{margin:0; font-size:clamp(22px,4.2vw,36px); letter-spacing:.22em; text-indent:.22em}
-  .sub{margin:6px 0 0; font-size:clamp(11px,2vw,13px); letter-spacing:.16em; opacity:.6}
+  body::before{ /* faint woodgrain streaks + top light pool */
+    content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(60% 40% at 50% 8%, #ffe9c419, #0000 70%),
+      repeating-linear-gradient(96deg,#0000 0 22px,#00000010 22px 24px);
+    mix-blend-mode:soft-light;
+  }
 
-  /* ---------- the pop-up stage ---------- */
-  .stage{
-    width:min(100%,960px); aspect-ratio:3/2; position:relative;
-    perspective:1500px; perspective-origin:50% 42%;
-    touch-action:pan-y;
+  /* ---------- fixed 3D stage: the book stays put, the scroll drives it ---------- */
+  .deck{
+    position:fixed; inset:0; z-index:1;
+    display:grid; place-items:center;
+    perspective:1700px; perspective-origin:50% 34%;
+    pointer-events:none;               /* let scroll pass through            */
   }
-  .book{
-    position:absolute; inset:0; transform-style:preserve-3d;
+  .parallax{
     transform:rotateX(var(--rx)) rotateY(var(--ry));
+    transform-style:preserve-3d;
     transition:transform .5s cubic-bezier(.22,.9,.3,1);
   }
-  /* the open spread = the flat page the diorama sits on */
+  .book{
+    position:relative;
+    width:min(90vw,1000px); aspect-ratio:3/2;
+    transform-style:preserve-3d;
+    transform:rotateX(var(--tilt));    /* the book reclines on the desk      */
+  }
+  .book::after{ /* soft contact shadow cast onto the desk under the book */
+    content:""; position:absolute; left:6%; right:6%; bottom:-7%; height:16%;
+    background:radial-gradient(60% 100% at 50% 0%, #0009, #0000 72%);
+    transform:translateZ(-2px); filter:blur(6px); z-index:0;
+  }
+
+  /* a spread = one chapter's open page, hinged along its TOP edge so it
+     turns UPWARD (bottom lifts toward you) — a book you flip away from
+     yourself on a desk, not a left/right page-turn */
   .spread{
     position:absolute; inset:0; transform-style:preserve-3d;
-    background:linear-gradient(90deg,#e9d9ba,var(--paper) 8%,var(--paper) 46%,#dcc9a6 50%,var(--paper) 54%,var(--paper) 92%,#e9d9ba);
-    border-radius:6px;
-    box-shadow:0 40px 70px -20px #000a, 0 0 0 1px var(--edge) inset;
-    overflow:hidden;
+    transform-origin:50% 0%;
+    transform:translateZ(var(--sz,0px)) rotateX(var(--turn,0deg)) scale(var(--sc,1));
+    background:linear-gradient(120deg,#efe0c1,var(--paper) 12%,var(--paper) 88%,#e6d4af);
+    border-radius:7px;
+    box-shadow:0 40px 80px -26px #000c, 0 0 0 1px var(--edge) inset;
+    overflow:hidden; will-change:transform,opacity;
   }
-  .spread::after{ /* centre gutter shadow */
-    content:""; position:absolute; top:0; bottom:0; left:50%; width:44px;
-    transform:translateX(-50%);
-    background:linear-gradient(90deg,#0000,#00000024 45%,#00000030 50%,#00000024 55%,#0000);
-    pointer-events:none; z-index:6;
+  .spread .grain{ /* printed-paper tooth */
+    position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.5;
+    background:repeating-linear-gradient(0deg,#0000 0 3px,#00000008 3px 4px);
   }
-  /* each pop-up layer */
+
+  /* pop-up layers: a card folded flat into the page (--fold:-90deg) that
+     stands straight up (--fold:0) when its chapter scrolls into view */
   .layer{
-    position:absolute; left:50%; bottom:8%; width:var(--w);
-    transform-style:preserve-3d; will-change:transform; transform-origin:50% 100%;
-    transform:translateX(-50%) translate(var(--dx),var(--dy)) translateZ(var(--z)) rotateX(var(--fold,0deg));
-    transition:transform .8s cubic-bezier(.2,1.2,.3,1), opacity .45s ease;
+    position:absolute; left:50%; bottom:9%; width:var(--w);
+    transform-style:preserve-3d; transform-origin:50% 100%; will-change:transform;
+    transform:translateX(-50%) translate(var(--dx),var(--dy)) translateZ(var(--z)) rotateX(var(--fold,-90deg));
+    transition:filter .4s ease;
   }
   .layer img,.layer video{display:block; width:100%; height:auto}
-  /* a standing paper card - cream mount, rounded top, shadow cast onto the page */
+  /* a standing cut-paper card: cream mount, rounded top, own drop shadow */
   .layer.cut{
-    background:var(--paper); padding:2.4% 2.4% 0; border-radius:14px 14px 3px 3px;
-    box-shadow:0 20px 26px -14px #00000075, 0 0 0 1px #00000014;
+    background:var(--paper); padding:2.2% 2.2% 0; border-radius:15px 15px 3px 3px;
+    box-shadow:0 22px 30px -16px #00000085, 0 0 0 1px #00000014;
   }
-  .layer.cut img,.layer.cut video{border-radius:9px 9px 0 0}
-  /* the backdrop plate fills the whole spread */
-  .layer.plate{left:0; bottom:0; width:100%; height:100%; transform:translateZ(0)}
+  .layer.cut img,.layer.cut video{border-radius:10px 10px 0 0}
+  /* the backdrop plate lies flat, filling the whole spread */
+  .layer.plate{
+    left:0; bottom:0; width:100%; height:100%;
+    transform:translateZ(0); transform-origin:50% 0%; border-radius:7px; overflow:hidden;
+  }
   .layer.plate img,.layer.plate video{width:100%; height:100%; object-fit:cover}
-  /* closed state: every card folded flat down into the page */
-  .book.closed .layer.cut{--fold:-86deg; opacity:0}
-  .flipping .spread{animation:flip .62s cubic-bezier(.45,.05,.3,1)}
-  @keyframes flip{
-    0%{transform:rotateY(0deg)}
-    48%{transform:rotateY(-14deg) translateZ(-40px)}
-    100%{transform:rotateY(0deg)}
+  .spread .gutter{ /* subtle centre fold so it still reads as a bound book */
+    position:absolute; top:0; bottom:0; left:50%; width:38px; transform:translateX(-50%);
+    background:linear-gradient(90deg,#0000,#00000022 46%,#0000002e 50%,#00000022 54%,#0000);
+    z-index:6; pointer-events:none;
   }
 
-  /* ---------- caption ---------- */
-  .caption{
-    width:min(100%,960px); margin-top:clamp(14px,2.4vh,22px);
-    background:#0000002e; border:1px solid #ffffff14; border-radius:10px;
-    padding:clamp(14px,2.4vw,20px) clamp(16px,3vw,24px);
+  /* ---------- the cover, hinged at the top like the spreads ---------- */
+  .cover{
+    position:absolute; inset:0; transform-origin:50% 0%;
+    transform:rotateX(var(--turn,0deg));
+    border-radius:9px; overflow:hidden; z-index:200; will-change:transform,opacity;
+    background:
+      linear-gradient(160deg,#8f3f22,#c4562f 40%,#a8492a);
+    box-shadow:0 46px 90px -28px #000d, 0 0 0 1px #00000030 inset, 0 0 0 6px #ffffff10 inset;
+    display:grid; place-items:center; text-align:center;
   }
-  .caption h2{margin:0 0 8px; font-size:clamp(15px,2.6vw,19px); color:#f0c98b; letter-spacing:.1em}
-  .caption p{margin:0; font-size:clamp(14px,2.4vw,16.5px); line-height:1.95; white-space:pre-line}
+  .cover .plate-frame{
+    position:absolute; inset:7% 8%; border-radius:6px; overflow:hidden;
+    box-shadow:0 0 0 3px #ffffff22, 0 18px 40px -18px #0009;
+  }
+  .cover .plate-frame img{width:100%; height:100%; object-fit:cover; opacity:.92}
+  .cover .veil{position:absolute; inset:0; background:linear-gradient(180deg,#0000 30%,#00000066)}
+  .cover .band{position:relative; z-index:2; padding:0 8%}
+  .cover h1{
+    margin:0; font-size:clamp(30px,6vw,58px); letter-spacing:.24em; text-indent:.24em;
+    color:#fff7ea; text-shadow:0 3px 0 #0004, 0 12px 30px #0007;
+  }
+  .cover .sub{margin:14px 0 0; font-size:clamp(12px,2.2vw,15px); letter-spacing:.34em; color:#ffe9c9cc}
+  .cover .seal{
+    margin:22px auto 0; width:clamp(54px,9vw,74px); aspect-ratio:1; border-radius:50%;
+    background:radial-gradient(circle at 38% 32%,#f7d89b,#c98b3a); color:#5b3211;
+    display:grid; place-items:center; font-size:clamp(20px,4vw,30px);
+    box-shadow:0 8px 20px -8px #000a, 0 0 0 3px #ffffff40 inset;
+  }
 
-  /* ---------- controls ---------- */
-  nav{
-    width:min(100%,960px); margin-top:16px; display:flex; flex-wrap:wrap; gap:10px;
-    align-items:center; justify-content:center;
+  /* ---------- captions: kaori-style reveals in a fixed overlay ---------- */
+  .captions{position:fixed; left:0; right:0; bottom:0; z-index:20; pointer-events:none;
+    display:grid; place-items:end center; padding:0 clamp(16px,4vw,40px) clamp(20px,5vh,46px)}
+  .cap{
+    grid-area:1/1; width:min(680px,92vw); pointer-events:auto;
+    background:linear-gradient(180deg,#1a120bd0,#0d0906e0);
+    border:1px solid #ffffff1c; border-radius:16px; backdrop-filter:blur(9px);
+    padding:clamp(16px,2.6vw,24px) clamp(18px,3vw,30px);
+    box-shadow:0 24px 60px -24px #000c; will-change:transform,opacity;
   }
-  button{
-    font:inherit; font-size:14px; color:var(--paper); cursor:pointer;
-    background:#ffffff12; border:1px solid #ffffff24; border-radius:999px;
-    padding:9px 18px; transition:background .18s,border-color .18s,opacity .18s;
-  }
-  button:hover:not(:disabled){background:#ffffff22; border-color:#ffffff44}
-  button:disabled{opacity:.34; cursor:default}
-  button.primary{background:var(--accent); border-color:#0000; color:#fff8f0}
-  button.primary:hover{background:#d4622f}
-  button.on{background:var(--accent-2); border-color:#0000}
-  .count{font-size:13px; letter-spacing:.14em; opacity:.7; min-width:72px; text-align:center}
-  .dots{display:flex; gap:7px; margin-top:4px}
-  .dot{width:8px; height:8px; border-radius:50%; background:#ffffff2e; border:0; padding:0; cursor:pointer}
-  .dot[aria-current="true"]{background:#f0c98b}
-  .note{
-    width:min(100%,960px); margin-top:14px; font-size:12px; line-height:1.8;
-    opacity:.5; text-align:center;
-  }
-  @media (max-width:560px){ .stage{aspect-ratio:4/3} }
+  .cap .k{font-size:12px; letter-spacing:.32em; color:var(--gold); opacity:.85}
+  .cap h2{margin:6px 0 10px; font-size:clamp(17px,3vw,23px); letter-spacing:.08em; color:#fbe6c6}
+  .cap p{margin:0; font-size:clamp(14px,2.4vw,16.5px); line-height:1.95; white-space:pre-line; color:#efe3ccdd}
+
+  /* ---------- chrome: title, progress rail, hint, footer ---------- */
+  .brand{position:fixed; top:clamp(14px,3vh,26px); left:clamp(16px,4vw,32px); z-index:30;
+    font-size:13px; letter-spacing:.28em; color:#ffe9c9aa; text-indent:.28em}
+  .rail{position:fixed; top:50%; right:clamp(12px,2.4vw,26px); transform:translateY(-50%);
+    z-index:30; display:flex; flex-direction:column; gap:11px}
+  .rail button{width:11px; height:11px; padding:0; border:0; border-radius:50%; cursor:pointer;
+    background:#ffffff33; transition:transform .2s,background .2s}
+  .rail button[aria-current="true"]{background:var(--gold); transform:scale(1.5)}
+  .rail button:hover{background:#ffffff88}
+
+  .hint{position:fixed; left:50%; bottom:26px; transform:translateX(-50%); z-index:30;
+    font-size:12px; letter-spacing:.24em; color:#ffe9c9; opacity:.85; text-align:center;
+    transition:opacity .4s ease; pointer-events:none}
+  .hint .arrow{display:block; margin:10px auto 0; width:16px; height:16px;
+    border-right:2px solid #ffe9c9; border-bottom:2px solid #ffe9c9;
+    transform:rotate(45deg); animation:bob 1.5s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:rotate(45deg) translate(0,0);opacity:.4}
+    50%{transform:rotate(45deg) translate(4px,4px);opacity:1}}
+
+  .foot{position:fixed; left:0; right:0; bottom:0; z-index:10; text-align:center;
+    font-size:11px; line-height:1.7; color:#ffe9c955; padding:8px; opacity:.0;
+    transition:opacity .4s ease; pointer-events:none}
+
+  /* the invisible track: its height is what you actually scroll through */
+  #track{position:relative; z-index:5; width:1px}
+
+  @media (max-width:640px){ :root{--tilt:10deg} .book{width:94vw} }
+  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} .hint .arrow{animation:none} }
 </style>
 </head>
 <body>
-<header>
-  <h1 id="title">三隻小豬</h1>
-  <p class="sub" id="subtitle">立體繪本</p>
-</header>
 
-<div class="stage" id="stage">
-  <div class="book closed" id="book">
-    <div class="spread" id="spread"></div>
+<div class="brand" id="brand"></div>
+
+<div class="deck" aria-hidden="true">
+  <div class="parallax" id="parallax">
+    <div class="book" id="book">
+      <!-- cover + one .spread per chapter are injected here -->
+    </div>
   </div>
 </div>
 
-<div class="caption">
-  <h2 id="pageTitle"></h2>
-  <p id="pageText"></p>
-</div>
+<div class="captions" id="captions"><!-- one .cap per chapter --></div>
 
-<nav>
-  <button id="prev">← 上一頁</button>
-  <span class="count" id="count"></span>
-  <button id="next">下一頁 →</button>
-  <button id="play" class="primary">▶ 播放動畫</button>
-  <button id="auto">自動翻頁</button>
-</nav>
-<div class="dots" id="dots"></div>
-<p class="note" id="note"></p>
+<div class="rail" id="rail"></div>
+<div class="hint" id="hint">向下滾動 · 翻開繪本<span class="arrow"></span></div>
+<div class="foot" id="foot"></div>
+
+<div id="track"></div>
 
 <script>
 const STORY = /*__STORY__*/ null;
 const MANIFEST = /*__MANIFEST__*/ {images:{}, videos:{}};
 
-/* ---- placeholder paper cut-outs, used until a Grok asset exists ---- */
+const SEG_VH = 1.15;   // scroll length (in viewport-heights) per chapter / cover
+const reduced = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+/* ---- placeholder cut-paper art, shown until a Grok Imagine asset exists ---- */
 const PALETTE = {
   bg:  ['#bcd9e8','#8fb98d','#e4d3ad'],
   mid: ['#f2c9b4','#d98b6a','#8a5a3c'],
@@ -165,147 +222,205 @@ function placeholder(layerId, label){
   </svg>`;
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
 }
+const assetFor = (pid, layerId) => { const n = MANIFEST.images?.[`${pid}_${layerId}`]; return n?`assets/${n}`:null; };
+const videoFor = (key) => { const n = MANIFEST.videos?.[key]; return n?`assets/${n}`:null; };
+const coverImg = () => { const n = MANIFEST.images?.cover; return n?`assets/${n}`:null; };
 
-const book    = document.getElementById('book');
-const spread  = document.getElementById('spread');
-const stage   = document.getElementById('stage');
-const elCount = document.getElementById('count');
-const elDots  = document.getElementById('dots');
-const btnPlay = document.getElementById('play');
-const btnAuto = document.getElementById('auto');
+const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+function smooth(a,b,x){ const t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); } // smoothstep
 
-let idx = 0, playing = false, autoTimer = null;
+/* ---------- build the DOM from the story ---------- */
+const book = document.getElementById('book');
+const capsBox = document.getElementById('captions');
+const rail = document.getElementById('rail');
+const N = STORY.pages.length;
 
-function assetFor(pid, layerId){
-  const name = MANIFEST.images?.[`${pid}_${layerId}`];
-  return name ? `assets/${name}` : null;
+// cover
+const cover = document.createElement('div');
+cover.className = 'cover';
+{
+  const ci = coverImg();
+  cover.innerHTML =
+    (ci ? `<div class="plate-frame"><img src="${ci}" alt=""></div><div class="veil"></div>` : '') +
+    `<div class="band">
+       <h1>${STORY.title}</h1>
+       <p class="sub">${STORY.subtitle || ''}</p>
+       <div class="seal">✦</div>
+     </div>`;
 }
-function videoFor(pid){
-  const name = MANIFEST.videos?.[pid];
-  return name ? `assets/${name}` : null;
-}
+book.appendChild(cover);
 
-function render(){
-  const page = STORY.pages[idx];
-  spread.innerHTML = '';
-  book.classList.add('closed');
+// spreads (one per chapter), stacked; earlier chapters sit on top of the stack
+const spreads = STORY.pages.map((page, i) => {
+  const sp = document.createElement('div');
+  sp.className = 'spread';
+  sp.style.zIndex = String(100 - i);
+  sp.innerHTML = '<div class="grain"></div><div class="gutter"></div>';
 
-  page.layers.forEach((layer, i) => {
+  const layers = page.layers.map((layer, li) => {
     const wrap = document.createElement('div');
-    wrap.className = 'layer';
+    wrap.className = 'layer ' + (layer.cut ? 'cut' : 'plate');
     wrap.dataset.id = layer.id;
-    wrap.classList.add(layer.cut ? 'cut' : 'plate');
     wrap.style.setProperty('--z', (layer.depth || 0) + 'px');
     wrap.style.setProperty('--w', (layer.width ?? 100) + '%');
     wrap.style.setProperty('--dx', (layer.x || 0) + '%');
     wrap.style.setProperty('--dy', (layer.y || 0) + '%');
-    wrap.style.zIndex = String(i + 1);
-    wrap.style.transitionDelay = (i * 110) + 'ms';
+    wrap.style.zIndex = String(li + 1);
 
     const src = assetFor(page.id, layer.id);
     const img = document.createElement('img');
-    img.alt = `${page.title} · ${layer.id}`;
-    img.decoding = 'async';
+    img.alt = `${page.title} · ${layer.id}`; img.decoding = 'async'; img.loading = 'lazy';
     img.src = src || placeholder(layer.id, `${page.id}_${layer.id} · 尚未生成`);
     if (src) img.onerror = () => { img.src = placeholder(layer.id, `${page.id}_${layer.id} · 缺檔`); };
     wrap.appendChild(img);
-    spread.appendChild(wrap);
+    sp.appendChild(wrap);
+    return wrap;
   });
 
-  document.getElementById('pageTitle').textContent = `${idx + 1}. ${page.title}`;
-  document.getElementById('pageText').textContent = page.text;
-  elCount.textContent = `${idx + 1} / ${STORY.pages.length}`;
-  document.getElementById('prev').disabled = idx === 0;
-  document.getElementById('next').disabled = idx === STORY.pages.length - 1;
+  book.appendChild(sp);
 
-  const hasVideo = !!videoFor(page.id);
-  btnPlay.disabled = !hasVideo;
-  btnPlay.textContent = hasVideo ? '▶ 播放動畫' : '（動畫尚未生成）';
-  playing = false;
-  btnPlay.classList.remove('on');
+  // caption
+  const cap = document.createElement('div');
+  cap.className = 'cap';
+  cap.innerHTML = `<div class="k">第 ${i + 1} 章 / ${N}</div>
+    <h2>${page.title}</h2><p>${page.text}</p>`;
+  capsBox.appendChild(cap);
 
-  [...elDots.children].forEach((d, i) => d.setAttribute('aria-current', String(i === idx)));
+  // rail dot
+  const dot = document.createElement('button');
+  dot.type = 'button'; dot.setAttribute('aria-label', `第 ${i + 1} 章`);
+  dot.addEventListener('click', () => scrollToChapter(i));
+  rail.appendChild(dot);
 
-  // let the layers rise after the page settles — the pop-up moment
-  requestAnimationFrame(() => requestAnimationFrame(() => book.classList.remove('closed')));
-}
-
-function go(next){
-  if (next < 0 || next >= STORY.pages.length) return;
-  idx = next;
-  book.classList.add('flipping');
-  setTimeout(() => book.classList.remove('flipping'), 620);
-  render();
-}
-
-/* ---- swap the source layer for its generated clip ---- */
-btnPlay.addEventListener('click', () => {
-  const page = STORY.pages[idx];
-  const url = videoFor(page.id);
-  if (!url) return;
-  const target = page.video?.from || 'bg';
-  const wrap = spread.querySelector(`.layer[data-id="${target}"]`);
-  if (!wrap) return;
-
-  if (playing){ render(); return; }
-  playing = true;
-  btnPlay.textContent = '■ 回到插畫';
-  btnPlay.classList.add('on');
-
-  const v = document.createElement('video');
-  v.src = url; v.loop = true; v.muted = true; v.playsInline = true; v.autoplay = true;
-  v.onerror = () => { btnPlay.textContent = '（動畫檔讀取失敗）'; };
-  wrap.replaceChildren(v);
-  v.play().catch(() => {});
+  return { el: sp, layers, cap, page, videoBg: null };
 });
 
-btnAuto.addEventListener('click', () => {
-  if (autoTimer){ clearInterval(autoTimer); autoTimer = null; btnAuto.classList.remove('on'); return; }
-  btnAuto.classList.add('on');
-  autoTimer = setInterval(() => {
-    if (idx < STORY.pages.length - 1) go(idx + 1);
-    else { clearInterval(autoTimer); autoTimer = null; btnAuto.classList.remove('on'); }
-  }, 7000);
-});
+document.getElementById('brand').textContent = STORY.title;
 
-document.getElementById('prev').addEventListener('click', () => go(idx - 1));
-document.getElementById('next').addEventListener('click', () => go(idx + 1));
-addEventListener('keydown', e => {
-  if (e.key === 'ArrowLeft') go(idx - 1);
-  if (e.key === 'ArrowRight') go(idx + 1);
-  if (e.key === ' '){ e.preventDefault(); btnPlay.click(); }
-});
-
-/* ---- parallax: tilt the whole diorama toward the pointer ---- */
-stage.addEventListener('pointermove', e => {
-  const r = stage.getBoundingClientRect();
-  const px = (e.clientX - r.left) / r.width - .5;
-  const py = (e.clientY - r.top) / r.height - .5;
-  book.style.setProperty('--ry', (px * 16).toFixed(2) + 'deg');
-  book.style.setProperty('--rx', (-py * 10).toFixed(2) + 'deg');
-});
-stage.addEventListener('pointerleave', () => {
-  book.style.setProperty('--ry', '0deg');
-  book.style.setProperty('--rx', '0deg');
-});
-
-/* ---- boot ---- */
-document.getElementById('title').textContent = STORY.title;
-document.getElementById('subtitle').textContent = STORY.subtitle || '';
-STORY.pages.forEach((_, i) => {
-  const b = document.createElement('button');
-  b.className = 'dot'; b.type = 'button';
-  b.setAttribute('aria-label', `第 ${i + 1} 頁`);
-  b.addEventListener('click', () => go(i));
-  elDots.appendChild(b);
-});
+// footer note about asset state
 const nImg = Object.keys(MANIFEST.images || {}).length;
 const nVid = Object.keys(MANIFEST.videos || {}).length;
-const nWant = STORY.pages.reduce((a, p) => a + p.layers.length, 0);
-document.getElementById('note').textContent = nImg
-  ? `Grok Imagine 素材：${nImg}/${nWant} 張圖、${nVid}/${STORY.pages.length} 段影片（${MANIFEST.models?.image || ''}／${MANIFEST.models?.video || ''}）。滑動滑鼠可傾斜紙雕，空白鍵播放動畫。`
-  : `目前顯示的是紙雕佔位圖。設定 XAI_API_KEY 後執行 scripts/grok_gen.py 生成 ${nWant} 張圖與 ${STORY.pages.length} 段影片，再跑 scripts/build_book.py 即會自動換上。`;
-render();
+const nWant = STORY.pages.reduce((a, p) => a + p.layers.length, 0) + 1; // + cover
+document.getElementById('foot').textContent = nImg
+  ? `Grok Imagine：${nImg}/${nWant} 圖、${nVid} 影片（${MANIFEST.models?.image||''}／${MANIFEST.models?.video||''}）· 滾動翻頁 · 移動滑鼠傾斜立體場景`
+  : `目前為紙雕佔位圖 · 設定 XAI_API_KEY → 執行 scripts/grok_gen.py 生成素材 → scripts/build_book.py 即自動換上`;
+
+/* ---------- scroll → drive the 3D ---------- */
+const track = document.getElementById('track');
+function layout(){ track.style.height = ((N + 2) * SEG_VH * 100) + 'vh'; }
+layout();
+
+let currentVideo = -1;
+function setActiveVideo(idx){
+  if (idx === currentVideo) return;
+  // tear down previous
+  if (currentVideo >= 0){
+    const prev = spreads[currentVideo];
+    const plate = prev.el.querySelector('.layer.plate');
+    if (prev.videoBg && plate){
+      const img = document.createElement('img');
+      img.src = assetFor(prev.page.id, 'bg') || placeholder('bg', `${prev.page.id}_bg`);
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover';
+      plate.replaceChildren(img); prev.videoBg = null;
+    }
+  }
+  currentVideo = idx;
+  if (idx < 0) return;
+  const cur = spreads[idx];
+  const url = videoFor(cur.page.id);
+  const plate = cur.el.querySelector('.layer.plate');
+  if (!url || !plate) return;
+  const v = document.createElement('video');
+  v.src = url; v.loop = v.muted = v.playsInline = v.autoplay = true;
+  plate.replaceChildren(v); cur.videoBg = v;
+  v.play().catch(()=>{});
+}
+
+const hint = document.getElementById('hint');
+const railBtns = [...rail.children];
+
+function scrub(){
+  const seg = innerHeight * SEG_VH;
+  const y = scrollY;
+
+  // cover turns up and away over the first segment
+  const coverT = y / seg;
+  const lift = smooth(0.06, 0.82, coverT);
+  cover.style.setProperty('--turn', (reduced ? 0 : lift * -128) + 'deg');
+  cover.style.opacity = (1 - smooth(0.55, 0.98, coverT)).toFixed(3);
+  cover.style.visibility = coverT > 1.12 ? 'hidden' : 'visible';
+
+  const pos = y / seg - 1;          // 0 ⇒ chapter 0 centred/active
+  let best = -1, bestAbs = 9;
+
+  spreads.forEach((sp, i) => {
+    const t = pos - i;              // <0 still to come (flat, under), >0 turning away
+    if (t <= -1.1 || t >= 1.1){
+      sp.el.style.visibility = 'hidden';
+      sp.cap.style.opacity = '0'; sp.cap.style.visibility = 'hidden';   // keep culled captions hidden
+      return;
+    }
+    sp.el.style.visibility = 'visible';
+
+    const back = clamp(-t, 0, 1);                 // how far "underneath" (future page)
+    const turn = reduced ? 0 : smooth(0.22, 0.96, t) * -120;
+    const inOp  = smooth(-1.08, -0.82, t);
+    const outOp = 1 - smooth(0.52, 1.0, t);
+    sp.el.style.setProperty('--turn', turn.toFixed(1) + 'deg');
+    sp.el.style.setProperty('--sc', (1 - 0.05 * back).toFixed(3));
+    sp.el.style.setProperty('--sz', (-26 * back).toFixed(0) + 'px');
+    sp.el.style.opacity = Math.min(inOp, outOp).toFixed(3);
+
+    // pop-ups rise, staggered back-to-front
+    sp.layers.forEach((L, li) => {
+      const s = reduced ? 1 : smooth(-0.88, -0.26, t + li * 0.06);
+      L.style.setProperty('--fold', ((s - 1) * 90).toFixed(1) + 'deg');
+    });
+
+    // caption reveal (kaori-style: slide up + fade in around the active window)
+    const cop = Math.min(smooth(-0.78, -0.34, t), 1 - smooth(0.30, 0.72, t));
+    sp.cap.style.opacity = cop.toFixed(3);
+    sp.cap.style.transform = `translateY(${((1 - cop) * 28).toFixed(1)}px)`;
+    sp.cap.style.visibility = cop < 0.01 ? 'hidden' : 'visible';
+
+    const a = Math.abs(t);
+    if (a < bestAbs){ bestAbs = a; best = i; }
+  });
+
+  setActiveVideo(bestAbs < 0.5 ? best : -1);
+  railBtns.forEach((b, i) => b.setAttribute('aria-current', String(i === best && bestAbs < 0.5 && coverT > 0.9)));
+  hint.style.opacity = y > innerHeight * 0.3 ? '0' : '.85';
+  document.getElementById('foot').style.opacity = coverT > 0.9 ? '1' : '0';
+}
+
+function scrollToChapter(i){ scrollTo({ top: (i + 1) * innerHeight * SEG_VH, behavior:'smooth' }); }
+
+/* rAF-throttled scroll */
+let ticking = false;
+function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(()=>{ scrub(); ticking = false; }); } }
+addEventListener('scroll', onScroll, { passive:true });
+addEventListener('resize', () => { layout(); scrub(); });
+
+/* pointer parallax — tilt the whole book toward the cursor */
+if (!reduced){
+  const px = document.getElementById('parallax');
+  addEventListener('pointermove', e => {
+    const x = e.clientX / innerWidth - .5, yy = e.clientY / innerHeight - .5;
+    px.style.setProperty('--ry', (x * 12).toFixed(2) + 'deg');
+    px.style.setProperty('--rx', (-yy * 8).toFixed(2) + 'deg');
+  });
+}
+
+/* keyboard: page through chapters */
+addEventListener('keydown', e => {
+  const seg = innerHeight * SEG_VH;
+  if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' '){ e.preventDefault(); scrollBy({ top: seg, behavior:'smooth' }); }
+  if (e.key === 'ArrowUp'   || e.key === 'PageUp'){ e.preventDefault(); scrollBy({ top:-seg, behavior:'smooth' }); }
+  if (e.key === 'Home'){ e.preventDefault(); scrollTo({ top:0, behavior:'smooth' }); }
+  if (e.key === 'End'){ e.preventDefault(); scrollToChapter(N - 1); }
+});
+
+scrub();
 </script>
 </body>
 </html>
