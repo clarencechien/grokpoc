@@ -132,7 +132,7 @@
     "cover_closed": {
       "file": "ref_cover_closed.jpg",
       "from": "ref_spread_blank.jpg",
-      "prompt": "Same book, same table, same camera, same lamp. One change: the book is now CLOSED, front cover up. Its spine is the far edge of the book, running left-to-right across the top of the frame; the thick block of cream page edges faces the camera along the bottom. The front cover is plain matte indigo cloth with a single debossed rectangular panel showing a misty ink-wash river and distant mountains — no lettering of any kind. Nothing else on the table."
+      "prompt": "Same book, same table, same camera, same lamp. One change: the book is now CLOSED, front cover up, still lying in exactly the same place and at the same angle on the table. Because this book hinges along its far edge, the closed book shows the thick stack of cream page edges on THREE sides — along the bottom edge nearest the camera, along the left end, and along the right end. The only side with no page edges is the far edge, where the indigo cloth spine runs left-to-right across the top of the book. The front cover is plain matte indigo cloth with one debossed rectangular panel of a misty ink-wash river and distant mountains; no lettering of any kind. Nothing else on the table."
     },
     "cast": {
       "file": "ref_cast.jpg",
