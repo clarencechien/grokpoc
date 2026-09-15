@@ -114,14 +114,17 @@ def stage_sheets(story: dict, ids: set[str], dry: bool, force: bool) -> bool:
     src = ASSETS / story["refs"]["cast"]["file"]
     if not src.exists():
         print("missing", src.name); return False
-    w = story["cast_slot_width"]
-    for slot, x in story["cast_slots"].items():
+    # Bounds were MEASURED off the sheet (column ink profile), not guessed: a crop
+    # that clips one figure or catches a sliver of the next poisons every scene
+    # sheet built from it.
+    for slot, (x0, x1) in story["cast_bounds"].items():
         out = cast_dir / f"{slot}.jpg"
         if out.exists() and not force:
             continue
         if dry:
-            print(f"  DRY crop {slot} x={x}"); continue
-        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-vf", f"crop={w}:720:{x}:0", str(out)], check=True)
+            print(f"  DRY crop {slot} {x0}..{x1}"); continue
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(src),
+                        "-vf", f"crop={x1 - x0}:720:{x0}:0", str(out)], check=True)
     for uid, u in units(story, ids):
         out = ASSETS / u["sheet"]
         parts = [cast_dir / f"{s}.jpg" for s in u["cast_list"]]

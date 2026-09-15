@@ -190,16 +190,30 @@
   "or_turn_motion": "The raised page turns smoothly from right to left and settles flat onto the book, uncovering the paper diorama. The camera holds still.",
   "book_spec": "an old, well-loved A3 landscape pop-up storybook that has been read for generations: hardcover boards in faded, threadbare indigo cloth worn pale at the corners and edges, the card pages yellowed to warm parchment tan with foxing spots, soft creases, and ragged, torn edges — a chipped corner here, a small tear there, a frayed deckle along the fore-edge — — the card pages are the FULL SIZE of the boards, their edges sitting flush with the cloth-covered boards so that only a two-millimetre rim of cloth shows around them — lying on a dark walnut tabletop, OPEN AT NINETY DEGREES like a desk calendar: the far page stands upright, the near page lies flat, and the two meet at a horizontal hinge running left-to-right across the frame",
   "binding_rule": "The book's ORIENTATION is fixed and must not change: the stitched indigo cloth binding runs HORIZONTALLY ACROSS THE TOP EDGE of the frame, at the far side of the book away from the viewer, and the thick block of ivory deckle-edged pages shows along the BOTTOM EDGE, nearest the viewer. There is no binding on the left and no binding on the right — the left and right sides show only the open page and the page block. ",
-  "cast_slots": {
-    "zhuge": 80,
-    "zhouyu": 320,
-    "lusu": 560,
-    "caocao": 790,
-    "straw": 1040
-  },
-  "cast_slot_width": 250,
   "turn_motion": "EXACTLY ONE page moves in this shot. The flat near page — the one lying on the table with the pop-up scene on it — lifts by its torn bottom edge and swings up and back over the horizontal hinge, like a desk-calendar page being flipped, carrying the folded paper scene away with it, until it comes to rest against the standing far page. The standing far page itself NEVER moves, never folds and never tips: it simply ends up as plain blank parchment once the painted scene has gone with the turned page. No second page appears, no other page turns, nothing slides across the book. The shot ends on the open old book with both pages blank. The camera holds completely still.",
   "collapse_motion": "The pop-up scene folds away: the chibi paper figures and props tip backward and lie flat on the parchment page, and the painted backdrop on the upright back page fades out to plain foxed parchment, until the open old book is completely blank. The book and the camera do not move.",
   "ambient_motion": "{beat}. The chibi paper figures otherwise stay still. The book and the camera do not move.",
-  "fix_fan": "Keep everything exactly as it is. One change: Zhuge Liang holds ONE white feather fan, in his right hand only; his left hand is empty and relaxed at his side. Nothing else changes."
+  "fix_fan": "Keep everything exactly as it is. One change: Zhuge Liang holds ONE white feather fan, in his right hand only; his left hand is empty and relaxed at his side. Nothing else changes.",
+  "cast_bounds": {
+    "zhuge": [
+      0,
+      317
+    ],
+    "zhouyu": [
+      317,
+      551
+    ],
+    "lusu": [
+      551,
+      788
+    ],
+    "caocao": [
+      788,
+      1049
+    ],
+    "straw": [
+      1049,
+      1280
+    ]
+  }
 }
