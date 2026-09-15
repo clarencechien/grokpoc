@@ -284,3 +284,62 @@ Grok CLI 自帶一套 skill，就在 `~/.grok/bundled/skills/`。其中兩份直
 3. **一個 shot 一個動作**，6 秒為主，寧可多切幾個 shot。
 4. `image_to_video` 動畫每個 shot；下一 shot 用上一段最後一格當來源以接戲。
 5. 最後 `ffmpeg -f concat -c copy` 串起來。
+
+---
+
+## 11. 用 grok 做「同一本書」的多張圖：edit-chain 與場景小表
+
+**問題**：每張各自 `image_gen`，鏡位、色溫、書的形制每張都自己飄。
+**解法**：只生一張**母版**，其他全部從它 `image_edit` 衍生，每次只改一件事。
+
+- 母版 = 攤開的空白書（無人物、無紙雕）。它決定鏡位、光、紙質、書的形制。
+- 闔上的封面、掀起的頁、每章跨頁，都是母版的 edit。改動描述用「Same book, same table, same camera, same lamp. One change: …」開頭。
+- 一次要模型做兩件新事（印刷頁面＋紙雕、或紙雕＋翻頁）→ 不是糊成一團就是丟掉一件。**先書、再紙雕；先跨頁、再翻頁。**
+
+**角色混入**：把整張定裝表當多圖參考，模型會把表上每個人都搬進場，文字白名單（only / no other characters）壓不住。
+**解法**：用 ffmpeg 從定裝表**裁出**該場景需要的人，hstack 成場景專用小表，只餵這張。表上沒有的人它就無從複製。指令改用計數語言：「exactly TWO figures … nobody else, no duplicates」。
+
+單個殘留問題（多一把扇、少一個人）用**單一修改**補：「Keep everything exactly as it is. One change: …」。
+
+## 12. Prompt 怎麼寫模型才聽：物件、畫面座標、排除條件
+
+三次失敗歸納出來的：
+
+| 寫法 | 結果 |
+|---|---|
+| 屬性形容詞：`top-bound`、`hinged at the top` | 畫成左翻書；屬性上「對」，畫面上錯 |
+| 借喻：`like a flip-chart` | 帶進「立在架上」的先驗，整張紙立成背板 |
+| 抽象約束：`orientation must not change` | 沒有可想像的物件，無效 |
+| **具體物件 + 畫面座標**：「spine runs left-to-right across the middle of the frame, one page beyond it, one in front」 | 一次即中 |
+| **看得見的線索**：「closed book shows page edges on THREE sides; the only side without is the far edge」 | 修好闔上書的方向 |
+| **排除條件**：「no binding on the left, none on the right」「no curl, no bend, no corner peeling」 | 必要，光講「要什麼」不夠 |
+| **可核對的幾何**：「both bottom corners at the same height」 | 有效，但會被當成形狀規格（畫成三角形） |
+
+- 描述順序：主體 → 它在畫面裡的位置 → 材質細節 → 鏡位 → 光。
+- 破損、皺摺這類模型自己會冒出來的東西，**寫進設計裡**（改成老書）比壓制它便宜。
+- 表情：用 chibi／Q 版，臉部結構簡單，「angry frown, pointing」「gentle smile」一句就到位；寫實臉很難控。
+
+**畫不出來的**：矩形硬卡繞鉸鏈翻到一半（三次：捲角、斜掀捲曲、信封蓋三角形）。這個姿態不在它的分布裡，換描述沒用。結論：**不需要那張圖**，翻頁交給影片。
+
+## 13. 影片：grok 只釘首格，怎麼把兩端都釘住
+
+- `image_to_video` 只吃首格。翻頁動作**在它的訓練資料裡**：首格給攤開的跨頁、一句「前頁由下緣抬起、繞鉸鏈往後翻、露出空白頁、鏡頭不動」，它會翻，而且翻得對。掀頁靜圖不需要。
+- 末格不可指定 → **揭露用倒放**：以下一章跨頁為首格生「紙雕收折、背景褪成空白」，ffmpeg `reverse` 後就是「空白頁 → 紙雕升起成該章跨頁」，首尾都是我們的圖。
+- 翻頁片（結束於空白）+ 升起片（始於空白）+ 環境片（該章一個動作），用 `ffmpeg xfade` 相接；所有素材同一母版，淡入讀成「紙雕在那一頁上浮現」。
+- `resolution_name` 預設 **480p**，每次呼叫顯式寫 720p；`duration` 只吃 6 或 10。
+- xfade 兩端 timebase 不同會報錯：兩路都先 `settb=AVTB`。
+- 一個 shot 一個動作（skill 規定）；環境片的 beat 一句話就好。
+
+## 14. 跑批次時的雜項
+
+- 長工作：`setsid nohup script.sh > log 2>&1 < /dev/null & disown`，用 `until grep -q DONE log` 等；以檔案存在判進度，log 會被緩衝。
+- **`pkill -f <pattern>` 的 pattern 若出現在你自己的指令列裡，會把自己殺掉**，後面的改動全沒寫進去。要殺就殺明確的 pid，或用不會出現在自己指令裡的字串。
+- 同時跑兩個 grok 呼叫沒問題；產出檔權限 0600。
+- 每一步產出都用眼睛看（抽格對照圖），再往下；不要靠 agent 的回話。
+
+## 15. 跟 OpenRouter 路線的對照（實測）
+
+- OpenRouter 影片模型多數支援 **first_frame + last_frame**（Seedance、Veo 3.1、Kling、Hailuo…）；**Grok Imagine Video 在 OpenRouter 上也只有 first_frame**。首末格能直接把翻頁釘死，Veo 3.1 Lite 720p 無音訊 $0.03/秒，45 秒生完。
+- Nano Banana 2 從零構圖同樣**不肯畫豎起的書頁**，但「先生攤開狀態、再單一指令掀起」成功 —— 跟 grok 一樣的規律。
+- 翻頁要有揭露對象：首末格若是**同一場景**，那一頁沒事做，只會往外倒掉；首格上一章、末格本章才對。
+- 呼叫細節在 `scripts/or_gen.py`。
