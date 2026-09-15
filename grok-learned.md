@@ -235,3 +235,52 @@ grok -p "List the names of every tool you have available."
 # 4. 生一張試水溫，確認畫風再全跑
 grok --always-approve -p 'Use image_gen ... save to out.jpg ... PROMPT: ...'
 ```
+
+---
+
+## 10. ⚠️ 官方 `imagine` skill —— 早該先讀的那份
+
+Grok CLI 自帶一套 skill，就在 `~/.grok/bundled/skills/`。其中兩份直接規範生圖生片：
+
+- **`imagine/SKILL.md`** —— 生圖、修圖、生影片的完整規範（**必讀**）
+- **`game-character-consistency/SKILL.md`** —— 同一角色跨多張圖的 edit-chain protocol
+
+還有 `game-asset-core`、`game-tilesets`、`game-ui-icons`、`game-animation-frames`
+是疊在 imagine 之上的遊戲美術特化版。
+
+> **教訓：接一個新 agent CLI 當生成後端時，第一件事是翻它的 `bundled/skills/`。**
+> 我們靠試誤重新發現的規則，有一半這份文件裡本來就寫了。
+
+### 這份 skill 講了什麼（逐條對照我們踩過的坑）
+
+| 官方規定 | 我們原本的做法 | 後果 |
+|---|---|---|
+| 影片 prompt **1–2 句**、現在式、**一個**鏡頭運動 | ~1500 字元，style + cast 整段貼上 | 模型抓不到重點，翻頁草率 |
+| 一個 shot **一個主體、一個簡單動作**；多動作「models handle it poorly」 | 翻頁＋紙雕彈起＋分層依序＋環境動態 = 4+ 動作 | 翻頁被壓成 0.5 秒，動作互搶 |
+| 複雜來源圖動畫時**會變形**；要嘛換簡單的底圖，要嘛**只動鏡頭** | 立體書紙雕極精細（紙層／帳篷／人物／燈籠／書頁） | 風格漂移：披風、燈籠形制、鏡位全變 |
+| duration **只有 6s 或 10s**，其餘四捨五入 | 用了 5 / 6 / 7 / 8 | 5/7/8 根本無效 |
+| 反覆出現的角色要先生一張 canonical reference，之後一律 `image_edit` 衍生，**never a fresh `image_gen`** | 8 章各自 fresh `image_gen` | 章與章之間角色必然漂移 |
+| `image_edit` 時**必須保留 style words**，否則「drift toward photorealism」 | 未特別保留 | 人物一度變成寫實真人臉 |
+| 鏡頭連續性：用 ffmpeg 抽上一段**最後一格**當下一段來源 | 沒做 | 章之間不連戲 |
+| 多格拼貼（storyboard／contact sheet）要**用程式組**，不要叫模型畫 | — | 模型畫不準格線與標籤 |
+| 串接用 `ffmpeg -f concat -c copy`，**不要重新編碼** | — | 避免畫質損失 |
+
+### 其他要點
+
+- **沒有 seed 參數。** 全篇未提供，一致性只能靠 reference + edit-chain 手工製造
+  （原文：「Grok Build has no persistent character or style memory, so consistency
+  is manufactured on every call」）。
+- **沒有 text-to-video。** 影片一定從圖開始，預設 `image_to_video`。
+- `image_gen` 的 `aspect_ratio` 只吃 `1:1 / 16:9 / 9:16 / 4:3 / 3:4 / auto`。
+  影片比例**在來源圖上決定**，不要事後裁切。
+- `image_gen` / `image_edit` **都沒有 `n` / `count`**，要多版本就多呼叫幾次。
+- 需要精確文字、數字、圖表、格線的東西**不要用影像模型**，用 HTML/CSS 生再截圖。
+- 被 moderation 擋下時**不要改寫 prompt 規避**，直接告知使用者換方向。
+
+### 正確的 pipeline 形狀（skill 建議的）
+
+1. 先生 **canonical references**：場景 master、角色 reference，一次定裝。
+2. 每個 shot 的來源圖用 **`image_edit` 從 reference 衍生**（保留 style words），不要重生。
+3. **一個 shot 一個動作**，6 秒為主，寧可多切幾個 shot。
+4. `image_to_video` 動畫每個 shot；下一 shot 用上一段最後一格當來源以接戲。
+5. 最後 `ffmpeg -f concat -c copy` 串起來。
