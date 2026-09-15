@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assemble the book: for each spread, its ambient clip, then its page-turn clip (which
+"""Assemble the book (turn -> [rise] -> ambient): for each spread, its ambient clip, then its page-turn clip (which
 ends on the blank book), cross-faded into the next spread's ambient clip so the next
 diorama appears to surface on the page.
 
@@ -48,7 +48,7 @@ def still_hold(img: Path, dst: Path, seconds: float) -> Path:
 def xfade(a: Path, b: Path, dst: Path, fade: float) -> Path:
     off = max(dur(a) - fade, 0)
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(a), "-i", str(b),
-                    "-filter_complex", f"[0:v][1:v]xfade=transition=fade:duration={fade}:offset={off:.3f}[v]",
+                    "-filter_complex", f"[0:v]settb=AVTB[x];[1:v]settb=AVTB[y];[x][y]xfade=transition=fade:duration={fade}:offset={off:.3f}[v]",
                     "-map", "[v]", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
                     "-pix_fmt", "yuv420p", str(dst)], check=True)
     return dst
@@ -64,8 +64,14 @@ def main() -> int:
     ids = [x for x in args.ids.split(",") if x]
     tmp = ASSETS / "_compose"; tmp.mkdir(exist_ok=True)
 
-    timeline: list[Path] = []  # alternating: ambient(id), turn(id), ambient(next) ...
+    timeline: list[Path] = []  # ambient(id), turn(id), [rise(next)], ambient(next) ...
     for i, uid in enumerate(ids):
+        # {id}_rise.mp4 = the reversed collapse clip: blank page -> figures stand up into {id}.
+        # It sits between the previous turn (ends blank) and this spread's ambient clip.
+        rise = ASSETS / f"{uid}_rise.mp4"
+        if i > 0 and rise.exists():
+            timeline.append(norm(rise, tmp / f"{uid}_rise.mp4"))
+            print(f"  {uid}: rise {dur(rise):.1f}s")
         amb = ASSETS / f"{uid}_ambient.mp4"
         if amb.exists():
             timeline.append(norm(amb, tmp / f"{uid}_amb.mp4"))
