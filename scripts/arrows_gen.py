@@ -72,7 +72,8 @@ def video_instruction(motion: str, source: Path, out: Path, duration: int) -> st
     return (f"Use your image_to_video tool with the input image {source} to animate it into a "
             f"paper pop-up book clip that OPENS by completing the page-turn already begun in "
             f"the source image, and save the MP4 to {out}. Overwrite if it exists. "
-            f"Target about {duration} seconds. Do not ask questions; generate and save.\n\n"
+            f"Set duration={duration} and resolution_name=\"720p\" on the tool call — 720p is required, "
+            f"do not leave it at the 480p default. Do not ask questions; generate and save.\n\n"
             f"Motion: {motion}\n\nWhen finished, print only: SAVED {out}")
 
 

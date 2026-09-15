@@ -3,8 +3,8 @@
   "subtitle": "紙雕動態繪本 · Grok Image-to-Video",
   "lang": "zh-TW",
   "route": "image-to-video (page-turn baked into the still's first frame)",
-  "style": "a photograph of a handmade pop-up picture book lying open on a dark walnut table, three-quarter overhead angle, the open book fills the frame, thick deckle-edged paper pages with visible fibre and the centre gutter clearly visible, the scene built as layered cut-paper diorama tiers rising out of the fold with real shadows between the layers, Chinese ink-wash painted paper with visible brush texture and torn-paper edges, warm practical lamplight raking across the paper against cold blue night, shallow depth of field, real object photography, no text, no words, no letters, no watermark",
-  "cast": "All characters are flat cut-paper puppet figures standing upright on paper tabs — visible paper grain, hand-painted ink faces, slightly rough scissor-cut edges; they are paper craft, never real people and never photorealistic. ZHUGE LIANG is a calm strategist figure in a pale cream Taoist robe and a dark head-wrap, holding a white feather fan; ZHOU YU is a proud young general in dark lamellar armour with a crimson sash; LU SU is a kindly round-faced official in a soft blue robe; CAO CAO is an older warlord in heavy charcoal armour on a tall paper watchtower; the straw boats are long paper riverboats lined with rows of straw-bundle soldier figures under cloth canopies.",
+  "style": "a close-up photograph of a beautifully made Chinese pop-up storybook lying open on a dark walnut table, the open book filling the frame almost edge to edge with only a sliver of table showing; BOTH flat pages are fully printed with soft ink-wash scenery — indigo river, grey mist and distant mountains on a warm ivory paper ground, no blank paper anywhere — and from the centre fold a layered cut-paper diorama rises in three tiers with visible paper grain, torn deckle edges and real shadows falling between the layers; warm lamplight rakes in from the upper left against a cold blue night, shallow depth of field, crisp macro detail, real object photography, no text, no words, no letters, no watermark",
+  "cast": "Every character is a flat cut-paper puppet figure standing upright on a paper tab — visible paper grain, hand-painted ink faces, slightly rough scissor-cut edges; paper craft, never a real person and never photorealistic. Any lantern, fire or lamp in the scene is a small paper lantern built into the diorama itself, never a real light fixture floating outside the book. ZHUGE LIANG is a calm strategist in a pale cream Taoist robe and dark head-wrap holding a white feather fan; ZHOU YU is a proud young general in dark lamellar armour with a crimson sash; LU SU is a kindly round-faced official in a soft blue robe; CAO CAO is an older warlord in heavy charcoal armour on a tall paper watchtower; the straw boats are long paper riverboats lined with rows of straw-bundle soldier figures under cloth canopies.",
   "cover": {
     "prompt": "cover key art: a paper-diorama of a long straw-lined riverboat gliding through thick blue night fog on a wide river, a calm robed strategist with a white feather fan standing at the bow, faint warm lantern glow, distant paper mountains, cinematic and mysterious, clear space at the top for a title",
     "video": {
@@ -21,7 +21,7 @@
       "prompt": "inside a lamplit military tent of layered cut paper, a proud young general in dark armour with a crimson sash gestures sternly across a low table at a calm robed strategist holding a white feather fan, tense confrontation, warm lantern light and long paper shadows",
       "video": {
         "prompt": "lantern flames flickering and casting shifting paper shadows across the tent, the general's sash stirring, the strategist calmly waving his feather fan, a thin curl of incense smoke rising",
-        "duration": 5
+        "duration": 6
       },
       "only": "ZHOU YU and ZHUGE LIANG only — exactly two figures"
     },
@@ -32,7 +32,7 @@
       "prompt": "the calm strategist in a pale robe presses his seal onto a paper military pledge on a low table while the armoured general watches with a hidden smug smile, officials in the background lean in, dramatic candlelight, layered paper figures",
       "video": {
         "prompt": "candle flames dancing, the paper pledge document trembling slightly as the seal presses down, the general's smug smile deepening, smoke and shadows shifting",
-        "duration": 5
+        "duration": 6
       },
       "only": "ZHUGE LIANG and ZHOU YU, plus two or three anonymous minor officials in the background"
     },
@@ -43,7 +43,7 @@
       "prompt": "at a misty night riverbank of torn paper, the robed strategist quietly instructs a kindly round-faced official in blue beside a row of long wooden boats lined with straw-bundle figures and covered with blue-grey cloth canopies, secretive mood, cold moonlight and warm lantern accents",
       "video": {
         "prompt": "night fog drifting over the moored boats, cloth canopies rippling in the breeze, lantern light glinting on the water, the two figures leaning in to whisper, reeds swaying",
-        "duration": 5
+        "duration": 6
       },
       "only": "ZHUGE LIANG and LU SU only — exactly two figures, plus anonymous straw-bundle figures on the boats"
     },
@@ -54,7 +54,7 @@
       "prompt": "a quiet paper-diorama study at night, the calm strategist reclines reading a scroll and sipping tea with a serene smile, while the round-faced official paces anxiously by the window, moonlit river visible outside, warm interior glow against cold blue night",
       "video": {
         "prompt": "steam curling gently from the teacup, the scroll edges fluttering, the anxious official pacing back and forth, moonlight shimmering on the river outside the window",
-        "duration": 5
+        "duration": 6
       },
       "only": "ZHUGE LIANG and LU SU only — exactly two figures"
     },
@@ -65,7 +65,7 @@
       "prompt": "a wide cinematic paper river swallowed by thick rolling fog before dawn, twenty long straw-lined boats roped together in a line gliding north, tiny lanterns glowing in the mist, the robed strategist and the official seated calmly at the lead boat, layers of cotton-paper fog",
       "video": {
         "prompt": "vast walls of paper fog rolling and swirling across the river, the line of boats gliding forward, lanterns pulsing softly in the haze, water rippling under the hulls, an eerie calm",
-        "duration": 7
+        "duration": 6
       },
       "only": "ZHUGE LIANG and LU SU seated on the lead boat, plus anonymous straw-bundle figures"
     },
@@ -87,7 +87,7 @@
       "prompt": "from a tall paper watchtower an old armoured warlord orders volleys of arrows into the fog, a dense storm of paper arrows streaking down and thudding into the straw-bundle figures and boat hulls, arrows bristling everywhere, cold blue fog lit by muzzle-like flashes, epic scale",
       "video": {
         "prompt": "a dense rain of arrows streaking through the fog and thudding into the straw figures one after another, the boats bristling with more and more arrows, then slowly turning to present the other side, ripples and drifting mist",
-        "duration": 8
+        "duration": 6
       },
       "only": "CAO CAO on the watchtower and anonymous archer figures, plus the straw-bundle figures taking the arrows"
     },
@@ -103,6 +103,8 @@
       "only": "ZHUGE LIANG at the bow, plus anonymous cheering soldier figures"
     }
   ],
-  "page_still": "a FULL-SIZE book page — exactly as tall and wide as one half of the open spread, its outer deckle edge reaching the far edge of the book — is caught mid-turn: it is hinged along the centre gutter and has swung up off the right-hand side to stand almost upright, arcing over toward the left so that it screens and partly hides the paper diorama behind it, the warm lamplight glowing through its paper fibre and its broad shadow cast across the spread below; it is a whole page of the book, never a small torn scrap or loose flap",
-  "page_motion": "The single full-size page, hinged along the centre gutter, continues its arc from right to left in one unbroken sweep — the whole page, not a fragment — falling all the way down and settling flat onto the left-hand side of the book, uncovering the spread as it goes; the moment it lands the paper diorama unfolds and springs upright out of the gutter, its layered tiers rising into place one after another; then"
+  "page_still": "one full-size page of the book — as tall and wide as half the spread, and printed on both faces with the same ink-wash scenery so it is clearly a storybook page and not a blank sheet — is caught mid-turn: hinged along the centre fold, swung up off the right-hand side to stand at a steep angle and arc over the spread so that it screens part of the diorama behind it, warm lamplight glowing through its printed paper and its soft shadow falling across the pages below",
+  "page_motion": "The raised printed page swings down from right to left in one slow, weighted arc and settles flat onto the open book, uncovering the paper diorama behind it. The camera holds completely still.",
+  "scene_motion_suffix": "The camera pushes in very slowly.",
+  "resolution": "720p"
 }
