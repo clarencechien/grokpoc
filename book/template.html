@@ -34,7 +34,8 @@
   /* ---------- fixed 3D stage: the book stays put, the scroll drives it ---------- */
   .deck{
     position:fixed; inset:0; z-index:1;
-    display:grid; place-items:center;
+    display:grid; place-items:start center;   /* sit the book high so the caption never covers it */
+    padding-top:clamp(22px,7vh,64px);
     perspective:1700px; perspective-origin:50% 34%;
     pointer-events:none;               /* let scroll pass through            */
   }
@@ -45,7 +46,9 @@
   }
   .book{
     position:relative;
-    width:min(90vw,1000px); aspect-ratio:3/2;
+    /* height-capped (86vh drives ~57vh tall) so the book's bottom edge clears
+       the caption band; width follows the 3:2 ratio */
+    width:min(88vw,86vh,960px); aspect-ratio:3/2;
     transform-style:preserve-3d;
     transform:rotateX(var(--tilt));    /* the book reclines on the desk      */
   }
@@ -269,7 +272,7 @@ const spreads = STORY.pages.map((page, i) => {
 
     const src = assetFor(page.id, layer.id);
     const img = document.createElement('img');
-    img.alt = `${page.title} · ${layer.id}`; img.decoding = 'async'; img.loading = 'lazy';
+    img.alt = `${page.title} · ${layer.id}`; img.decoding = 'async';   // eager: the fixed stage keeps every card in-viewport, lazy just risked blank cards
     img.src = src || placeholder(layer.id, `${page.id}_${layer.id} · 尚未生成`);
     if (src) img.onerror = () => { img.src = placeholder(layer.id, `${page.id}_${layer.id} · 缺檔`); };
     wrap.appendChild(img);
@@ -357,7 +360,7 @@ function scrub(){
     const t = pos - i;              // <0 still to come (flat, under), >0 turning away
     if (t <= -1.1 || t >= 1.1){
       sp.el.style.visibility = 'hidden';
-      sp.cap.style.opacity = '0'; sp.cap.style.visibility = 'hidden';   // keep culled captions hidden
+      sp.cap.style.display = 'none';   // fully remove culled captions from the paint tree
       return;
     }
     sp.el.style.visibility = 'visible';
@@ -377,11 +380,18 @@ function scrub(){
       L.style.setProperty('--fold', ((s - 1) * 90).toFixed(1) + 'deg');
     });
 
-    // caption reveal (kaori-style: slide up + fade in around the active window)
-    const cop = Math.min(smooth(-0.78, -0.34, t), 1 - smooth(0.30, 0.72, t));
-    sp.cap.style.opacity = cop.toFixed(3);
-    sp.cap.style.transform = `translateY(${((1 - cop) * 28).toFixed(1)}px)`;
-    sp.cap.style.visibility = cop < 0.01 ? 'hidden' : 'visible';
+    // caption reveal (kaori-style: slide up + fade in). The visible band is < 1
+    // chapter wide and meets its neighbours at cop=0, so two captions never
+    // overlap during a page-turn — the outgoing one is fully gone before the
+    // incoming one appears.
+    const cop = Math.min(smooth(-0.5, -0.28, t), 1 - smooth(0.28, 0.5, t));
+    if (cop < 0.01){
+      sp.cap.style.display = 'none';
+    } else {
+      sp.cap.style.display = '';
+      sp.cap.style.opacity = cop.toFixed(3);
+      sp.cap.style.transform = `translateY(${((1 - cop) * 28).toFixed(1)}px)`;
+    }
 
     const a = Math.abs(t);
     if (a < bestAbs){ bestAbs = a; best = i; }
