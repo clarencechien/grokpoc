@@ -12,8 +12,12 @@
       "duration": 6,
       "beat": "paper fog drifts slowly across the river behind the straw boat"
     },
-    "only": "exactly ONE Zhuge Liang (the one on the character sheet) and four little straw-bundle soldiers; no other people",
-    "sheet": "cast/sheet_cover.jpg"
+    "only": "exactly ONE Zhuge Liang and four little straw-bundle soldiers; no other people",
+    "sheet": "cast/sheet_cover.jpg",
+    "cast_list": [
+      "zhuge",
+      "straw"
+    ]
   },
   "chapters": [
     {
@@ -26,8 +30,12 @@
         "duration": 6,
         "beat": "a thin curl of incense smoke rises past the small paper lanterns"
       },
-      "only": "exactly TWO figures: Zhou Yu (the armoured general on the sheet, dark plume) and Zhuge Liang; nobody else, no duplicates",
-      "sheet": "cast/sheet_c1.jpg"
+      "only": "exactly TWO figures: Zhou Yu (dark plume) and Zhuge Liang; nobody else, no duplicates",
+      "sheet": "cast/sheet_c1.jpg",
+      "cast_list": [
+        "zhouyu",
+        "zhuge"
+      ]
     },
     {
       "id": "c2",
@@ -39,7 +47,13 @@
         "duration": 6,
         "beat": "a candle flame wavers, throwing shifting paper shadows across the table"
       },
-      "only": "ZHUGE LIANG and ZHOU YU, plus two or three anonymous minor officials in the background"
+      "only": "exactly THREE figures: Zhuge Liang, Zhou Yu and Lu Su; nobody else",
+      "cast_list": [
+        "zhuge",
+        "zhouyu",
+        "lusu"
+      ],
+      "sheet": "cast/sheet_c2.jpg"
     },
     {
       "id": "c3",
@@ -51,7 +65,13 @@
         "duration": 6,
         "beat": "night fog drifts slowly over the moored boats"
       },
-      "only": "ZHUGE LIANG and LU SU only — exactly two figures, plus anonymous straw-bundle figures on the boats"
+      "only": "Zhuge Liang and Lu Su once each, plus straw-bundle soldiers on the boats; nobody else",
+      "cast_list": [
+        "zhuge",
+        "lusu",
+        "straw"
+      ],
+      "sheet": "cast/sheet_c3.jpg"
     },
     {
       "id": "c4",
@@ -63,7 +83,12 @@
         "duration": 6,
         "beat": "steam curls gently upward from the teacup"
       },
-      "only": "ZHUGE LIANG and LU SU only — exactly two figures"
+      "only": "exactly TWO figures: Zhuge Liang and Lu Su; nobody else",
+      "cast_list": [
+        "zhuge",
+        "lusu"
+      ],
+      "sheet": "cast/sheet_c4.jpg"
     },
     {
       "id": "c5",
@@ -75,7 +100,13 @@
         "duration": 6,
         "beat": "a wall of paper fog rolls slowly across the river"
       },
-      "only": "ZHUGE LIANG and LU SU seated on the lead boat, plus anonymous straw-bundle figures"
+      "only": "Zhuge Liang and Lu Su once each on the lead boat, plus straw-bundle soldiers; nobody else",
+      "cast_list": [
+        "zhuge",
+        "lusu",
+        "straw"
+      ],
+      "sheet": "cast/sheet_c5.jpg"
     },
     {
       "id": "c6",
@@ -87,7 +118,13 @@
         "duration": 6,
         "beat": "the war banners whip and ripple above the boats"
       },
-      "only": "ZHUGE LIANG and LU SU on the lead boat, plus anonymous drumming soldier figures"
+      "only": "Zhuge Liang and Lu Su once each, plus straw-bundle soldiers beating drums; nobody else",
+      "cast_list": [
+        "zhuge",
+        "lusu",
+        "straw"
+      ],
+      "sheet": "cast/sheet_c6.jpg"
     },
     {
       "id": "c7",
@@ -99,7 +136,12 @@
         "duration": 6,
         "beat": "a dense rain of paper arrows streaks down into the straw figures"
       },
-      "only": "CAO CAO on the watchtower and anonymous archer figures, plus the straw-bundle figures taking the arrows"
+      "only": "Cao Cao once on the watchtower, plus straw-bundle soldiers taking the arrows; nobody else",
+      "cast_list": [
+        "caocao",
+        "straw"
+      ],
+      "sheet": "cast/sheet_c7.jpg"
     },
     {
       "id": "c8",
@@ -111,7 +153,12 @@
         "duration": 6,
         "beat": "the arrow-covered boats drift slowly forward as the mist thins"
       },
-      "only": "ZHUGE LIANG at the bow, plus anonymous cheering soldier figures"
+      "only": "Zhuge Liang once at the bow, plus cheering straw-bundle soldiers; nobody else",
+      "cast_list": [
+        "zhuge",
+        "straw"
+      ],
+      "sheet": "cast/sheet_c8.jpg"
     }
   ],
   "page_still": "one full-size page of the book — as tall and wide as half the spread, and printed on both faces with the same ink-wash scenery so it is clearly a storybook page and not a blank sheet — is caught mid-turn: hinged along the centre fold, swung up off the right-hand side to stand at a steep angle and arc over the spread so that it screens part of the diorama behind it, warm lamplight glowing through its printed paper and its soft shadow falling across the pages below",
@@ -141,5 +188,17 @@
   "or_page_down": "Use the FIRST reference image as the exact book, camera and lighting, and the SECOND reference image as the exact character designs.\n\nProduce a photograph of that same blue cloth-bound pop-up storybook, open flat on the same dark walnut table, shot from the identical three-quarter angle with the identical warm-lamp-on-indigo night grade. Both flat pages stay fully printed with ink-wash scenery — no blank paper.\n\nThe pop-up rising from the centre fold shows: {scene} {only} Every figure is a flat cut-paper puppet drawn exactly as on the character sheet — paper craft, never a real person. Any lantern is a small paper lantern built into the diorama.",
   "or_turn_motion": "The raised page turns smoothly from right to left and settles flat onto the book, uncovering the paper diorama. The camera holds still.",
   "book_spec": "an old, well-loved A3 landscape pop-up storybook that has been read for generations: hardcover boards in faded, threadbare indigo cloth worn pale at the corners and edges, the card pages yellowed to warm parchment tan with foxing spots, soft creases, and ragged, torn edges — a chipped corner here, a small tear there, a frayed deckle along the fore-edge — — the card pages are the FULL SIZE of the boards, their edges sitting flush with the cloth-covered boards so that only a two-millimetre rim of cloth shows around them — lying on a dark walnut tabletop, OPEN AT NINETY DEGREES like a desk calendar: the far page stands upright, the near page lies flat, and the two meet at a horizontal hinge running left-to-right across the frame",
-  "binding_rule": "The book's ORIENTATION is fixed and must not change: the stitched indigo cloth binding runs HORIZONTALLY ACROSS THE TOP EDGE of the frame, at the far side of the book away from the viewer, and the thick block of ivory deckle-edged pages shows along the BOTTOM EDGE, nearest the viewer. There is no binding on the left and no binding on the right — the left and right sides show only the open page and the page block. "
+  "binding_rule": "The book's ORIENTATION is fixed and must not change: the stitched indigo cloth binding runs HORIZONTALLY ACROSS THE TOP EDGE of the frame, at the far side of the book away from the viewer, and the thick block of ivory deckle-edged pages shows along the BOTTOM EDGE, nearest the viewer. There is no binding on the left and no binding on the right — the left and right sides show only the open page and the page block. ",
+  "cast_slots": {
+    "zhuge": 80,
+    "zhouyu": 320,
+    "lusu": 560,
+    "caocao": 790,
+    "straw": 1040
+  },
+  "cast_slot_width": 250,
+  "turn_motion": "The flat front page of the old pop-up book lifts by its torn bottom edge and swings up and back over the horizontal hinge, like a desk-calendar page being flipped; the paper figures fold flat against it as it rises, and it settles against the upright back page, uncovering the next blank, foxed parchment page beneath. The camera holds completely still.",
+  "collapse_motion": "The pop-up scene folds away: the chibi paper figures and props tip backward and lie flat on the parchment page, and the painted backdrop on the upright back page fades out to plain foxed parchment, until the open old book is completely blank. The book and the camera do not move.",
+  "ambient_motion": "{beat}. The chibi paper figures otherwise stay still. The book and the camera do not move.",
+  "fix_fan": "Keep everything exactly as it is. One change: Zhuge Liang holds ONE white feather fan, in his right hand only; his left hand is empty and relaxed at his side. Nothing else changes."
 }
