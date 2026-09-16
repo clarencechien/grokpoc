@@ -42,7 +42,7 @@
       "id": "c2",
       "title": "三日的軍令狀",
       "text": "「十天太久，只要三天就夠了。」諸葛亮竟當眾立下軍令狀：若造不出箭，甘願受罰。\n周瑜暗自得意，以為這回諸葛亮插翅難逃。",
-      "prompt": "inside a lamplit army tent painted on the backdrop, ZHUGE LIANG with a calm gentle smile pressing a red seal onto a paper pledge on a low table, ZHOU YU behind him with a smug satisfied smirk, LU SU at the side looking worried with raised eyebrows; a small paper lantern on the table",
+      "prompt": "inside a lamplit army tent painted on the backdrop, ZHUGE LIANG with a calm gentle smile pressing a red seal onto a paper pledge on a low table, ZHOU YU standing behind with a smug self-satisfied smirk and one eyebrow raised, arms folded, LU SU at the side looking worried with raised eyebrows; a small paper lantern on the table",
       "video": {
         "prompt": "candle flames dancing, the paper pledge document trembling slightly as the seal presses down, the general's smug smile deepening, smoke and shadows shifting",
         "duration": 6,
@@ -60,7 +60,7 @@
       "id": "c3",
       "title": "向魯肅借船",
       "text": "諸葛亮悄悄找來魯肅，借了二十艘快船，每船三十名軍士，船身兩側綁滿稻草人，再用青布幔子遮起來。\n「千萬別告訴都督。」諸葛亮低聲叮嚀。",
-      "prompt": "a misty night riverbank painted on the backdrop with long paper boats lined with straw-bundle soldiers under cloth canopies, ZHUGE LIANG leaning in with a secretive smile whispering to LU SU, who looks puzzled and curious; one small paper lantern on a pole",
+      "prompt": "a misty empty night riverbank painted on the backdrop — just water, reeds and fog, with no boats and no people painted in it; on the near page stands a LONG WOODEN RIVERBOAT shown as a flat cut-paper side view, wide and low with a curved prow and stern and a rounded cloth canopy amidships, as long as three of the little figures standing side by side, cut from painted paper and standing upright on its own paper tab — it is a proper boat, NOT a folded origami paper boat and not a tiny toy; four straw-bundle soldier figures stand along it, and in front ZHUGE LIANG leans in with a secretive smile whispering to LU SU, who looks puzzled and curious; one small paper lantern on a pole",
       "video": {
         "prompt": "night fog drifting over the moored boats, cloth canopies rippling in the breeze, lantern light glinting on the water, the two figures leaning in to whisper, reeds swaying",
         "duration": 6,
@@ -95,7 +95,7 @@
       "id": "c5",
       "title": "大霧漫江",
       "text": "到了第三天四更，江上忽然起了漫天大霧，對面看不見人影。\n諸葛亮請魯肅一同上船，二十艘船用長索連成一線，趁著濃霧向北岸曹營划去。",
-      "prompt": "a wide river swallowed by thick cotton-paper fog before dawn painted on the backdrop, a long paper boat with straw-bundle soldiers, ZHUGE LIANG seated calmly with a gentle smile, LU SU beside him wide-eyed and nervous; one small paper lantern glowing in the mist",
+      "prompt": "a wide river swallowed by thick fog before dawn painted on the backdrop, empty of people; on the near page one long paper boat carries exactly two seated figures — ZHUGE LIANG with a gentle smile and his feather fan, and LU SU beside him wide-eyed and nervous — with straw-bundle soldiers standing behind them; there is only ONE figure in a cream robe in the whole picture; one small paper lantern glows in the mist",
       "video": {
         "prompt": "vast walls of paper fog rolling and swirling across the river, the line of boats gliding forward, lanterns pulsing softly in the haze, water rippling under the hulls, an eerie calm",
         "duration": 6,
@@ -148,7 +148,7 @@
       "id": "c8",
       "title": "滿載而歸",
       "text": "天快亮時，霧漸漸散去，二十艘船上插滿了箭，足足超過十萬支。\n軍士齊聲高喊：「謝丞相賜箭！」船隊順流而回。諸葛亮如期交箭，周瑜聽了，長長地嘆了一口氣：「我真的比不上他啊。」",
-      "prompt": "dawn breaking over a calm river painted on the backdrop, a paper boat bristling all over with little paper arrows, ZHUGE LIANG standing at the bow with a triumphant gentle smile and his fan, straw-bundle soldiers cheering with arms raised",
+      "prompt": "dawn just breaking over a calm river painted on the backdrop in cool pale blue and soft grey, empty of people; on the near page one paper boat COMPLETELY COVERED in dozens and dozens of little paper arrows — arrows bristling out of the hull, the sides and the canopy in every direction like a porcupine, far more arrows than boat — ZHUGE LIANG standing at the bow with a triumphant gentle smile and his fan, straw-bundle soldiers cheering with arms raised",
       "video": {
         "prompt": "morning fog dissolving into golden light, thousands of arrows glinting as the boats drift home, soldiers cheering and pumping fists, water sparkling, the feather fan waving gently, a warm triumphant shimmer",
         "duration": 6,
@@ -184,22 +184,36 @@
       "prompt": "Same book, same table, same camera, same lamp. One change: the book is now CLOSED, front cover up, in the same place on the table. Because it hinges along its far edge, the closed book shows the ragged stack of tan page edges on THREE sides — bottom (nearest the camera), left end and right end; the only side without page edges is the far edge, where the worn indigo cloth spine runs left-to-right. The front cover is faded threadbare indigo cloth, corners rubbed pale, with one aged, slightly scuffed debossed panel of a misty ink-wash river; no lettering. Nothing else on the table."
     }
   },
-  "scene_edit": "The FIRST reference image is the exact book to keep: the same old torn-parchment pop-up storybook on the same dark walnut table, open at ninety degrees — far page standing, near page flat, horizontal hinge — the same straight-on camera, the same warm lamp and cool blue room, the same tears, foxing and chipped corners on the pages. The SECOND reference image shows ONLY the characters allowed in this scene, as CHIBI cut-paper puppets; use each of them once, drawn exactly as shown, and add no one else.\n\nOne change: the pop-up scene appears. The standing far page becomes the painted cut-paper backdrop of the scene, its torn edges still visible; the chibi figures and props stand on the flat near page in front, each on a small paper tab, with real shadows on the parchment. The scene shows {scene} {only} Any lantern is a small paper lantern that is part of the diorama. Everything stays inside the outline of the two pages; the worn indigo edges, the ragged page block along the bottom and the table remain exactly as in the reference. Camera and lamp do not move. Style words to keep in every image: chibi cut-paper puppets, old torn parchment pages, faded indigo cloth, warm lamp, cool blue room, real photograph of a paper craft book.",
+  "scene_edit": "The FIRST reference image is the exact book to keep: the same old torn-parchment pop-up storybook on the same dark walnut table, open at ninety degrees — far page standing, near page flat, horizontal hinge — the same straight-on camera, the same warm lamp and cool blue room, the same tears, foxing and chipped corners on the pages. The SECOND reference image shows ONLY the characters allowed in this scene, as CHIBI cut-paper puppets; use each of them once, drawn exactly as shown, and add no one else.\n\nOne change: the pop-up scene appears. The standing far page becomes the painted cut-paper backdrop of the scene, its torn edges still visible; the chibi figures and props stand on the flat near page in front, each on a small paper tab, with real shadows on the parchment. The scene shows {scene} {only} The painted backdrop on the standing page contains ONLY landscape, weather and buildings — no people are painted into it, not even small distant ones; every single person in the picture is a separate cut-paper figure standing on its own tab on the flat near page. Each character appears EXACTLY ONCE: never draw two figures wearing the same costume. Any lantern is a small paper lantern that is part of the diorama. Everything stays inside the outline of the two pages; the worn indigo edges, the ragged page block along the bottom and the table remain exactly as in the reference. Camera and lamp do not move. Style words to keep in every image: chibi cut-paper puppets, old torn parchment pages, faded indigo cloth, warm lamp, cool blue room, real photograph of a paper craft book.",
   "or_page_up": "Lift the entire right-hand page of this book so that it stands straight up, as if a hand has just turned it: the whole page swings on the centre fold and is now vertical, a large flat rectangle of paper towering above the right half of the spread, its straight outer edge and square corners clear against the dark background. Its printed ink-wash scenery is visible on the face turned toward us. It is an ordinary book page mid-turn — flat, rigid, not folded, not curved, and not part of the pop-up sculpture. Keep everything else identical: same book, same table, same camera angle, same lighting, same pop-up diorama, same figures in the same poses.",
   "or_page_down": "Use the FIRST reference image as the exact book, camera and lighting, and the SECOND reference image as the exact character designs.\n\nProduce a photograph of that same blue cloth-bound pop-up storybook, open flat on the same dark walnut table, shot from the identical three-quarter angle with the identical warm-lamp-on-indigo night grade. Both flat pages stay fully printed with ink-wash scenery — no blank paper.\n\nThe pop-up rising from the centre fold shows: {scene} {only} Every figure is a flat cut-paper puppet drawn exactly as on the character sheet — paper craft, never a real person. Any lantern is a small paper lantern built into the diorama.",
   "or_turn_motion": "The raised page turns smoothly from right to left and settles flat onto the book, uncovering the paper diorama. The camera holds still.",
   "book_spec": "an old, well-loved A3 landscape pop-up storybook that has been read for generations: hardcover boards in faded, threadbare indigo cloth worn pale at the corners and edges, the card pages yellowed to warm parchment tan with foxing spots, soft creases, and ragged, torn edges — a chipped corner here, a small tear there, a frayed deckle along the fore-edge — — the card pages are the FULL SIZE of the boards, their edges sitting flush with the cloth-covered boards so that only a two-millimetre rim of cloth shows around them — lying on a dark walnut tabletop, OPEN AT NINETY DEGREES like a desk calendar: the far page stands upright, the near page lies flat, and the two meet at a horizontal hinge running left-to-right across the frame",
   "binding_rule": "The book's ORIENTATION is fixed and must not change: the stitched indigo cloth binding runs HORIZONTALLY ACROSS THE TOP EDGE of the frame, at the far side of the book away from the viewer, and the thick block of ivory deckle-edged pages shows along the BOTTOM EDGE, nearest the viewer. There is no binding on the left and no binding on the right — the left and right sides show only the open page and the page block. ",
-  "cast_slots": {
-    "zhuge": 80,
-    "zhouyu": 320,
-    "lusu": 560,
-    "caocao": 790,
-    "straw": 1040
-  },
-  "cast_slot_width": 250,
-  "turn_motion": "The flat front page of the old pop-up book lifts by its torn bottom edge and swings up and back over the horizontal hinge, like a desk-calendar page being flipped; the paper figures fold flat against it as it rises, and it settles against the upright back page, uncovering the next blank, foxed parchment page beneath. The camera holds completely still.",
+  "turn_motion": "EXACTLY ONE page moves in this shot. The flat near page — the one lying on the table with the pop-up scene on it — lifts by its torn bottom edge and swings up and back over the horizontal hinge, like a desk-calendar page being flipped, carrying the folded paper scene away with it, until it comes to rest against the standing far page. The standing far page itself NEVER moves, never folds and never tips: it simply ends up as plain blank parchment once the painted scene has gone with the turned page. No second page appears, no other page turns, nothing slides across the book. EVERY cut-paper piece — every figure, the boat, the table, the lantern, all of it — folds down and goes away with the turning page; not one figure is left standing behind. The shot ends on the open old book completely EMPTY: two blank parchment pages, nothing standing on them, nothing painted on the far page. The camera holds completely still.",
   "collapse_motion": "The pop-up scene folds away: the chibi paper figures and props tip backward and lie flat on the parchment page, and the painted backdrop on the upright back page fades out to plain foxed parchment, until the open old book is completely blank. The book and the camera do not move.",
   "ambient_motion": "{beat}. The chibi paper figures otherwise stay still. The book and the camera do not move.",
-  "fix_fan": "Keep everything exactly as it is. One change: Zhuge Liang holds ONE white feather fan, in his right hand only; his left hand is empty and relaxed at his side. Nothing else changes."
+  "fix_fan": "Keep everything exactly as it is. One change: Zhuge Liang holds ONE white feather fan, in his right hand only; his left hand is empty and relaxed at his side. Nothing else changes.",
+  "cast_bounds": {
+    "zhuge": [
+      0,
+      317
+    ],
+    "zhouyu": [
+      317,
+      551
+    ],
+    "lusu": [
+      551,
+      788
+    ],
+    "caocao": [
+      788,
+      1049
+    ],
+    "straw": [
+      1049,
+      1280
+    ]
+  }
 }
