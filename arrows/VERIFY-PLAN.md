@@ -17,7 +17,7 @@
 | 按鈕怎麼碰到容器？ | 網頁**碰不到**容器（沒有 inbound）。反過來：網頁用 `artifact` capability 把 queue 寫回自己（重新發佈一版），這個 session **watch** 著該 artifact，republish 會喚醒 session；session 讀回 `queue.json`、跑重生、再發佈新版 | artifact-capabilities 規約、`watch_url` |
 | session 睡了怎麼辦？ | 容器閒置會被回收，但 republish 喚醒 / `send_later` 排程都能把它拉起來；grok 登入曾經撐過一次容器重啟 | 已踩過 |
 | 誰按都算？ | artifact 預設私有；`artifact.publish` 以按的人的身分寫。若之後分享出去，read-only 的人會收到 `not_writer`，按鈕要隱藏 | 規約 |
-| 裁判用誰？ | grok CLI 的 `read_file` 會多模態讀圖，不用另外的 key；或由主持 pipeline 的 agent 自己 Read 圖。兩者都校準過：**計數可靠、下結論不可靠** | §16 |
+| 裁判用誰？ | 三者互補，見 §2.2。沒有模型吃得下 mp4，一律先抽格拼對照圖。grok CLI 的 `read_file` 不用另外的 key；Claude 讀 jpg/png/PDF 但**不讀 mp4**；兩者都是**計數可靠、下結論不可靠** | §16、§2.2 |
 | 還要不要 xAI API key？ | 可選。REST 的 `grok-imagine-video-1.5` 有 `last_frame`，翻頁片／升起片兩端都能釘住，`rise` 不用倒放，「末格是否空白／是否本章」兩類檢查直接消失 | docs.x.ai |
 
 結論：**做得到**，而且不需要任何新服務。唯一沒實測的是「網頁按鈕 → session 被喚醒」這一段，Phase 0 就是拿一個只有一個按鈕的頁面去驗它。
@@ -62,7 +62,25 @@ publish_console()                       # §3
 
 閾值先用現有素材（已知好壞）跑一次定，寫進 story JSON 的 `verify.thresholds`。
 
-### 2.2 裁判（VLM 只回 JSON）
+### 2.2 誰來看：三種驗法的分工（實測，不是三選一）
+
+**沒有任何模型能直接吃 mp4。** Claude 的 Read 工具讀 mp4 回「cannot read binary files」（實測），Claude API 也沒有原生 video input；grok 的 `read_file` 同樣只吃圖。所以 **ffmpeg 抽格拼對照圖不是繞路，是唯一的路**，這一步無論裁判換成誰都省不掉。
+
+| 驗法 | 能看什麼 | c5 多一個人 | c8 翻頁「空白頁從人物前升起」 |
+|---|---|---|---|
+| **純 Python**（numpy + ffmpeg 逐格動作能量） | 連續量：動作能量、對母版距離、色溫、解析度時長 | 測不到（不是它能表達的東西） | **抓不到** —— 壞的與修正版都只有一個動作峰 |
+| **grok CLI 裁判**，通用問法（「翻幾次？」） | 語意 | 數出 3 人（對），但自己的 `duplicate_costume` 欄位答 false（錯） | **抓不到**，6 格、12 格都答「翻一次，pass」 |
+| **grok CLI 裁判**，針對性問法（「有沒有一格是空白頁在仍可見的人物前面？」） | 語意 | — | **抓到**，指出第 5–6 格 fail；但對修正版也答 fail → **誤判**（或該版仍有輕微同症） |
+| **Claude 自己看圖**（Read tool 直接渲染 jpg/png/PDF） | 語意，不同模型的第二意見 | 讀了兩張跨頁 | 讀了 12 格對照圖，但**與 grok 同批跑，沒有先獨立記下判斷**，等於沒測到 |
+
+結論：
+1. **三者互補。** 程式指標負責連續量（結尾沒停住、解析度掉了、色溫飄了），VLM 負責語意，兩邊都不可少。
+2. **通用問法沒有用。** 只有針對已知失敗模式寫的問題抓得到時間軸上的缺陷 —— 這就是 `checks` 要像 regression test 一條一條加的原因。
+3. **誤判是真的。** 修正版被判 fail。所以 fail 只能重生 + 標紅，永遠不能自動刪。
+4. **Claude 當裁判這條還沒乾淨測過**，Phase 1 要補一次盲測：同一批對照圖，我先獨立寫下判斷，再跟 grok 與程式指標對答案。
+5. 容器裡**沒有 Anthropic API key**（`ANTHROPIC_API_KEY` 未設、`ant` CLI 未安裝）。要把 Claude 當裁判做進 pipeline（不佔 session、可平行）需要一把 key；否則只能由 session 裡的我看，但那就是在對話裡看，無法無人值守。
+
+### 2.2.1 裁判呼叫（VLM 只回 JSON）
 
 呼叫：`grok --always-approve -p "Look at <sheet> with read_file … answer ONLY with one JSON object {…}"`，解析最後一個 `{…}`。
 
@@ -150,7 +168,7 @@ session 醒來
 | Phase | 做什麼 | 產出 | 驗收 |
 |---|---|---|---|
 | **0 · 喚醒實驗** | 一個只有一顆鈕的 artifact，按下去把 `queue` 寫回自己 | 一個連結 | 使用者按一下，session 收到 republish 通知並讀到 queue 內容 |
-| 1 · verify 階段 | `metrics()`、`judge()`、`compare()`、`_cand/` 佈局、`state.json`；用現有 v0/v1/v2 素材當測資把閾值定好 | `arrows_pipeline.py verify` | 已知的 c5 多人、c8 第二頁都被標紅；正確素材不被誤殺（或誤殺率記下來） |
+| 1 · verify 階段 | `metrics()`、`judge()`、`compare()`、`_cand/` 佈局、`state.json`；用現有 v0/v1/v2 素材當測資把閾值定好；**補跑一次 Claude 看圖的盲測**（先獨立記判斷再對答案，§2.2 結論 4） | `arrows_pipeline.py verify` | 已知的 c5 多人、c8 第二頁都被標紅；正確素材不被誤殺（或誤殺率記下來）；盲測結果寫進 §2.2 表 |
 | 2 · 審片台（唯讀） | `build_console.py`：格子、候選、規則、影片 | artifact | 九章看得到、標紅對得上 state.json |
 | 3 · queue | 採用／重來鈕、queue 狀態、session 端的讀 queue → 跑 → republish | 同上 | 按重來 → 10 分鐘內新候選出現在頁上 |
 | 4 · （選）API 路線 | `scripts/xai_video.py` 直接打 `/v1/videos/generations` 帶 `last_frame` | 新的 clips 階段 | rise 不再倒放；turn 末格 = 母版 |
@@ -167,6 +185,6 @@ session 醒來
 
 ## 5. 要你決定的
 
-1. 裁判用 grok（同一家模型評自己，便宜、不用 key）還是由主持的 agent 自己看圖（不同模型、無額外呼叫、但佔 session 時間）？建議：**程式指標 + grok 計數**當第一線，agent 只看被標紅的。
+1. 裁判用 grok（同一家模型評自己，不用 key）還是 Claude（不同模型的第二意見）？建議：**程式指標 + grok 計數**當第一線，Claude 只看被標紅的。要讓 Claude 無人值守地當裁判需要一把 Anthropic API key（容器裡目前沒有）；否則只能由 session 裡的我看，那就無法離開對話自動跑。
 2. 要不要申請 xAI API key 走 `last_frame`？這會把抽卡面砍掉一半，但要付費；先用 CLI 把 Phase 1–3 做完再決定也行。
 3. Phase 0 現在就做：連結給你，你按一下，我看 session 有沒有醒。
