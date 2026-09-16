@@ -155,6 +155,16 @@ session 醒來
 | 3 · queue | 採用／重來鈕、queue 狀態、session 端的讀 queue → 跑 → republish | 同上 | 按重來 → 10 分鐘內新候選出現在頁上 |
 | 4 · （選）API 路線 | `scripts/xai_video.py` 直接打 `/v1/videos/generations` 帶 `last_frame` | 新的 clips 階段 | rise 不再倒放；turn 末格 = 母版 |
 
+## Phase 0 結果（2026-09-16 實測）
+
+| 段 | 結果 |
+|---|---|
+| 網頁按鈕 → `artifact.publish` 把 queue 寫回頁面 | **通**，兩次都寫進去（01:40、01:42），內容完整（unit / kind / hint / 時間） |
+| session 讀回 queue（`Artifact read`）→ 改狀態寫回頁面 | **通** |
+| republish → 自動喚醒 session | **沒通**，兩次都沒有。第一次時訂閱還在註冊；第二次發佈回報「已註冊」仍沒醒，是使用者傳訊息才叫醒 session 去讀的 |
+
+所以 Phase 3 的 queue 接手改成**排程輪詢**：審片期間 session 用 `send_later` 每 5–10 分鐘讀一次頁面（沒新 queue 就靜默重排、有就跑），按完等幾分鐘會被接手；頁面上寫清楚「排隊中，最久 N 分鐘內開始」。未測的第三條路：在 artifact 上留言送給 Claude 是文件上寫明的喚醒事件，若日後要即時，可以把「重來」改成引導使用者留言，或再測一次 republish 喚醒是否只在特定狀態下才發。
+
 ## 5. 要你決定的
 
 1. 裁判用 grok（同一家模型評自己，便宜、不用 key）還是由主持的 agent 自己看圖（不同模型、無額外呼叫、但佔 session 時間）？建議：**程式指標 + grok 計數**當第一線，agent 只看被標紅的。
