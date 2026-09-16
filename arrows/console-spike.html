@@ -1,0 +1,114 @@
+<title>審片台 喚醒實驗</title>
+<style>
+  :root{
+    --ground:#f3efe6; --paper:#fbf8f1; --ink:#2a2418; --dim:#7a705f; --line:#d9d0bd;
+    --gold:#9a6b1f; --gold-ink:#fff8ea; --queued:#2f5f9e; --done:#3d7a4a;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+    --ground:#12161f; --paper:#1b2130; --ink:#efe7d6; --dim:#9aa3b5; --line:#2e3748;
+    --gold:#e2b56a; --gold-ink:#1a1408; --queued:#8fb4ea; --done:#8fd39c; } }
+  :root[data-theme="dark"]{
+    --ground:#12161f; --paper:#1b2130; --ink:#efe7d6; --dim:#9aa3b5; --line:#2e3748;
+    --gold:#e2b56a; --gold-ink:#1a1408; --queued:#8fb4ea; --done:#8fd39c; }
+  body{background:var(--ground); color:var(--ink); padding-block:28px; padding-inline:16px;
+       font-family:"Noto Serif TC","Songti TC",ui-serif,Georgia,serif; line-height:1.6}
+  main{max-width:640px; margin:0 auto; display:grid; gap:20px}
+  h1{margin:0; font-size:22px; letter-spacing:.2em; text-wrap:balance}
+  .sub{margin:0; color:var(--dim); font-size:13px}
+  .cell{background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:16px 18px;
+        display:grid; gap:12px}
+  .cell header{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
+  .cell h2{margin:0; font-size:16px; letter-spacing:.08em}
+  .chip{font-size:11px; letter-spacing:.14em; padding:2px 9px; border-radius:999px; border:1px solid currentColor}
+  .chip.red{color:#b3402e}
+  .rule{font-size:13px; color:var(--dim)}
+  .rule b{color:#b3402e; font-weight:600}
+  .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  label{font-size:13px; display:flex; gap:6px; align-items:center}
+  button{font:inherit; font-size:14px; padding:8px 18px; border-radius:999px; cursor:pointer;
+         background:var(--gold); color:var(--gold-ink); border:0}
+  button:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  button:disabled{opacity:.45; cursor:default}
+  .queue{display:grid; gap:8px}
+  .queue h2{margin:0; font-size:13px; letter-spacing:.2em; color:var(--dim); text-transform:uppercase}
+  .item{display:flex; gap:12px; align-items:baseline; font-size:14px; font-variant-numeric:tabular-nums}
+  .item .st{font-size:11px; letter-spacing:.14em}
+  .st.queued{color:var(--queued)} .st.running{color:var(--gold)} .st.done{color:var(--done)}
+  .empty{color:var(--dim); font-size:13px}
+  #note{font-size:13px; color:var(--dim); min-height:1.4em}
+  @media (prefers-reduced-motion: no-preference){ button{transition:transform .12s} button:active{transform:scale(.97)} }
+</style>
+
+<script type="application/json" id="state">{"queue": [{"id": "qmu3fogxq", "unit": "c8", "kind": "turn", "hint": "second_page_in_front", "status": "done", "at": "2026-09-16 01:40", "note": "寫回通；但沒有喚醒 session"}, {"id": "qmu3fqzyh", "unit": "c8", "kind": "turn", "hint": "second_page_in_front", "status": "done", "at": "2026-09-16 01:42", "note": "訂閱已註冊後再按，仍沒有喚醒；session 是被你的訊息叫醒才讀到的"}]}</script>
+
+<main id="app"></main>
+
+<script id="src">
+/* Phase 0 of arrows/VERIFY-PLAN.md: can a button on this page wake the
+   Claude Code session that published it?  The page is the record — clicking
+   "重來" re-renders this document with the new queue entry and publishes it
+   as the next version; the watching session is told a republish happened. */
+const state = JSON.parse(document.getElementById("state").textContent);
+const CELL = {unit:"c8", kind:"turn", rule:"second_page_in_front", frames:[5,6],
+              why:"空白頁在第 5–6 格從仍可見的人物前面升起，景被蓋掉而不是被帶走。"};
+
+function view(s){
+  const items = s.queue.length ? s.queue.map(q => `
+    <div class="item"><span class="st ${q.status}">${q.status}</span>
+      <span>${q.unit} / ${q.kind}</span><span class="rule">加強：${q.hint}</span>
+      <span class="rule">${q.at}</span>${q.note ? `<span class="rule">${q.note}</span>` : ""}</div>`).join("") : `<p class="empty">目前沒有排隊的重生。</p>`;
+  return `
+  <div>
+    <h1>審片台 · 喚醒實驗</h1>
+    <p class="sub">只有一格、一顆鈕。按下去會把這格丟進 queue，看 session 會不會醒來接手。</p>
+  </div>
+  <section class="cell">
+    <header><h2>${CELL.unit} · ${CELL.kind}</h2><span class="chip red">裁判標紅</span></header>
+    <p class="rule"><b>${CELL.rule}</b> · 第 ${CELL.frames.join("–")} 格 · ${CELL.why}</p>
+    <div class="row">
+      <label><input type="checkbox" id="hint" checked> 下次 prompt 加強這一條</label>
+    </div>
+    <div class="row">
+      <button id="redo" type="button">重來 → 進 queue</button>
+      <span id="note"></span>
+    </div>
+  </section>
+  <section class="queue"><h2>Queue</h2>${items}</section>`;
+}
+
+function fullDocument(s){
+  return `<!doctype html>
+<html lang="zh-TW"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+${document.querySelector("title").outerHTML}
+${document.querySelector("style").outerHTML}
+</head><body>
+<script type="application/json" id="state">${JSON.stringify(s)}<\/script>
+<main id="app"></main>
+<script id="src">${document.getElementById("src").textContent}<\/script>
+</body></html>`;
+}
+
+function render(){
+  document.getElementById("app").innerHTML = view(state);
+  const btn = document.getElementById("redo"), note = document.getElementById("note");
+  btn.addEventListener("click", async () => {
+    btn.disabled = true; note.textContent = "寫入中…";
+    const artifact = await claude.use("artifact");
+    if (!artifact){ note.textContent = "這個檢視無法寫回頁面（不在 claude.ai 檢視器裡）。"; btn.disabled = false; return; }
+    const hint = document.getElementById("hint").checked ? CELL.rule : "無";
+    const next = {queue: [...state.queue, {
+      id: "q" + Date.now().toString(36), unit: CELL.unit, kind: CELL.kind, hint,
+      status: "queued", at: new Date().toISOString().slice(0,16).replace("T"," ")}]};
+    try {
+      await artifact.publish(fullDocument(next));
+      note.textContent = "已排入，頁面即將重新載入。";
+    } catch (e) {
+      if (e && e.code === "conflict") note.textContent = "別人剛發佈了新版，頁面會自動重載。";
+      else if (e && (e.code === "not_writer" || e.code === "not_granted")) { note.textContent = "這個檢視是唯讀的。"; btn.hidden = true; }
+      else { note.textContent = "寫入失敗：" + (e && e.code || "unknown"); btn.disabled = false; }
+    }
+  });
+}
+render();
+</script>
