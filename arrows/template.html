@@ -102,6 +102,8 @@
 const DATA = /*__DATA__*/ {title:"草船借箭",subtitle:"",pages:[]};
 const A = "assets/";
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const TURN_RATE = 3.5;   // transition clips play fast; ambient stays at 1x
+const CARD_MS   = 500;   // how long the chapter title sits on the blank book
 
 const frame = document.getElementById("frame");
 const poster = document.getElementById("poster");
@@ -115,6 +117,17 @@ const btnNext = document.getElementById("next");
 let idx = 0;        // current page index
 let busy = false;   // a transition is playing
 let slot = 0;       // which <video> is live
+let live = null;    // transition clip currently on screen, if any
+let skipCard = false;
+
+/* A second click while a page is turning means "get on with it". */
+function skip(){
+  skipCard = true;
+  if (live){
+    try { live.pause(); if (isFinite(live.duration)) live.currentTime = live.duration; } catch {}
+    if (live.onended) live.onended();          // resolve now; do not wait for the seek
+  }
+}
 
 const page = i => DATA.pages[i];
 const url = f => f ? A + f : null;
@@ -126,7 +139,7 @@ function showOnly(el){
 /* Play one clip in the idle video element; resolve when it ends.
    A clip that will not load must never leave a stale frame on screen or hang
    the book, so every failure path falls back to the page's still. */
-function playClip(file, {loop = false, fallback = null} = {}){
+function playClip(file, {loop = false, fallback = null, rate = 1} = {}){
   return new Promise(resolve => {
     const v = vids[slot ^ 1];
     let done = false;
@@ -140,12 +153,14 @@ function playClip(file, {loop = false, fallback = null} = {}){
     v.loop = loop;
     v.onended = null;
     v.oncanplay = null;
+    live = loop ? null : v;          // a transition clip the reader may skip
     v.onerror = () => finish(false);
     const timer = setTimeout(() => finish(false), 6000);   // stalled load
     const start = () => {
       clearTimeout(timer);
       showOnly(v);
       slot ^= 1;
+      v.playbackRate = rate;
       v.play().catch(() => {});
       if (loop) finish(true); else v.onended = () => finish(true);
     };
@@ -180,26 +195,32 @@ async function settle(i){
 
 /* Turn from page i to page j (j = i+1 or i-1). */
 async function turn(j){
-  if (busy || j < 0 || j >= DATA.pages.length) return;
-  busy = true;
+  if (busy){ skip(); return; }
+  if (j < 0 || j >= DATA.pages.length) return;
+  busy = true; skipCard = false; live = null;
   const from = page(idx), to = page(j);
   capEl.classList.add("hide");
 
   if (reduce){ await settle(j); busy = false; return; }
 
   // 1. the page flips up and the book goes blank
-  if (from.turn) await playClip(from.turn, {fallback: from.still});
+  if (from.turn) await playClip(from.turn, {fallback: from.still, rate: TURN_RATE});
 
   // 2. over the blank book, name the chapter
   document.getElementById("cardNo").textContent = to.no ? `第 ${to.no} 章` : "序";
   document.getElementById("cardTi").textContent = to.title;
   card.classList.add("on");
-  await new Promise(r => setTimeout(r, 1400));
+  await new Promise(r => {
+    const t = setTimeout(r, CARD_MS);
+    const poll = setInterval(() => { if (skipCard){ clearTimeout(t); clearInterval(poll); r(); } }, 60);
+    setTimeout(() => clearInterval(poll), CARD_MS + 50);
+  });
   card.classList.remove("on");
 
   // 3. the new diorama rises out of the blank page
-  if (to.rise) await playClip(to.rise, {fallback: to.still});
+  if (to.rise) await playClip(to.rise, {fallback: to.still, rate: TURN_RATE});
   await settle(j);
+  live = null;
   busy = false;
 }
 
@@ -224,7 +245,9 @@ addEventListener("keydown", e => {
 let wheelLock = 0;
 addEventListener("wheel", e => {
   const now = Date.now();
-  if (busy || now - wheelLock < 900 || Math.abs(e.deltaY) < 24) return;
+  if (Math.abs(e.deltaY) < 24) return;
+  if (busy){ skip(); return; }
+  if (now - wheelLock < 420) return;
   wheelLock = now;
   turn(e.deltaY > 0 ? idx + 1 : idx - 1);
 }, {passive: true});

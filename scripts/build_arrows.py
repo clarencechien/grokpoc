@@ -17,6 +17,7 @@ A page contributes whatever it has:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -29,7 +30,17 @@ MIN_IMG, MIN_VID = 20_000, 100_000
 
 
 def usable(p: Path, floor: int) -> str | None:
-    return p.name if p.exists() and p.stat().st_size >= floor else None
+    """Return the asset's name stamped with a content fingerprint, or None.
+
+    The stamp is not cosmetic. Every regeneration writes the same file names, so
+    a browser that cached c3.jpg from one version happily keeps serving it after
+    the assets are replaced — which shows up as a book that is half new and half
+    old. A ?v= that changes with the bytes forces the refetch.
+    """
+    if not p.exists() or p.stat().st_size < floor:
+        return None
+    digest = hashlib.sha1(p.read_bytes()).hexdigest()[:10]
+    return f"{p.name}?v={digest}"
 
 
 def main() -> None:
