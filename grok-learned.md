@@ -343,3 +343,56 @@ Grok CLI 自帶一套 skill，就在 `~/.grok/bundled/skills/`。其中兩份直
 - Nano Banana 2 從零構圖同樣**不肯畫豎起的書頁**，但「先生攤開狀態、再單一指令掀起」成功 —— 跟 grok 一樣的規律。
 - 翻頁要有揭露對象：首末格若是**同一場景**，那一頁沒事做，只會往外倒掉；首格上一章、末格本章才對。
 - 呼叫細節在 `scripts/or_gen.py`。
+
+## 16. 生影片還是抽卡嗎？程式化重驗做得到嗎？（實測 + 查證）
+
+### 抽卡是模型層的事，不是 CLI 的錯；但 CLI 藏了兩個能少抽幾張的參數
+
+- **沒有 seed。** 官方 API 文件（text/image/reference-to-video、video extension）全部沒有 seed 參數，每次呼叫 server 端隨機。同 prompt 同來源圖生兩次就是兩支不同的片。這點用 CLI 或直接打 API 都一樣。
+- **`last_frame` 其實存在，CLI 沒露出來。** `grok-imagine-video-1.5` 的 REST（`POST /v1/videos/generations`）可以同時給 `image`（首格）和 `last_frame`（末格），模型在兩張之間插補。我們的「收折片倒放」整套 hack 就是在補這個缺口——如果直接打 API，翻頁片可以首格＝本章跨頁、末格＝空白母版，揭露片首格＝空白母版、末格＝下章跨頁，兩端都釘死，少掉一半的抽卡面。**CLI 的 `image_to_video` / `reference_to_video` schema 我印出來看過：只有 prompt / images / duration / resolution_name / aspect_ratio，沒有 last_frame。**
+- CLI 還把 duration 限在 6 / 10、解析度預設 480p 上限 720p；API 是 1–15 秒、到 1080p。
+- 官方 `imagine` skill 自己也寫了「Verifying discrete accuracy (loop)：生完用 image understanding 讀回來核對，不對就修，只有全對才算完成」——它預設你會做重驗迴圈，只是我們前半段沒讀到。
+
+### 外面的評論怎麼說
+
+- 排行榜與評測文講的是**偏好與品質**（Grok Imagine Video 1.5 在 Image-to-Video Arena 居首；Aurora 靜圖「78% 角色一致性」），**沒有人公布重抽率**。比較文的共識是「哪個最好逐 shot 不同」，且建議「只比第一次生成加一次修正，不要比各自重抽 N 次後的最佳」——換句話說業界默認要重抽。
+- 學術上同一件事叫 VLM-as-judge：VQQA（2026）用 VLM 對生成影片提問、把批評當「語意梯度」回饋去改 prompt，T2V-CompBench +11.6%、VBench2 +8.4%。**是提升，不是消滅**；回饋主要改 prompt，而不是只重抽。
+- 開源的 QC pipeline（如 Video_Gen_QC）做法一致：任務合規／場景一致／視覺異常三項，每項 pass / fail / uncertain 加幀證據；而且作者自己承認**沒有驗證過裁判準確率**。
+
+### 我們自己的校準（拿已知有錯的素材測裁判）
+
+grok CLI 的 `read_file` 會把圖片以多模態方式讀進去，所以它可以當裁判，不用另外的 key。用已知結果的素材測：
+
+| 已知缺陷 | 純程式指標 | grok 通用問法 | grok 針對性問法 |
+|---|---|---|---|
+| c5 多一個人（cast 2 人，圖上 3 人） | 無 | 回 `figures_total: 3`，它自己的 `duplicate_costume` 卻答 false | — |
+| c5 修正版（2 人） | 無 | `figures_total: 2` | — |
+| c8 翻頁「翻了兩次」（空白頁從人物前面升起把景蓋掉） | 4fps 動作能量只有一個峰，**抓不到** | 1fps 六格、0.5s 十二格都答「翻一次，pass」，**抓不到** | 「有沒有任何一格是空白頁在仍看得見的人物前面？」→ 指出第 5–6 格，**fail，正確** |
+| c8 修正版 | 一個峰 | pass | 也答 fail（第 5 格）—— **誤判／或該版也有輕微同症** |
+| 結尾必須空白 | 每格對末格的像素距離收斂到 0，**可靠** | 可靠 | 可靠 |
+| 解析度 / 時長 | ffprobe，**可靠** | — | — |
+
+結論：
+1. **叫 VLM 數東西，判斷放在程式裡。** 它數人頭準（3 vs 2），但問它「有沒有重複」會答錯。所以裁判只回 JSON 計數，`figures_total == len(cast_list)`、`boats == 1`、`straw_soldier_bundles >= 3` 這些比對用 code 做。
+2. **時間軸上的語意缺陷要用針對性的問題。** 通用的「翻幾次」抓不到第二頁；針對已知失敗模式寫的問題（像 regression test）抓得到。所以每踩一個坑就加一條檢查，不是換一個萬用 prompt。
+3. **裁判有誤判，fail 不能等於自動刪掉。** 正確做法是 fail → 再生一支、兩支都留、把裁判的幀證據印給人看最後拍板。人審不會消失，但從「九章逐格看」變成「只看被標紅的」。
+4. 純程式指標便宜且零誤判，能做的先做：存在／大小／ffprobe／末格對空白母版距離／色溫統計（c8 曾整張偏暖）／動作能量在最後 1 秒應趨近 0。
+
+### 下次再來一次的形狀
+
+```
+for unit in chapters:
+    for attempt in 1..3:
+        gen(unit)                                   # image_edit / image_to_video
+        sheet = contact_sheet(unit, fps=2)          # ffmpeg，12–20 格
+        m = metrics(unit)                           # ffprobe、->blank 距離、動作能量、色溫
+        j = judge(sheet, questions[unit.kind])      # grok read_file → 只回 JSON 計數與幀號
+        ok = compare(m, j, story[unit])             # 判斷寫在 code：計數、幀號、閾值
+        keep(unit, attempt, ok, evidence=(sheet, m, j))
+        if ok: break
+    if not ok: flag_for_human(unit)                 # 附三次的證據，人只看這些
+```
+
+- 裁判問題按素材種類分：跨頁（數人頭／船／稻草兵、背景有無人物、書有無被動到）；翻頁片（空白頁是否出現在可見人物前、末格是否空、鉸鏈是否仍水平）；升起片（首格是否空白、末格對跨頁的距離）；環境片（只有一個動作、書不動）。
+- 一次裁判呼叫約 1–4 分鐘（跟生成同量級），所以先跑純程式指標，過了才問 VLM。
+- 若改直接打 API（有 `last_frame`），翻頁片和升起片的末格是我們給的，「結尾是否空白」「揭露是否為本章」這兩類檢查直接消失，抽卡面剩中段動作。

@@ -71,6 +71,16 @@ python3 scripts/arrows_pipeline.py check   --ids c2
 - **驗證看 content-length，不要只看 HTTP 200**。GitHub Pages 的舊檔一樣回 200。逐檔比對線上 `Content-Length` 與本機 `stat -c%s`，全部相符才算上線完成。
 - **重新壓縮前先刪掉 `*.orig.*`**。`stage_publish` 會保留 `<name>.orig.*` 原檔；殘留的舊備份會被再壓一次蓋回新素材。
 
+## 下次的 `verify` 階段（設計已校準，尚未實作）
+
+`check` 現在只做存在／尺寸／時長並吐對照圖給人看。校準過的下一步（細節與實測表在 `grok-learned.md` §16）：
+
+1. 純程式指標先跑：ffprobe、每格對空白母版的距離（翻頁片末段要收斂到 0）、動作能量（最後 1 秒趨近 0）、色溫統計。
+2. 過了才叫裁判：`grok --always-approve -p '… read_file <對照圖> … answer ONLY with one JSON object {…}'`，**只讓它回計數與幀號**，比對寫在 code（`figures_total == len(cast_list)` 等）。它數人頭準，叫它下結論會錯。
+3. 針對已知缺陷各寫一題（空白頁是否在可見人物前升起、背景是否畫了人、同裝扮是否兩個）；通用問法抓不到時間軸上的語意錯。
+4. fail → 重生，最多三次，全部保留並附證據；三次都不過才標給人。裁判會誤判，不能自動刪。
+5. 若改打 xAI REST（`grok-imagine-video-1.5` 有 `last_frame`），翻頁片與升起片兩端都能釘住，`rise` 不用再倒放，「末格是否空白／是否本章」兩類檢查直接消失。
+
 ## 已知未解 / 可再調
 
 - 掀頁靜圖（矩形硬卡繞鉸鏈翻到一半）grok image_edit 三次都畫不出來；不需要它，別再試。
