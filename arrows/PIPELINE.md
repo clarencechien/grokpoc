@@ -65,6 +65,12 @@ python3 scripts/arrows_pipeline.py check   --ids c2
 5. **grok 只釘首格**。翻頁從跨頁生（動作在訓練資料裡，它會翻）；揭露用收折片倒放，首尾都是我們的圖。720p 要顯式指定，預設 480p。
 6. **別用會匹配到自己 shell 的 pattern 去 pkill**。會把自己的指令一起殺掉，改動沒寫進去。
 
+## 上線與驗證（別省）
+
+- **素材換版一定要換 URL**。每次重生寫回的都是同一組檔名（`c3.jpg`、`c5_turn.mp4`…），瀏覽器就拿舊快取，畫面會變成幾章新幾章舊。`scripts/build_arrows.py` 已把每個素材蓋上內容指紋（`c3.jpg?v=<sha1前10碼>`），換了 bytes URL 就一定換；根目錄 `index.html` 的兩張書封縮圖也要跟著蓋。
+- **驗證看 content-length，不要只看 HTTP 200**。GitHub Pages 的舊檔一樣回 200。逐檔比對線上 `Content-Length` 與本機 `stat -c%s`，全部相符才算上線完成。
+- **重新壓縮前先刪掉 `*.orig.*`**。`stage_publish` 會保留 `<name>.orig.*` 原檔；殘留的舊備份會被再壓一次蓋回新素材。
+
 ## 已知未解 / 可再調
 
 - 掀頁靜圖（矩形硬卡繞鉸鏈翻到一半）grok image_edit 三次都畫不出來；不需要它，別再試。
