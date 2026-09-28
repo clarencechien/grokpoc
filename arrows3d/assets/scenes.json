@@ -1,0 +1,381 @@
+{
+ "cover": {
+  "backdrop": "bd_cover.jpg",
+  "cards": [
+   {
+    "src": "cards/cover_straw_back.webp",
+    "kind": "group",
+    "w": 0.4687,
+    "h": 0.3142,
+    "x": 0.2777,
+    "d": 0.04,
+    "ox": 0.0212
+   },
+   {
+    "src": "cards/cover_boat.webp",
+    "kind": "boat",
+    "w": 0.5446,
+    "h": 0.576,
+    "x": -0.2942,
+    "d": 0.2965,
+    "ox": 0.0254,
+    "pt": [
+     0.209,
+     0.651
+    ],
+    "lamp": true
+   },
+   {
+    "src": "cards/cover_straw_l.webp",
+    "kind": "figure",
+    "w": 0.3017,
+    "h": 0.38,
+    "x": -0.3897,
+    "d": 0.7139,
+    "ox": 0.015
+   },
+   {
+    "src": "cards/cover_straw_front.webp",
+    "kind": "group",
+    "w": 0.5014,
+    "h": 0.414,
+    "x": 0.3681,
+    "d": 0.7244,
+    "ox": 0.0264
+   }
+  ]
+ },
+ "c1": {
+  "backdrop": "bd_c1.jpg",
+  "cards": [
+   {
+    "src": "cards/c1_zhouyu.webp",
+    "kind": "figure",
+    "w": 0.5029,
+    "h": 0.857,
+    "x": -0.3101,
+    "d": 0.5076,
+    "ox": 0.0578
+   },
+   {
+    "src": "cards/c1_zhuge.webp",
+    "kind": "figure",
+    "w": 0.6082,
+    "h": 0.7491,
+    "x": 0.4059,
+    "d": 0.5519,
+    "ox": -0.0787
+   }
+  ]
+ },
+ "c2": {
+  "backdrop": "bd_c2.jpg",
+  "cards": [
+   {
+    "src": "cards/c2_zhouyu.webp",
+    "kind": "figure",
+    "w": 0.38,
+    "h": 0.743,
+    "x": 0.2032,
+    "d": 0.2965,
+    "ox": -0.0315
+   },
+   {
+    "src": "cards/c2_lusu.webp",
+    "kind": "figure",
+    "w": 0.3569,
+    "h": 0.7,
+    "x": 0.499,
+    "d": 0.6606,
+    "ox": -0.0081
+   },
+   {
+    "src": "cards/c2_zhuge_table.webp",
+    "kind": "group",
+    "w": 0.7084,
+    "h": 0.7175,
+    "x": -0.1736,
+    "d": 0.7769,
+    "ox": -0.0286,
+    "pt": [
+     0.884,
+     0.357
+    ],
+    "lamp": true
+   }
+  ]
+ },
+ "c3": {
+  "backdrop": "bd_c3.jpg",
+  "cards": [
+   {
+    "src": "cards/c3_zhuge.webp",
+    "kind": "figure",
+    "w": 0.3395,
+    "h": 0.5697,
+    "x": -0.1133,
+    "d": 0.6337,
+    "ox": -0.0372
+   },
+   {
+    "src": "cards/c3_lusu.webp",
+    "kind": "figure",
+    "w": 0.2973,
+    "h": 0.5574,
+    "x": 0.2197,
+    "d": 0.6445,
+    "ox": -0.0128
+   },
+   {
+    "src": "cards/c3_lantern.webp",
+    "kind": "lantern",
+    "w": 0.1649,
+    "h": 0.4343,
+    "x": 0.4763,
+    "d": 0.6445,
+    "ox": 0.0012,
+    "pt": [
+     0.493,
+     0.775
+    ],
+    "lamp": true
+   }
+  ]
+ },
+ "c4": {
+  "backdrop": "bd_c4.jpg",
+  "cards": [
+   {
+    "src": "cards/c4_lamp_table.webp",
+    "kind": "lantern",
+    "w": 0.4005,
+    "h": 0.3443,
+    "x": 0.0691,
+    "d": 0.2198,
+    "ox": 0.0012,
+    "pt": [
+     0.476,
+     0.596
+    ],
+    "lamp": true
+   },
+   {
+    "src": "cards/c4_zhuge.webp",
+    "kind": "figure",
+    "w": 0.4986,
+    "h": 0.7945,
+    "x": -0.2957,
+    "d": 0.6174,
+    "ox": -0.0617,
+    "pt": [
+     0.701,
+     0.563
+    ],
+    "steam": true
+   },
+   {
+    "src": "cards/c4_lusu.webp",
+    "kind": "figure",
+    "w": 0.4302,
+    "h": 0.8348,
+    "x": 0.3844,
+    "d": 0.6337,
+    "ox": 0.0035,
+    "pace": true
+   }
+  ]
+ },
+ "c5": {
+  "backdrop": "bd_c5.jpg",
+  "cards": [
+   {
+    "src": "cards/c5_zhuge.webp",
+    "kind": "figure",
+    "w": 0.2974,
+    "h": 0.5188,
+    "x": -0.3644,
+    "d": 0.7033,
+    "ox": -0.0104
+   },
+   {
+    "src": "cards/c5_boat.webp",
+    "kind": "boat",
+    "w": 0.9263,
+    "h": 0.6312,
+    "x": 0.1964,
+    "d": 0.8287,
+    "ox": -0.0114,
+    "pt": [
+     0.456,
+     0.403
+    ],
+    "lamp": true
+   }
+  ]
+ },
+ "c6": {
+  "backdrop": "bd_c6.jpg",
+  "cards": [
+   {
+    "src": "cards/c6_lantern.webp",
+    "kind": "lantern",
+    "w": 0.1563,
+    "h": 0.3541,
+    "x": 0.0972,
+    "d": 0.2198,
+    "ox": -0.0024,
+    "pt": [
+     0.469,
+     0.221
+    ],
+    "lamp": true
+   },
+   {
+    "src": "cards/c6_zhuge.webp",
+    "kind": "figure",
+    "w": 0.2961,
+    "h": 0.5898,
+    "x": -0.4804,
+    "d": 0.4797,
+    "ox": 0.0059
+   },
+   {
+    "src": "cards/c6_lusu.webp",
+    "kind": "figure",
+    "w": 0.3145,
+    "h": 0.582,
+    "x": -0.1567,
+    "d": 0.5574,
+    "ox": -0.0012,
+    "tremble": true
+   },
+   {
+    "src": "cards/c6_drummers.webp",
+    "kind": "drums",
+    "w": 0.7106,
+    "h": 0.5312,
+    "x": 0.4523,
+    "d": 0.6174,
+    "ox": -0.014
+   }
+  ]
+ },
+ "c7": {
+  "backdrop": "bd_c7.jpg",
+  "cards": [
+   {
+    "src": "cards/c7_tower.webp",
+    "kind": "tower",
+    "w": 0.4456,
+    "h": 0.9543,
+    "x": -0.3341,
+    "d": 0.2906,
+    "ox": 0.0012
+   },
+   {
+    "src": "cards/c7_boat.webp",
+    "kind": "boat",
+    "w": 0.8324,
+    "h": 0.6226,
+    "x": 0.2548,
+    "d": 0.7925,
+    "ox": 0.0411,
+    "target": true
+   }
+  ]
+ },
+ "c8": {
+  "backdrop": "bd_c8.jpg",
+  "cards": [
+   {
+    "src": "cards/c8_boat.webp",
+    "kind": "boat",
+    "w": 0.6782,
+    "h": 0.6149,
+    "x": 0.1496,
+    "d": 0.5574,
+    "ox": -0.0082,
+    "pt": [
+     0.253,
+     0.492
+    ],
+    "lamp": true
+   },
+   {
+    "src": "cards/c8_straw_r.webp",
+    "kind": "group",
+    "w": 0.4582,
+    "h": 0.4948,
+    "x": 0.5417,
+    "d": 0.756,
+    "ox": 0.0011,
+    "cheer": true
+   },
+   {
+    "src": "cards/c8_straw_l.webp",
+    "kind": "group",
+    "w": 0.4293,
+    "h": 0.5047,
+    "x": -0.401,
+    "d": 0.7821,
+    "ox": 0.0023,
+    "cheer": true
+   }
+  ]
+ },
+ "end": {
+  "backdrop": "page_far.jpg",
+  "cards": [
+   {
+    "src": "cards/cast_zhuge.webp",
+    "kind": "figure",
+    "role": "zhuge",
+    "w": 0.3522,
+    "h": 0.5633,
+    "x": -0.6,
+    "d": 0.42,
+    "ox": 0
+   },
+   {
+    "src": "cards/cast_lusu.webp",
+    "kind": "figure",
+    "role": "lusu",
+    "w": 0.2981,
+    "h": 0.5672,
+    "x": 0.0,
+    "d": 0.42,
+    "ox": 0
+   },
+   {
+    "src": "cards/cast_straw.webp",
+    "kind": "figure",
+    "role": "straw",
+    "w": 0.2915,
+    "h": 0.3694,
+    "x": 0.6,
+    "d": 0.42,
+    "ox": 0
+   },
+   {
+    "src": "cards/cast_zhouyu.webp",
+    "kind": "figure",
+    "role": "zhouyu",
+    "w": 0.2981,
+    "h": 0.6358,
+    "x": -0.3,
+    "d": 0.48,
+    "ox": 0
+   },
+   {
+    "src": "cards/cast_caocao.webp",
+    "kind": "figure",
+    "role": "caocao",
+    "w": 0.3337,
+    "h": 0.6042,
+    "x": 0.3,
+    "d": 0.48,
+    "ox": 0
+   }
+  ]
+ }
+}

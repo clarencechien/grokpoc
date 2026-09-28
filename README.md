@@ -1,5 +1,7 @@
 # 三隻小豬 · 立體繪本（Grok Imagine 生成實驗）
 
+> 第二本《草船借箭》有兩版：`arrows/`（Grok 影片版）與 `arrows3d/`（同一批素材改用 Three.js 即時渲染，見 [arrows3d/README.md](arrows3d/README.md)）。
+
 用 xAI 的 Grok Imagine API 生成插畫與影片，組成一本可翻頁、有景深的 CSS 3D 立體繪本。
 這個 repo 同時是一份「Claude Code 遠端環境能不能驅動 Grok」的實測記錄。
 
