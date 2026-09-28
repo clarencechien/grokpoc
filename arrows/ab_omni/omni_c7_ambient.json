@@ -1,0 +1,102 @@
+{
+ "id": "v1_ChdZd2E2YW9hZUxiMmEtOFlQazhpR2lBbxIXWXdhNmFvYWVMYjJhLThZUGs4aUdpQW8",
+ "status": "completed",
+ "usage": {
+  "total_tokens": 37002,
+  "total_input_tokens": 1170,
+  "input_tokens_by_modality": [
+   {
+    "modality": "image",
+    "tokens": 1100
+   },
+   {
+    "modality": "text",
+    "tokens": 70
+   }
+  ],
+  "total_cached_tokens": 0,
+  "total_output_tokens": 35523,
+  "output_tokens_by_modality": [
+   {
+    "modality": "video",
+    "tokens": 34752
+   }
+  ],
+  "total_tool_use_tokens": 0,
+  "total_thought_tokens": 309,
+  "raw_prompt_token": 34372,
+  "model_invocation_token_counts": [
+   {
+    "prompt_tokens_details": [
+     {
+      "modality": "text",
+      "tokens": 1857
+     },
+     {
+      "modality": "image",
+      "tokens": 1100
+     }
+    ],
+    "candidates_tokens_details": [
+     {
+      "modality": "text",
+      "tokens": 777
+     }
+    ],
+    "thoughts_tokens_details": [
+     {
+      "modality": "text",
+      "tokens": 309
+     }
+    ]
+   }
+  ],
+  "non_grounding_model_invocation_token_counts": [
+   {
+    "prompt_tokens_details": [
+     {
+      "modality": "text",
+      "tokens": 1857
+     },
+     {
+      "modality": "image",
+      "tokens": 1100
+     }
+    ],
+    "candidates_tokens_details": [
+     {
+      "modality": "text",
+      "tokens": 777
+     }
+    ],
+    "thoughts_tokens_details": [
+     {
+      "modality": "text",
+      "tokens": 309
+     }
+    ]
+   }
+  ]
+ },
+ "created": "2026-09-28T06:17:07Z",
+ "updated": "2026-09-28T06:17:07Z",
+ "service_tier": "standard",
+ "steps": [
+  {
+   "signature": "<6424 chars>",
+   "type": "thought"
+  },
+  {
+   "content": [
+    {
+     "uri": "https://generativelanguage.googleapis.com/v1beta/files/7sbwk2le2wqk:download?alt=media",
+     "mime_type": "video/mp4",
+     "type": "video"
+    }
+   ],
+   "type": "model_output"
+  }
+ ],
+ "object": "interaction",
+ "model": "gemini-omni-1.1-flash"
+}
