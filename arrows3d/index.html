@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>草船借箭 · 立體繪本（Three.js）</title>
+<meta name="description" content="一本真的會翻的紙雕立體書：Three.js 即時渲染，素材沿用 Grok 生成的插畫。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#f2e8d5; --dim:#aab3c6; --gold:#e8b765; --bg:#0d1322;
+    --cap-bg:linear-gradient(to top, #0b1020f2 0%, #0b1020c8 55%, #0b102000 100%);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+    font-family:"Noto Serif TC","Songti TC",ui-serif,Georgia,serif;
+    -webkit-tap-highlight-color:transparent; overscroll-behavior:none}
+  canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+  canvas#gl.drag{cursor:grabbing}
+
+  .top{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;
+    padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none;z-index:3}
+  .top a,.top button{pointer-events:auto}
+  a.home{color:var(--dim);text-decoration:none;font-size:13px;letter-spacing:.12em;padding:6px 2px}
+  a.home:hover{color:var(--ink)}
+  .dots{display:flex;gap:7px;align-items:center}
+  .dots button{width:9px;height:9px;padding:0;border-radius:50%;border:1px solid #ffffff55;background:transparent;cursor:pointer}
+  .dots button.on{background:var(--gold);border-color:var(--gold)}
+  .dots button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+  #cap{position:fixed;left:0;right:0;bottom:0;z-index:2;pointer-events:none;
+    padding:64px 16px max(22px,env(safe-area-inset-bottom));background:var(--cap-bg);transition:opacity .2s linear}
+  #cap .in{max-width:760px;margin:0 auto;text-align:center}
+  #cap .num{font-size:12px;letter-spacing:.3em;color:var(--gold);margin-bottom:6px}
+  #cap h2{margin:0 0 8px;font-weight:700;font-size:clamp(18px,3.2vw,24px);letter-spacing:.2em}
+  #cap p{margin:0;font-size:clamp(14px,2.2vw,16px);line-height:1.95;color:#e3dccd;white-space:pre-line}
+  #cap.title h2{font-family:"Ma Shan Zheng","Noto Serif TC",serif;font-weight:400;font-size:clamp(40px,8vw,64px);letter-spacing:.18em}
+  #cap .again{pointer-events:auto;margin-top:12px;font:inherit;font-size:14px;letter-spacing:.2em;color:var(--ink);
+    background:#ffffff14;border:1px solid #ffffff40;border-radius:999px;padding:8px 20px;cursor:pointer}
+  #cap .again:hover{background:#ffffff26}
+
+  .nav{position:fixed;z-index:3;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;
+    border:1px solid #ffffff30;background:#0b102080;color:var(--ink);font-size:22px;line-height:1;cursor:pointer;
+    display:grid;place-items:center;backdrop-filter:blur(2px)}
+  .nav:hover{background:#ffffff1f}
+  .nav:disabled{opacity:.25;cursor:default}
+  #prev{left:12px} #next{right:12px}
+  .hint{position:fixed;z-index:3;right:16px;top:max(40px,calc(env(safe-area-inset-top) + 36px));font-size:11px;color:var(--dim);
+    letter-spacing:.14em;opacity:.8;pointer-events:none;text-align:right}
+
+  #loading{position:fixed;inset:0;z-index:5;display:grid;place-items:center;background:var(--bg);
+    font-size:13px;letter-spacing:.3em;color:var(--dim);transition:opacity .6s ease}
+  #loading.done{opacity:0;pointer-events:none}
+  #err{position:fixed;inset:0;z-index:6;display:none;place-items:center;text-align:center;padding:24px;background:var(--bg)}
+  @media (max-width:640px){ .nav{top:auto;bottom:calc(50% - 22px)} .hint{display:none} }
+  @media (prefers-reduced-motion:reduce){ #cap{transition:none} }
+</style>
+</head>
+<body>
+<canvas id="gl" aria-label="草船借箭立體書（可翻頁的 3D 場景）"></canvas>
+
+<div class="top">
+  <a class="home" href="../">‹ 書架</a>
+  <div class="dots" id="dots" role="tablist" aria-label="頁次"></div>
+</div>
+<div class="hint">點擊／方向鍵／滾輪翻頁 · 往上拖曳可慢慢掀頁</div>
+<button class="nav" id="prev" aria-label="上一頁">‹</button>
+<button class="nav" id="next" aria-label="下一頁">›</button>
+
+<div id="cap" aria-live="polite"><div class="in"><div class="num"></div><h2></h2><p></p><div class="act"></div></div></div>
+<div id="loading">翻開老書中…</div>
+<div id="err"><p>這個瀏覽器無法啟用 WebGL，看不到 3D 立體書。<br><a href="../arrows/" style="color:var(--gold)">改看影片版</a></p></div>
+
+<script id="data" type="application/json">{"title":"草船借箭","cover":{"text":"赤壁之前，江上大霧。\n三日之內，十萬支箭——這是一樁不可能的軍令，也是一個早已想好的計策。"},"chapters":[{"id":"c1","title":"周瑜的刁難","text":"赤壁大戰前，周瑜妒忌諸葛亮的才智，故意設下難題：「軍中缺箭，就請先生在十天內趕造十萬支箭吧。」\n這分明是要陷害他。諸葛亮卻只是搖著羽扇，微微一笑。"},{"id":"c2","title":"三日的軍令狀","text":"「十天太久，只要三天就夠了。」諸葛亮竟當眾立下軍令狀：若造不出箭，甘願受罰。\n周瑜暗自得意，以為這回諸葛亮插翅難逃。"},{"id":"c3","title":"向魯肅借船","text":"諸葛亮悄悄找來魯肅，借了二十艘快船，每船三十名軍士，船身兩側綁滿稻草人，再用青布幔子遮起來。\n「千萬別告訴都督。」諸葛亮低聲叮嚀。"},{"id":"c4","title":"按兵不動","text":"第一天，諸葛亮沒有動靜。第二天，還是沒有動靜。\n魯肅急得團團轉，諸葛亮卻只是喝茶讀書，彷彿胸有成竹。"},{"id":"c5","title":"大霧漫江","text":"到了第三天四更，江上忽然起了漫天大霧，對面看不見人影。\n諸葛亮請魯肅一同上船，二十艘船用長索連成一線，趁著濃霧向北岸曹營划去。"},{"id":"c6","title":"擂鼓吶喊","text":"船隊逼近曹營水寨，諸葛亮下令一字排開，軍士一齊擂鼓吶喊，聲勢震天。\n魯肅嚇得臉色發白：「萬一曹兵殺出來怎麼辦？」諸葛亮大笑：「霧這麼大，曹操必不敢出。」"},{"id":"c7","title":"萬箭齊發","text":"曹操聽見鼓聲，怕有埋伏，不敢出戰，只命一萬多名弓箭手朝江面猛射。\n箭如飛蝗，密密麻麻地插滿了草人和船身。諸葛亮又下令調頭，讓另一side也受滿了箭。"},{"id":"c8","title":"滿載而歸","text":"天快亮時，霧漸漸散去，二十艘船上插滿了箭，足足超過十萬支。\n軍士齊聲高喊：「謝丞相賜箭！」船隊順流而回。諸葛亮如期交箭，周瑜聽了，長長地嘆了一口氣：「我真的比不上他啊。」"}],"scenes":{"cover":{"backdrop":"bd_cover.jpg","cards":[{"src":"cards/cover_straw_back.webp","kind":"group","w":0.4687,"h":0.3142,"x":0.2777,"d":0.04,"ox":0.0212},{"src":"cards/cover_boat.webp","kind":"boat","w":0.5446,"h":0.576,"x":-0.2942,"d":0.2965,"ox":0.0254,"pt":[0.209,0.651],"lamp":true},{"src":"cards/cover_straw_l.webp","kind":"figure","w":0.3017,"h":0.38,"x":-0.3897,"d":0.7139,"ox":0.015},{"src":"cards/cover_straw_front.webp","kind":"group","w":0.5014,"h":0.414,"x":0.3681,"d":0.7244,"ox":0.0264}]},"c1":{"backdrop":"bd_c1.jpg","cards":[{"src":"cards/c1_zhouyu.webp","kind":"figure","w":0.5029,"h":0.857,"x":-0.3101,"d":0.5076,"ox":0.0578},{"src":"cards/c1_zhuge.webp","kind":"figure","w":0.6082,"h":0.7491,"x":0.4059,"d":0.5519,"ox":-0.0787}]},"c2":{"backdrop":"bd_c2.jpg","cards":[{"src":"cards/c2_zhouyu.webp","kind":"figure","w":0.38,"h":0.743,"x":0.2032,"d":0.2965,"ox":-0.0315},{"src":"cards/c2_lusu.webp","kind":"figure","w":0.3569,"h":0.7,"x":0.499,"d":0.6606,"ox":-0.0081},{"src":"cards/c2_zhuge_table.webp","kind":"group","w":0.7084,"h":0.7175,"x":-0.1736,"d":0.7769,"ox":-0.0286,"pt":[0.884,0.357],"lamp":true}]},"c3":{"backdrop":"bd_c3.jpg","cards":[{"src":"cards/c3_zhuge.webp","kind":"figure","w":0.3395,"h":0.5697,"x":-0.1133,"d":0.6337,"ox":-0.0372},{"src":"cards/c3_lusu.webp","kind":"figure","w":0.2973,"h":0.5574,"x":0.2197,"d":0.6445,"ox":-0.0128},{"src":"cards/c3_lantern.webp","kind":"lantern","w":0.1649,"h":0.4343,"x":0.4763,"d":0.6445,"ox":0.0012,"pt":[0.493,0.775],"lamp":true}]},"c4":{"backdrop":"bd_c4.jpg","cards":[{"src":"cards/c4_lamp_table.webp","kind":"lantern","w":0.4005,"h":0.3443,"x":0.0691,"d":0.2198,"ox":0.0012,"pt":[0.476,0.596],"lamp":true},{"src":"cards/c4_zhuge.webp","kind":"figure","w":0.4986,"h":0.7945,"x":-0.2957,"d":0.6174,"ox":-0.0617,"pt":[0.701,0.563],"steam":true},{"src":"cards/c4_lusu.webp","kind":"figure","w":0.4302,"h":0.8348,"x":0.3844,"d":0.6337,"ox":0.0035,"pace":true}]},"c5":{"backdrop":"bd_c5.jpg","cards":[{"src":"cards/c5_zhuge.webp","kind":"figure","w":0.2974,"h":0.5188,"x":-0.3644,"d":0.7033,"ox":-0.0104},{"src":"cards/c5_boat.webp","kind":"boat","w":0.9263,"h":0.6312,"x":0.1964,"d":0.8287,"ox":-0.0114,"pt":[0.456,0.403],"lamp":true}]},"c6":{"backdrop":"bd_c6.jpg","cards":[{"src":"cards/c6_lantern.webp","kind":"lantern","w":0.1563,"h":0.3541,"x":0.0972,"d":0.2198,"ox":-0.0024,"pt":[0.469,0.221],"lamp":true},{"src":"cards/c6_zhuge.webp","kind":"figure","w":0.2961,"h":0.5898,"x":-0.4804,"d":0.4797,"ox":0.0059},{"src":"cards/c6_lusu.webp","kind":"figure","w":0.3145,"h":0.582,"x":-0.1567,"d":0.5574,"ox":-0.0012,"tremble":true},{"src":"cards/c6_drummers.webp","kind":"drums","w":0.7106,"h":0.5312,"x":0.4523,"d":0.6174,"ox":-0.014}]},"c7":{"backdrop":"bd_c7.jpg","cards":[{"src":"cards/c7_tower.webp","kind":"tower","w":0.4456,"h":0.9543,"x":-0.3341,"d":0.2906,"ox":0.0012},{"src":"cards/c7_boat.webp","kind":"boat","w":0.8324,"h":0.6226,"x":0.2548,"d":0.7925,"ox":0.0411,"target":true}]},"c8":{"backdrop":"bd_c8.jpg","cards":[{"src":"cards/c8_boat.webp","kind":"boat","w":0.6782,"h":0.6149,"x":0.1496,"d":0.5574,"ox":-0.0082,"pt":[0.253,0.492],"lamp":true},{"src":"cards/c8_straw_r.webp","kind":"group","w":0.4582,"h":0.4948,"x":0.5417,"d":0.756,"ox":0.0011,"cheer":true},{"src":"cards/c8_straw_l.webp","kind":"group","w":0.4293,"h":0.5047,"x":-0.401,"d":0.7821,"ox":0.0023,"cheer":true}]},"end":{"backdrop":"page_far.jpg","cards":[{"src":"cards/cast_zhuge.webp","kind":"figure","role":"zhuge","w":0.3522,"h":0.5633,"x":-0.6,"d":0.42,"ox":0},{"src":"cards/cast_lusu.webp","kind":"figure","role":"lusu","w":0.2981,"h":0.5672,"x":0.0,"d":0.42,"ox":0},{"src":"cards/cast_straw.webp","kind":"figure","role":"straw","w":0.2915,"h":0.3694,"x":0.6,"d":0.42,"ox":0},{"src":"cards/cast_zhouyu.webp","kind":"figure","role":"zhouyu","w":0.2981,"h":0.6358,"x":-0.3,"d":0.48,"ox":0},{"src":"cards/cast_caocao.webp","kind":"figure","role":"caocao","w":0.3337,"h":0.6042,"x":0.3,"d":0.48,"ox":0}]}},"v":"d08c865c69"}</script>
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
+<script type="module">
+import * as THREE from 'three';
+
+const DATA = JSON.parse(document.getElementById('data').textContent);
+const V = DATA.v || '';                         // cache-buster for assets
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ------------------------------------------------------------------ book geometry
+// hinge runs along x at height T; the standing page is the far page (z<0 side), the
+// floor page lies on +z toward the reader. Units: one page is W x H.
+const W = 1.64, H = 1.0, T = 0.085;
+const SPREADS = ['cover', ...DATA.chapters.map(c => c.id), 'end'];
+const LAST = SPREADS.length - 1;               // pos runs from -1 (closed) to LAST
+
+// ------------------------------------------------------------------ renderer / scene
+const canvas = document.getElementById('gl');
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+} catch (e) {
+  document.getElementById('err').style.display = 'grid';
+  document.getElementById('loading').classList.add('done');
+  throw e;
+}
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.localClippingEnabled = true;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0d1322);
+scene.fog = new THREE.Fog(0x0d1322, 4.5, 10);
+const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 40);
+
+// warm desk lamp from the upper left, cold blue room — the same grade as the Grok stills
+const lamp = new THREE.SpotLight(0xffd6a0, 70, 0, 0.62, 0.75, 2);
+lamp.position.set(-2.3, 3.3, 2.3);
+lamp.target.position.set(0.05, 0.35, 0.35);
+lamp.castShadow = true;
+lamp.shadow.mapSize.set(2048, 2048);
+lamp.shadow.bias = -0.0004;
+lamp.shadow.normalBias = 0.01;
+lamp.shadow.camera.near = 1.5; lamp.shadow.camera.far = 9;
+scene.add(lamp, lamp.target);
+scene.add(new THREE.HemisphereLight(0x8ea2d6, 0x2a1d12, 1.15));
+const fill = new THREE.DirectionalLight(0x9fb4ff, 0.55);
+fill.position.set(2.5, 1.2, 3);
+scene.add(fill);
+
+// ------------------------------------------------------------------ textures
+const manager = new THREE.LoadingManager();
+const loader = new THREE.TextureLoader(manager);
+const maxAniso = renderer.capabilities.getMaxAnisotropy();
+function tex(src, opts = {}) {
+  const t = loader.load(`assets/${src}${V ? '?v=' + V : ''}`);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = Math.min(8, maxAniso);
+  if (opts.repeat) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(...opts.repeat); }
+  return t;
+}
+function canvasTex(cnv) {
+  const t = new THREE.CanvasTexture(cnv);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = Math.min(8, maxAniso);
+  return t;
+}
+function img(src) {
+  return new Promise((ok, bad) => { const i = new Image(); i.onload = () => ok(i); i.onerror = bad; i.src = `assets/${src}${V ? '?v=' + V : ''}`; });
+}
+
+// worn indigo book-cloth: a fine weave, faded in patches
+function clothTexture() {
+  const c = document.createElement('canvas'); c.width = c.height = 256;
+  const x = c.getContext('2d');
+  x.fillStyle = '#4a4a86'; x.fillRect(0, 0, 256, 256);
+  const d = x.getImageData(0, 0, 256, 256), a = d.data;
+  for (let j = 0; j < 256; j++) for (let i = 0; i < 256; i++) {
+    const k = (j * 256 + i) * 4;
+    const weave = ((i % 3 === 0) ? -14 : 0) + ((j % 3 === 0) ? -10 : 0);
+    const n = (Math.random() - 0.5) * 26 + weave;
+    const fade = 18 * Math.sin(i * 0.031) * Math.sin(j * 0.027 + 1.3);
+    a[k] += n + fade; a[k + 1] += n + fade; a[k + 2] += n * 1.1 + fade * 0.6;
+  }
+  x.putImageData(d, 0, 0);
+  const t = canvasTex(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(6, 4);
+  return t;
+}
+const T_FLOOR = tex('page_floor.jpg');
+const T_BLOCK = tex('page_block.jpg');
+const T_CLOTH = clothTexture();
+const T_WOOD = tex('wood.jpg', { repeat: [5, 3] });
+const BACKDROP = {};                               // spread id -> texture
+for (const id of SPREADS) if (DATA.scenes[id] && id !== 'end' && id !== 'cover') BACKDROP[id] = tex(DATA.scenes[id].backdrop);
+
+// paper materials
+const paper = (map, extra = {}) => new THREE.MeshStandardMaterial({ map, roughness: 0.92, metalness: 0, ...extra });
+const M_FLOOR = paper(T_FLOOR);
+const M_CLOTH = new THREE.MeshStandardMaterial({ map: T_CLOTH, roughness: 1 });
+const M_EDGE = new THREE.MeshStandardMaterial({ color: 0xcdb58c, roughness: 1 });
+const M_NONE = new THREE.MeshBasicMaterial({ visible: false });
+
+// ------------------------------------------------------------------ room: table + wall
+const table = new THREE.Mesh(new THREE.PlaneGeometry(9, 7), new THREE.MeshStandardMaterial({ map: T_WOOD, roughness: 0.62, color: 0xb08a6a }));
+table.rotation.x = -Math.PI / 2; table.position.set(0, 0, 0.8); table.receiveShadow = true;
+scene.add(table);
+const wall = new THREE.Mesh(new THREE.PlaneGeometry(14, 6), new THREE.MeshStandardMaterial({ color: 0x1b2440, roughness: 1 }));
+wall.position.set(0, 3, -2.7); wall.receiveShadow = true;
+scene.add(wall);
+
+// ------------------------------------------------------------------ the book
+const book = new THREE.Group();
+scene.add(book);
+const RIM = 0.035, BOARD = 0.016;
+
+// back board on the table
+const backBoard = new THREE.Mesh(new THREE.BoxGeometry(W + RIM * 2, BOARD, H + RIM * 1.5), M_CLOTH);
+backBoard.position.set(0, BOARD / 2, H / 2 + RIM * 0.25);
+backBoard.castShadow = backBoard.receiveShadow = true;
+book.add(backBoard);
+// the ragged block of pages; its front and ends show the torn page stack from the master photo
+const blockH = T - BOARD - 0.004;
+const block = new THREE.Mesh(new THREE.BoxGeometry(W - 0.01, blockH, H - 0.01),
+  [paper(T_BLOCK), paper(T_BLOCK), M_EDGE, M_EDGE, paper(T_BLOCK), M_EDGE]);
+block.position.set(0, BOARD + blockH / 2, H / 2);
+block.castShadow = block.receiveShadow = true;
+book.add(block);
+// spine / gutter cloth strip behind the hinge
+const spine = new THREE.Mesh(new THREE.BoxGeometry(W + RIM * 2, T + 0.03, 0.032), M_CLOTH);
+spine.position.set(0, (T + 0.03) / 2, -0.016);
+spine.castShadow = spine.receiveShadow = true;
+book.add(spine);
+// top of the page block = the floor of the NEXT spread (revealed while a page turns)
+const lowerFloor = new THREE.Mesh(new THREE.PlaneGeometry(W, H), M_FLOOR);
+lowerFloor.rotation.x = -Math.PI / 2; lowerFloor.position.set(0, T - 0.0035, H / 2);
+lowerFloor.receiveShadow = true;
+book.add(lowerFloor);
+
+// a turning leaf: front face = floor paper (face up while flat), back face = a backdrop.
+// Pivot sits on the hinge; rotation.x = -phi lifts it (phi = 0 flat .. PI/2 standing).
+function leaf(frontMat, backMat, thick, board) {
+  const pivot = new THREE.Group();
+  pivot.position.set(0, T, 0);
+  const off = board ? 0.0095 : 0;                   // cover board sits on top of the pages
+  const len = board ? H + RIM : H, wid = board ? W + RIM * 2 : W;
+  const core = new THREE.Mesh(new THREE.BoxGeometry(wid, thick, len),
+    [board ? M_CLOTH : M_EDGE, board ? M_CLOTH : M_EDGE, M_NONE, M_NONE, board ? M_CLOTH : M_EDGE, M_NONE]);
+  core.position.set(0, off + thick / 2, len / 2 - (board ? 0.004 : 0));
+  core.castShadow = core.receiveShadow = true;
+  // front (up when flat): texture top toward the hinge
+  const front = new THREE.Mesh(new THREE.PlaneGeometry(wid, len), frontMat);
+  front.rotation.x = -Math.PI / 2; front.position.set(0, off + thick + 0.0002, len / 2 - (board ? 0.004 : 0));
+  // back (down when flat, faces the reader when standing): texture top toward the free edge
+  const back = new THREE.Mesh(new THREE.PlaneGeometry(W, H), backMat);
+  back.rotation.x = Math.PI / 2; back.position.set(0, off - 0.0002, H / 2);
+  front.receiveShadow = back.receiveShadow = true;
+  front.castShadow = true;
+  pivot.add(core, front, back);
+  book.add(pivot);
+  return { pivot, front, back };
+}
+const M_FAR = paper(null);            // the standing page (inside of the front cover); map swapped per spread
+const M_SHEET_BACK = paper(null);
+const M_COVER = paper(null);
+const cover = leaf(M_COVER, M_FAR, BOARD, true);
+const sheet = leaf(M_FLOOR, M_SHEET_BACK, 0.004, false);
+
+// ------------------------------------------------------------------ canvas-painted pages (title, ending)
+const FONT = '"Ma Shan Zheng","Noto Serif TC",serif';
+function seal(ctx, x, y, s, text) {
+  ctx.save();
+  ctx.fillStyle = '#a8322a'; ctx.globalAlpha = 0.86;
+  ctx.fillRect(x, y, s, s);
+  ctx.fillStyle = '#f3e3cf'; ctx.globalAlpha = 0.95;
+  ctx.font = `${s * 0.42}px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  [...text].forEach((ch, i) => ctx.fillText(ch, x + s * (i < 2 ? 0.72 : 0.28), y + s * (i % 2 ? 0.72 : 0.28)));
+  ctx.restore();
+}
+function vertical(ctx, text, x, y, size, color = '#1c1712') {
+  ctx.save(); ctx.fillStyle = color; ctx.font = `${size}px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  [...text].forEach((ch, i) => ctx.fillText(ch, x, y + i * size * 1.02));
+  ctx.restore();
+}
+async function paintPages() {
+  try { await document.fonts.load(`80px "Ma Shan Zheng"`, '草船借箭完'); } catch (e) {}
+  const [bdCover, panel, far] = await Promise.all([
+    img(DATA.scenes.cover.backdrop), img('cover_panel.jpg'), img('page_far.jpg')]);
+  const cloth = T_CLOTH.image;
+
+  // inside of the cover: the misty river, with the title brushed down the right side
+  let c = document.createElement('canvas'); c.width = 1024; c.height = 624;
+  let x = c.getContext('2d');
+  x.drawImage(bdCover, 0, 0, 1024, 624);
+  x.globalAlpha = 0.9; vertical(x, '草船借箭', 900, 70, 92); x.globalAlpha = 1;
+  seal(x, 870, 470, 58, '三國');
+  BACKDROP.cover = canvasTex(c);
+
+  // outside of the cover: worn indigo cloth, the debossed ink-wash panel, a paper title slip
+  c = document.createElement('canvas'); c.width = 1024; c.height = 640;
+  x = c.getContext('2d');
+  const pat = x.createPattern(cloth, 'repeat');
+  x.fillStyle = pat; x.fillRect(0, 0, 1024, 640);
+  x.fillStyle = 'rgba(40,40,90,0.18)'; x.fillRect(0, 0, 1024, 640);
+  const g = x.createRadialGradient(512, 320, 200, 512, 320, 640);
+  g.addColorStop(0, 'rgba(255,255,255,0.06)'); g.addColorStop(1, 'rgba(10,10,30,0.45)');
+  x.fillStyle = g; x.fillRect(0, 0, 1024, 640);
+  x.save(); x.shadowColor = 'rgba(0,0,0,.55)'; x.shadowBlur = 10; x.shadowOffsetY = 3;
+  x.drawImage(panel, 360, 110, 560, 330); x.restore();
+  x.strokeStyle = 'rgba(230,225,210,.35)'; x.lineWidth = 3; x.strokeRect(352, 102, 576, 346);
+  // title slip (題簽)
+  x.save(); x.shadowColor = 'rgba(0,0,0,.5)'; x.shadowBlur = 8;
+  x.fillStyle = '#e9dcc0'; x.fillRect(118, 70, 150, 470); x.restore();
+  x.strokeStyle = '#6b5a45'; x.lineWidth = 2; x.strokeRect(128, 80, 130, 450);
+  vertical(x, '草船借箭', 193, 104, 94);
+  seal(x, 212, 482, 38, '立體');
+  M_COVER.map = canvasTex(c); M_COVER.needsUpdate = true;
+
+  // last page: blank parchment, 全書完
+  c = document.createElement('canvas'); c.width = 1024; c.height = 624;
+  x = c.getContext('2d');
+  x.drawImage(far, 0, 0, 1024, 624);
+  x.globalAlpha = 0.85; vertical(x, '全書完', 905, 48, 96); x.globalAlpha = 1;
+  seal(x, 880, 352, 50, '赤壁');
+  BACKDROP.end = canvasTex(c);
+  applySpread(true);
+}
+
+// ------------------------------------------------------------------ pop-up cards
+// Paper cut-outs keep the lighting baked into the Grok stills; a little emissive keeps them
+// readable when the lamp is behind them. The back of each cut-out is plain card.
+function cardMaterials(map, planes) {
+  const front = new THREE.MeshStandardMaterial({
+    map, alphaTest: 0.5, roughness: 0.85, side: THREE.FrontSide,
+    emissive: 0xffffff, emissiveMap: map, emissiveIntensity: 0.22,
+    clippingPlanes: planes, clipShadows: true,
+  });
+  const back = new THREE.MeshStandardMaterial({ map, alphaTest: 0.5, roughness: 0.95, side: THREE.BackSide,
+    clippingPlanes: planes, clipShadows: true });
+  back.onBeforeCompile = s => {
+    s.fragmentShader = s.fragmentShader.replace('#include <map_fragment>',
+      '#include <map_fragment>\n diffuseColor.rgb = vec3(0.78, 0.69, 0.55);');
+  };
+  return [front, back];
+}
+
+// soft round glow / smoke sprite
+function blobTexture(inner = 'rgba(255,255,255,1)', outer = 'rgba(255,255,255,0)') {
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const x = c.getContext('2d');
+  const g = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, inner); g.addColorStop(1, outer);
+  x.fillStyle = g; x.fillRect(0, 0, 128, 128);
+  return canvasTex(c);
+}
+function cloudTexture() {
+  const c = document.createElement('canvas'); c.width = 256; c.height = 128;
+  const x = c.getContext('2d');
+  for (let i = 0; i < 26; i++) {
+    const px = 40 + Math.random() * 176, py = 46 + Math.random() * 40, r = 18 + Math.random() * 34;
+    const g = x.createRadialGradient(px, py, 0, px, py, r);
+    g.addColorStop(0, 'rgba(236,236,240,0.22)'); g.addColorStop(1, 'rgba(236,236,240,0)');
+    x.fillStyle = g; x.fillRect(0, 0, 256, 128);
+  }
+  return canvasTex(c);
+}
+const T_GLOW = blobTexture('rgba(255,210,140,0.95)', 'rgba(255,160,60,0)');
+const T_STEAM = blobTexture('rgba(255,255,255,0.55)', 'rgba(255,255,255,0)');
+const T_CLOUD = cloudTexture();
+
+// an arrow: shaft + head + fletching, built along +y with the tip at the origin
+const M_SHAFT = new THREE.MeshStandardMaterial({ color: 0x9a7a52, roughness: 0.8 });
+const M_HEAD = new THREE.MeshStandardMaterial({ color: 0x5b5a5e, roughness: 0.5, metalness: 0.4 });
+const M_FLETCH = new THREE.MeshStandardMaterial({ color: 0xf0ece0, roughness: 1, side: THREE.DoubleSide });
+function makeArrow(planes) {
+  const a = new THREE.Group();
+  const mats = [M_SHAFT, M_HEAD, M_FLETCH].map(m => { const c = m.clone(); c.clippingPlanes = planes; c.clipShadows = true; return c; });
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.0045, 0.0045, 0.26, 5), mats[0]);
+  shaft.position.y = -0.13;                         // tip at the origin, shaft trails along -y
+  const head = new THREE.Mesh(new THREE.ConeGeometry(0.011, 0.036, 5), mats[1]);
+  head.position.y = 0.006;
+  const f1 = new THREE.Mesh(new THREE.PlaneGeometry(0.024, 0.06), mats[2]);
+  f1.position.y = -0.23; const f2 = f1.clone(); f2.rotation.y = Math.PI / 2;
+  a.add(shaft, head, f1, f2);
+  a.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  return a;
+}
+
+const FOGGY = new Set(['cover', 'c3', 'c5', 'c6', 'c7']);
+const DAWN = new Set(['c8']);
+
+class Spread {
+  constructor(id) {
+    this.id = id;
+    this.spec = DATA.scenes[id];
+    this.planes = [new THREE.Plane(new THREE.Vector3(0, 0, -1), H)];
+    this.group = new THREE.Group();
+    this.group.visible = false;
+    book.add(this.group);
+    this.cards = this.spec.cards.map((c, i) => this.card(c, i));
+    this.lamps = [];
+    this.cards.forEach(k => k.lampAt && this.lamps.push(k));
+    this.fx = [];
+    if (FOGGY.has(id)) this.fog();
+    this.arrows = [];
+    this.nextArrow = 0;
+    this.settle = 0;
+  }
+  card(spec, i) {
+    const map = tex(spec.src);
+    const g = new THREE.PlaneGeometry(spec.w, spec.h);
+    g.translate(spec.ox || 0, spec.h / 2, 0);
+    const [mf, mb] = cardMaterials(map, this.planes);
+    const front = new THREE.Mesh(g, mf), back = new THREE.Mesh(g, mb);
+    for (const m of [front, back]) { m.castShadow = true; m.receiveShadow = true; }
+    const sway = new THREE.Group(); sway.add(front, back);
+    const root = new THREE.Group(); root.add(sway);
+    this.group.add(root);
+    const k = { spec, root, sway, front, seed: i * 1.7 + this.id.length, x0: 0 };
+    if (spec.pt) {
+      const px = (spec.pt[0] - 0.5) * spec.w + (spec.ox || 0), py = spec.pt[1] * spec.h;
+      if (spec.lamp) {
+        const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: T_GLOW, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.8 }));
+        glow.scale.set(0.2, 0.2, 1); glow.position.set(px, py, 0.02);
+        sway.add(glow);
+        k.glow = glow; k.lampAt = new THREE.Vector3(px, py, 0.08);
+      }
+      if (spec.steam) {
+        k.steam = [];
+        for (let s = 0; s < 7; s++) {
+          const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: T_STEAM, transparent: true, depthWrite: false, opacity: 0 }));
+          sp.position.set(px, py, 0.03); sp.userData.t = s / 7;
+          sway.add(sp); k.steam.push({ sp, px, py });
+        }
+      }
+    }
+    return k;
+  }
+  fog() {
+    for (let i = 0; i < 14; i++) {
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: T_CLOUD, transparent: true, depthWrite: false, opacity: 0, color: this.id === 'c7' ? 0xb8c4d8 : 0xffffff }));
+      const s = 0.55 + Math.random() * 0.6;
+      sp.scale.set(s * 1.8, s * 0.7, 1);
+      sp.userData = { x: (Math.random() - 0.5) * 1.6, y: 0.05 + Math.random() * 0.3, z: 0.1 + Math.random() * 0.8, v: 0.015 + Math.random() * 0.03, a: 0.5 + Math.random() * 0.5 };
+      this.group.add(sp);
+      this.fx.push(sp);
+    }
+  }
+  // role 'old': cards stand on the lifting leaf and fold down onto it (toward its free edge).
+  // role 'new': cards are parallel-folded to the lifting leaf and stand up with it.
+  pose(role, phi, t, vis) {
+    const g = this.group;
+    g.visible = vis > 0.001;
+    if (!g.visible) return;
+    const s = Math.sin(phi), c = Math.cos(phi);
+    const P = this.planes[0];
+    if (role === 'old') {                   // keep what is within one page length along the leaf
+      P.normal.set(0, -s, -c); P.constant = H + T * s;
+    } else {                                // keep what is over the book (z <= H)
+      P.normal.set(0, 0, -1); P.constant = H + 0.002;
+    }
+    const u = phi / (Math.PI / 2);
+    for (const k of this.cards) {
+      const { spec, root, sway } = k;
+      let psi;                              // card angle from the forward horizontal
+      if (role === 'old') {
+        const beta = (Math.PI / 2) * (1 - u) * (1 - u);
+        psi = beta + phi;
+        root.position.set(spec.x, T + spec.d * s + 0.0025 * c, spec.d * c - 0.0025 * s);
+      } else {
+        psi = phi;
+        root.position.set(spec.x, T - 0.0035, spec.d);
+      }
+      root.rotation.x = Math.PI / 2 - psi;
+      this.animate(k, t, role === 'old' ? 1 - u : u);
+    }
+    // weather belongs to the spread: fades with it
+    for (const sp of this.fx) {
+      const d = sp.userData;
+      const xx = ((d.x + t * d.v + 0.8) % 1.6) - 0.8;       // drift across the page, wrap at its edges
+      sp.position.set(xx, T + d.y, d.z);
+      sp.material.opacity = 0.32 * d.a * vis * Math.sin(Math.PI * (xx + 0.8) / 1.6);
+    }
+  }
+  animate(k, t, up) {
+    const { spec, sway, seed } = k;
+    const live = REDUCED ? 0 : up * up;
+    const settle = this.settle * Math.sin(t * 16 + seed), a = live;
+    sway.position.set(0, 0, 0);
+    sway.rotation.set(0.012 * Math.sin(t * 0.9 + seed) * a + settle * 0.06, 0.02 * Math.sin(t * 0.6 + seed * 2) * a, 0);
+    sway.scale.set(1, 1, 1);
+    switch (spec.kind) {
+      case 'boat':
+        sway.rotation.z = 0.018 * Math.sin(t * 1.1 + seed) * a;
+        sway.position.y = 0.006 * Math.sin(t * 1.3 + seed) * a;
+        break;
+      case 'drums': {
+        const beat = Math.pow(Math.max(0, Math.sin(t * 7.5)), 8);
+        sway.position.y = 0.012 * beat * a;
+        sway.rotation.z = 0.02 * beat * Math.sin(t * 40) * a;
+        break;
+      }
+      case 'group':
+        if (spec.cheer) sway.position.y = 0.03 * Math.abs(Math.sin(t * 3.2 + seed)) * a;
+        break;
+      case 'figure':
+        if (spec.pace) { sway.position.x = 0.07 * Math.sin(t * 0.7) * a; sway.position.y = 0.006 * Math.abs(Math.sin(t * 2.8)) * a; }
+        if (spec.tremble) { sway.rotation.z = 0.012 * Math.sin(t * 38) * a; sway.position.x = 0.003 * Math.sin(t * 29) * a; }
+        break;
+    }
+    if (k.glow) {
+      const f = 0.8 + 0.12 * Math.sin(t * 11 + seed) + 0.08 * Math.sin(t * 23.7);
+      k.flicker = f;
+      k.glow.material.opacity = 0.75 * f * up;
+      const sc = 0.16 + 0.03 * f; k.glow.scale.set(sc, sc, 1);
+    }
+    if (k.steam) for (const st of k.steam) {
+      const p = (t * 0.22 + st.sp.userData.t) % 1;
+      st.sp.position.set(st.px + 0.02 * Math.sin(p * 6 + seed), st.py + p * 0.22, 0.03);
+      const sc = 0.04 + p * 0.08; st.sp.scale.set(sc, sc, 1);
+      st.sp.material.opacity = 0.4 * Math.sin(p * Math.PI) * up;
+    }
+  }
+}
+
+// ------------------------------------------------------------------ c7: a volley of real arrows
+// Arrows are loosed from behind the standing page on Cao Cao's side, arc over the painted storm
+// and stick into the straw soldiers; each stuck arrow is re-parented to the card so it folds away with it.
+const _v = new THREE.Vector3(), _q = new THREE.Quaternion(), _up = new THREE.Vector3(0, 1, 0);
+function volley(sp, t, dt, active) {
+  if (sp.id !== 'c7') return;
+  const target = sp.cards.find(k => k.spec.target);
+  if (!target) return;
+  if (!active) return;
+  if (t > sp.nextArrow && sp.arrows.length < 90) {
+    sp.nextArrow = t + (REDUCED ? 1.2 : 0.07 + Math.random() * 0.12);
+    const a = makeArrow(sp.planes);
+    const s = target.spec;
+    // aim: a random point on the upper two-thirds of the straw soldiers / hull
+    const lx = s.ox + (Math.random() - 0.5) * s.w * 0.8, ly = s.h * (0.15 + Math.random() * 0.6);
+    target.sway.updateWorldMatrix(true, false);
+    const end = target.sway.localToWorld(new THREE.Vector3(lx, ly, 0.0));
+    const start = new THREE.Vector3(-1.1 + Math.random() * 0.9, T + 1.25 + Math.random() * 0.35, -0.7 + Math.random() * 0.3);
+    const dur = 0.7 + Math.random() * 0.3;
+    a.userData = { start, end, local: new THREE.Vector3(lx, ly, 0), t0: t, dur, stuck: false };
+    book.add(a);
+    sp.arrows.push(a);
+  }
+  for (const a of sp.arrows) {
+    const d = a.userData;
+    if (d.stuck) continue;
+    const p = Math.min(1, (t - d.t0) / d.dur);
+    // slight ballistic arc
+    const pos = new THREE.Vector3().lerpVectors(d.start, d.end, p);
+    pos.y += Math.sin(p * Math.PI) * 0.35;
+    const ahead = new THREE.Vector3().lerpVectors(d.start, d.end, Math.min(1, p + 0.02));
+    ahead.y += Math.sin(Math.min(1, p + 0.02) * Math.PI) * 0.35;
+    const dir = (p < 1 ? ahead.sub(pos) : pos.clone().sub(d.prev || d.start)).normalize();
+    _q.setFromUnitVectors(_up, dir);
+    a.position.copy(pos); a.quaternion.copy(_q);
+    d.prev = pos.clone();
+    if (p >= 1) {
+      d.stuck = true;
+      // push the tip a little into the straw, then hand the arrow to the card
+      a.position.addScaledVector(dir, 0.03);
+      target.sway.attach(a);
+    }
+  }
+}
+function clearArrows(sp) {
+  for (const a of sp.arrows) a.removeFromParent();
+  sp.arrows.length = 0;
+}
+
+// ------------------------------------------------------------------ build spreads
+const spreads = SPREADS.map(id => new Spread(id));
+const LAMPS = [0, 1].map(() => {
+  const l = new THREE.PointLight(0xffb366, 0, 1.4, 2);
+  scene.add(l);
+  return l;
+});
+
+// ------------------------------------------------------------------ state: pos in [-1, LAST]
+let pos = -1, target = -1, vel = 0, dragging = false;
+let shownK = null;
+function setMap(m, t) { t = t || null; if (m.map !== t) { m.map = t; m.needsUpdate = true; } }
+function applySpread(force) {
+  const k = Math.max(0, Math.min(LAST, Math.floor(pos)));
+  if (!force && k === shownK) return;
+  shownK = k;
+  setMap(M_FAR, BACKDROP[SPREADS[k]]);
+  setMap(M_SHEET_BACK, BACKDROP[SPREADS[k + 1]]);
+}
+
+function layout(t) {
+  // closed -> cover spread: the cover board is the lifting leaf
+  if (pos < 0) {
+    const phi = (pos + 1) * Math.PI / 2;
+    cover.pivot.rotation.x = -phi;
+    sheet.pivot.visible = false;
+    setMap(M_FAR, BACKDROP.cover);
+    spreads.forEach((sp, i) => i === 0 ? sp.pose('new', phi, t, pos + 1) : sp.pose('', 0, t, 0));
+    shownK = null;
+    return;
+  }
+  cover.pivot.rotation.x = -Math.PI / 2;
+  const k = Math.min(LAST, Math.floor(pos));
+  const f = k === LAST ? 0 : pos - k;
+  const phi = f * Math.PI / 2;
+  applySpread(false);
+  sheet.pivot.visible = true;
+  sheet.pivot.rotation.x = -phi;
+  spreads.forEach((sp, i) => {
+    if (i === k) sp.pose('old', phi, t, 1 - f * 0.999);
+    else if (i === k + 1) sp.pose('new', phi, t, f);
+    else sp.pose('', 0, t, 0);
+  });
+}
+
+// ------------------------------------------------------------------ camera
+const camClosed = { dir: new THREE.Vector3(0.42, 0.78, 0.82).normalize(), l: new THREE.Vector3(0.02, 0.05, 0.45), hw: 1.25, hh: 0.8 };
+const camRead = { dir: new THREE.Vector3(0, 0.3, 1).normalize(), l: new THREE.Vector3(0, T + 0.46, 0.34), hw: 1.02, hh: 0.74 };
+const pointer = { x: 0, y: 0, sx: 0, sy: 0 };
+function frameCamera(t, shake) {
+  const aspect = innerWidth / innerHeight;
+  const e = THREE.MathUtils.smootherstep(pos, -1, -0.15);
+  const dir = camClosed.dir.clone().lerp(camRead.dir, e).normalize();
+  const l = camClosed.l.clone().lerp(camRead.l, e);
+  // fit the book both ways; on tall screens leave the lower part for the caption
+  const vt = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)), ht = vt * aspect;
+  const narrow = aspect < 1 ? THREE.MathUtils.lerp(1.05, 0.86, e) : 1;   // phones: let the table edges go, keep the book big
+  const hw = THREE.MathUtils.lerp(camClosed.hw, camRead.hw, e) * narrow, hh = THREE.MathUtils.lerp(camClosed.hh, camRead.hh, e);
+  const capRoom = aspect < 1 ? 0.62 : 0.8;              // share of the screen height the book may use
+  const dist = Math.max(hw / ht, hh / (vt * capRoom));
+  l.y -= (1 - capRoom) * dist * vt * 0.9;                // push the book up, above the caption band
+  // pointer parallax + a slow idle drift
+  pointer.sx += (pointer.x - pointer.sx) * 0.05; pointer.sy += (pointer.y - pointer.sy) * 0.05;
+  const yaw = (REDUCED ? 0 : 0.035 * Math.sin(t * 0.13)) + pointer.sx * 0.3 * e;
+  const pitch = -pointer.sy * 0.1 * e;
+  const off = dir.multiplyScalar(dist);
+  off.applyAxisAngle(new THREE.Vector3(0, 1, 0), -yaw);
+  const right = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), off).normalize();
+  off.applyAxisAngle(right, pitch);
+  camera.position.copy(l).add(off);
+  if (shake) camera.position.x += shake;
+  camera.lookAt(l);
+  scene.fog.near = dist * 1.6; scene.fog.far = dist * 3.6;   // the room fades out behind the book at any distance
+}
+
+// ------------------------------------------------------------------ captions + chrome
+const cap = document.getElementById('cap');
+const capNum = cap.querySelector('.num'), capH = cap.querySelector('h2'), capP = cap.querySelector('p'), capAct = cap.querySelector('.act');
+const NUM = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+let capFor = null;
+function caption() {
+  const s = Math.round(pos);
+  const vis = 1 - THREE.MathUtils.smoothstep(Math.abs(pos - s), 0.06, 0.28);
+  if (s !== capFor) {
+    capFor = s;
+    cap.classList.toggle('title', s === -1);
+    capAct.innerHTML = '';
+    if (s === -1) { capNum.textContent = '三國故事 · 紙雕立體書'; capH.textContent = DATA.title; capP.textContent = '點一下，翻開這本老書'; }
+    else if (s === 0) { capNum.textContent = '序'; capH.textContent = DATA.title; capP.textContent = DATA.cover.text; }
+    else if (s === LAST) {
+      capNum.textContent = '終'; capH.textContent = '全書完'; capP.textContent = '周瑜、諸葛亮、魯肅、曹操與稻草人——謝謝收看。';
+      const b = document.createElement('button'); b.className = 'again'; b.textContent = '闔上書，再讀一次';
+      b.onclick = e => { e.stopPropagation(); go(-1); };
+      capAct.appendChild(b);
+    } else {
+      const c = DATA.chapters[s - 1];
+      capNum.textContent = `第${NUM[s - 1]}章`; capH.textContent = c.title; capP.textContent = c.text;
+    }
+  }
+  cap.style.opacity = vis.toFixed(3);
+  cap.style.display = vis < 0.01 ? 'none' : '';
+  document.getElementById('prev').disabled = target <= -1;
+  document.getElementById('next').disabled = target >= LAST;
+  dots.forEach((d, i) => d.classList.toggle('on', i === Math.max(0, Math.round(target))));
+  document.body.dataset.spread = s;              // for tests: which spread is showing
+}
+const dotsEl = document.getElementById('dots');
+const dots = SPREADS.map((id, i) => {
+  const b = document.createElement('button');
+  b.setAttribute('aria-label', i === 0 ? '序' : i === LAST ? '完' : `第${NUM[i - 1]}章`);
+  b.onclick = e => { e.stopPropagation(); go(i); };
+  dotsEl.appendChild(b);
+  return b;
+});
+
+// ------------------------------------------------------------------ input
+function go(n) { target = Math.max(-1, Math.min(LAST, n)); }
+function step(d) { go(Math.round(target) + d); }
+document.getElementById('prev').onclick = e => { e.stopPropagation(); step(-1); };
+document.getElementById('next').onclick = e => { e.stopPropagation(); step(1); };
+addEventListener('keydown', e => {
+  if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); step(1); }
+  if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); step(-1); }
+  if (e.key === 'Home') go(-1);
+  if (e.key === 'End') go(LAST);
+});
+let wheelAcc = 0, wheelLock = 0;
+addEventListener('wheel', e => {
+  e.preventDefault();
+  const now = performance.now();
+  if (now < wheelLock) return;
+  wheelAcc += e.deltaY + e.deltaX;
+  if (Math.abs(wheelAcc) > 60) { step(Math.sign(wheelAcc)); wheelAcc = 0; wheelLock = now + 650; }
+}, { passive: false });
+// drag: pull the page up (or swipe left) to lift it by hand; release snaps to the nearer side
+let down = null;
+canvas.addEventListener('pointerdown', e => {
+  down = { x: e.clientX, y: e.clientY, p: pos, moved: false };
+  canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove', e => {
+  pointer.x = (e.clientX / innerWidth) * 2 - 1; pointer.y = (e.clientY / innerHeight) * 2 - 1;
+  if (!down) return;
+  const dy = down.y - e.clientY, dx = down.x - e.clientX;
+  const d = (Math.abs(dy) > Math.abs(dx) ? dy : dx) / Math.min(innerHeight, 700) * 1.6;
+  if (Math.abs(dx) + Math.abs(dy) > 8) { down.moved = true; dragging = true; canvas.classList.add('drag'); }
+  if (dragging) target = Math.max(-1, Math.min(LAST, down.p + d));
+});
+function release(e) {
+  if (!down) return;
+  if (!down.moved) step(e.shiftKey ? -1 : 1);
+  else {
+    const f = target - Math.floor(target), base = Math.floor(target);
+    const dir = Math.sign(target - down.p);
+    go(dir >= 0 ? (f > 0.2 ? base + 1 : base) : (f < 0.8 ? base : base + 1));
+  }
+  down = null; dragging = false; canvas.classList.remove('drag');
+}
+canvas.addEventListener('pointerup', release);
+canvas.addEventListener('pointercancel', release);
+addEventListener('pointerleave', () => { pointer.x = pointer.y = 0; });
+
+// ------------------------------------------------------------------ loop
+function resize() {
+  renderer.setSize(innerWidth, innerHeight, false);
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+resize();
+
+const clock = new THREE.Clock();
+let lastK = null;
+function tick() {
+  const dt = Math.min(0.05, clock.getDelta());
+  const t = clock.elapsedTime;
+  // critically damped spring toward target (a page turn takes about a second)
+  const kS = dragging ? 160 : (REDUCED ? 120 : 26), cS = 2 * Math.sqrt(kS);
+  vel += ((target - pos) * kS - vel * cS) * dt;
+  pos += vel * dt;
+  if (Math.abs(target - pos) < 0.0005 && Math.abs(vel) < 0.001) { pos = target; vel = 0; }
+  pos = Math.max(-1, Math.min(LAST, pos));
+
+  const k = Math.round(pos);
+  if (k !== lastK) {                       // a spread has just landed: let its cards wobble into place
+    if (lastK !== null && spreads[k]) spreads[k].settle = 1;
+    if (lastK !== null && spreads[lastK] && Math.abs(pos - lastK) > 0.9) clearArrows(spreads[lastK]);
+    lastK = k;
+  }
+  spreads.forEach(sp => sp.settle *= Math.exp(-dt * 3.5));
+  layout(t);
+
+  // arrows only fly while chapter 7 is open and still
+  const c7 = spreads[SPREADS.indexOf('c7')];
+  const c7on = Math.abs(pos - SPREADS.indexOf('c7')) < 0.08;
+  volley(c7, t, dt, c7on);
+  if (Math.abs(pos - SPREADS.indexOf('c7')) >= 1) clearArrows(c7);
+
+  // lantern point lights follow the nearest spread's lamps
+  const near = spreads[Math.max(0, Math.min(LAST, k))];
+  const vis = pos < 0 ? pos + 1 : 1 - Math.min(1, Math.abs(pos - k) * 2);
+  LAMPS.forEach((L, i) => {
+    const lk = near.lamps[i];
+    if (!lk || vis <= 0) { L.intensity = 0; return; }
+    lk.sway.updateWorldMatrix(true, false);
+    L.position.copy(lk.lampAt).applyMatrix4(lk.sway.matrixWorld);
+    L.intensity = 0.55 * (lk.flicker || 1) * vis;
+  });
+
+  // chapter 6 drums shake the table a little; chapter 8 warms the lamp to dawn
+  const c6 = SPREADS.indexOf('c6');
+  const drum = !REDUCED && Math.abs(pos - c6) < 0.1 ? 0.0035 * Math.pow(Math.max(0, Math.sin(t * 7.5)), 8) * Math.sin(t * 60) : 0;
+  const dawn = Math.max(0, 1 - Math.abs(pos - SPREADS.indexOf('c8')));
+  lamp.color.setHex(0xffd6a0).lerp(new THREE.Color(0xffc38a), dawn);
+  lamp.intensity = 70 + 18 * dawn;
+
+  frameCamera(t, drum);
+  caption();
+  renderer.render(scene, camera);
+  requestAnimationFrame(tick);
+}
+
+manager.onLoad = () => {
+  document.getElementById('loading').classList.add('done');
+};
+paintPages().catch(e => console.error(e));
+requestAnimationFrame(tick);
+// test hook: lets a headless check read state without guessing from pixels
+window.__book = { get pos() { return pos; }, get target() { return target; }, go, spreads,
+  jump(p) { pos = target = p; vel = 0; } };
+</script>
+</body>
+</html>
