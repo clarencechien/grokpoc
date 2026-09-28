@@ -1,0 +1,127 @@
+{
+ "rise": {
+  "note": "blank book -> c7 pop-up stands up (Grok: reversed collapse clip)",
+  "grok": {
+   "size": "1280x720",
+   "fps": 24.0,
+   "frames": 145,
+   "seconds": 6.04,
+   "audio": false,
+   "first": 13.5,
+   "last": 2.1,
+   "rim": 6.2,
+   "peaks": 2
+  },
+  "omni": {
+   "size": "1280x720",
+   "fps": 24.0,
+   "frames": 144,
+   "seconds": 6.0,
+   "audio": true,
+   "first": 2.9,
+   "last": 2.9,
+   "rim": 2.2,
+   "peaks": 2
+  }
+ },
+ "turn": {
+  "note": "c7 page turns away, book ends blank (Grok: first frame only)",
+  "grok": {
+   "size": "1280x720",
+   "fps": 24.0,
+   "frames": 145,
+   "seconds": 6.04,
+   "audio": false,
+   "first": 2.1,
+   "last": 9.8,
+   "rim": 11.4,
+   "peaks": 2
+  },
+  "omni": {
+   "size": "1280x720",
+   "fps": 24.0,
+   "frames": 144,
+   "seconds": 6.0,
+   "audio": true,
+   "first": 3.2,
+   "last": 2.4,
+   "rim": 2.4,
+   "peaks": 1
+  }
+ },
+ "ambient": {
+  "note": "arrows keep falling, nothing else moves",
+  "grok": {
+   "size": "1280x720",
+   "fps": 24.0,
+   "frames": 145,
+   "seconds": 6.04,
+   "audio": false,
+   "first": 2.1,
+   "last": 4.9,
+   "rim": 1.8,
+   "peaks": 0
+  },
+  "omni": {
+   "size": "1280x720",
+   "fps": 24.0,
+   "frames": 144,
+   "seconds": 6.0,
+   "audio": true,
+   "first": 3.6,
+   "last": 5.3,
+   "rim": 1.5,
+   "peaks": 2
+  }
+ },
+ "direct": {
+  "note": "c6 -> c7 in one shot (Grok needs turn + rise + xfade)",
+  "grok": {
+   "size": "1280x720",
+   "fps": 24.0,
+   "frames": 290,
+   "seconds": 12.08,
+   "audio": false,
+   "first": 2.0,
+   "last": 2.1,
+   "rim": 6.5,
+   "peaks": 7
+  },
+  "omni": {
+   "size": "1280x720",
+   "fps": 24.0,
+   "frames": 144,
+   "seconds": 6.0,
+   "audio": true,
+   "first": 3.2,
+   "last": 3.0,
+   "rim": 2.1,
+   "peaks": 2
+  }
+ },
+ "direct_reroll": {
+  "note": "same prompt and frames as 'direct', second roll",
+  "grok": {
+   "size": "1280x720",
+   "fps": 24.0,
+   "frames": 290,
+   "seconds": 12.08,
+   "audio": false,
+   "first": 2.0,
+   "last": 2.1,
+   "rim": 6.5,
+   "peaks": 7
+  },
+  "omni": {
+   "size": "1280x720",
+   "fps": 24.0,
+   "frames": 144,
+   "seconds": 6.0,
+   "audio": true,
+   "first": 3.2,
+   "last": 3.1,
+   "rim": 2.2,
+   "peaks": 4
+  }
+ }
+}

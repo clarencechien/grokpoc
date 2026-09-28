@@ -396,3 +396,12 @@ for unit in chapters:
 - 裁判問題按素材種類分：跨頁（數人頭／船／稻草兵、背景有無人物、書有無被動到）；翻頁片（空白頁是否出現在可見人物前、末格是否空、鉸鏈是否仍水平）；升起片（首格是否空白、末格對跨頁的距離）；環境片（只有一個動作、書不動）。
 - 一次裁判呼叫約 1–4 分鐘（跟生成同量級），所以先跑純程式指標，過了才問 VLM。
 - 若改直接打 API（有 `last_frame`），翻頁片和升起片的末格是我們給的，「結尾是否空白」「揭露是否為本章」這兩類檢查直接消失，抽卡面剩中段動作。
+
+## 17. Gemini Omni 1.1 Flash 對照（c7 A/B，2026-09-28）
+
+同樣首格／末格、720p、6 秒，Grok CLI 對 Omni。細節與並排影片在 `arrows/ab_omni/`。
+
+- **首末格真的釘得住**：兩端和指定圖的差約 3（無關兩張約 19–20）；鏡頭漂移約 2，Grok 是 6–11。§13 的「收折片倒放」與「翻頁＋升起兩支接起來」都可以不要。
+- **抽卡從兩端移到中間**：c6→c7 一鏡到底抽兩次，一次中段直接換景、劇情不通，一次正確但新場景在最後半秒才跳出來。沒有 seed，無法重現。
+- 預設一定有聲音（API 無開關）；每支 34–40 秒；720p 每秒 $0.10。
+- 呼叫：`POST https://generativelanguage.googleapis.com/v1beta/interactions`，`input` 放 image parts（先首格再末格）＋ text，`response_format: {type: video, resolution, aspect_ratio, delivery: "uri"}`；見 `scripts/omni_gen.py`。

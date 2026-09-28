@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>c7 A/B · Grok vs Gemini Omni</title>
+<style>
+  :root{--ink:#f2e8d5;--dim:#9aa6bd;--gold:#e8b765;--bg:#0f1422;--card:#ffffff0b;--line:#ffffff1f}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Serif TC","Songti TC",ui-serif,Georgia,serif;line-height:1.75}
+  main{max-width:1200px;margin:0 auto;padding:28px 16px 60px}
+  a{color:var(--gold)}
+  h1{font-size:clamp(20px,3.4vw,28px);letter-spacing:.12em;margin:0 0 4px}
+  .sub{color:var(--dim);font-size:13px;margin:0 0 22px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:18px 0}
+  h2{font-size:18px;margin:0 0 4px;color:var(--gold);letter-spacing:.08em}
+  .note{font-size:14px;color:#d9d2c4;margin:0 0 12px}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:700px){.pair{grid-template-columns:1fr}}
+  figure{margin:0}
+  figcaption{font-size:13px;color:var(--dim);margin-bottom:4px}
+  video{width:100%;aspect-ratio:16/9;background:#000;border-radius:6px;display:block}
+  .m{font:12px ui-monospace,Menlo,monospace;color:var(--dim);margin-top:4px}
+  .verdict{font-size:14px;margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line)}
+  button.play{font:inherit;font-size:13px;color:var(--ink);background:#ffffff14;border:1px solid #ffffff40;border-radius:999px;padding:4px 14px;cursor:pointer;margin-bottom:10px}
+  table{border-collapse:collapse;font-size:13px;width:100%}
+  td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left}
+  th{color:var(--dim);font-weight:400}
+  details img{width:100%;border-radius:6px;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+  <h1>第七章 A/B：Grok CLI vs Gemini Omni 1.1 Flash</h1>
+  <p class="sub">同一張首格（和末格）、同樣 720p 16:9、各 6 秒。左邊 Grok 是原本 <a href="../">影片版</a> 用的片，右邊 Omni 是 2026-09-28 生成。Omni 片有聲音，Grok 片沒有。詳細數字見 <a href="README.md">README.md</a>。</p>
+
+  <section>
+    <h2>一鏡到底：第六章翻到第七章</h2>
+    <p class="note">Grok 只能釘首格，只好拆成「c6 翻頁（結束在空白）」＋「c7 升起（收折片倒放）」兩支再接起來。Omni 可以同時給首格 c6、末格 c7，一支片做完。同樣的 prompt 抽了兩次。</p>
+    <button class="play" data-group="direct">▶ 三支一起播</button>
+    <div class="pair" style="grid-template-columns:1fr 1fr 1fr">
+      <figure><figcaption>Grok：c6_turn + c7_rise（12 秒）</figcaption>
+        <video data-group="direct" data-playlist="../assets/c6_turn.mp4,../assets/c7_rise.mp4" src="../assets/c6_turn.mp4" muted playsinline controls preload="metadata"></video></figure>
+      <figure><figcaption>Omni 第一抽</figcaption>
+        <video data-group="direct" src="omni_c6_to_c7_a.mp4" playsinline controls preload="metadata"></video></figure>
+      <figure><figcaption>Omni 第二抽</figcaption>
+        <video data-group="direct" src="omni_c6_to_c7_b.mp4" playsinline controls preload="metadata"></video></figure>
+    </div>
+    <p class="verdict">兩端都釘住了，但中段還是要抽：<b>第一抽</b>翻起來的頁背面又畫了一次 c6 的城樓，c6 人物憑空消失，約 3.5–4 秒之間背景直接換成 c7，劇情不通；
+      <b>第二抽</b>順序對了（掀頁 → 空白 → 紙雕立起），但 c7 幾乎在 4.5→5.0 秒的半秒內「跳」出來，因為末格被釘死、時間不夠用。兩抽裡有一抽能用。</p>
+  </section>
+
+  <section>
+    <h2>升起：空白老書 → 第七章</h2>
+    <p class="note">Grok 版是收折片倒放（首格實際上不是真的空白，差 13.5）。Omni 首格＝空白母版、末格＝c7.jpg。</p>
+    <button class="play" data-group="rise">▶ 一起播</button>
+    <div class="pair">
+      <figure><figcaption>Grok：c7_rise.mp4（倒放）</figcaption><video data-group="rise" src="../assets/c7_rise.mp4" muted playsinline controls preload="metadata"></video>
+        <div class="m">首格差 13.5 · 末格差 2.1 · 背景晃動 6.2</div></figure>
+      <figure><figcaption>Omni：omni_c7_rise.mp4</figcaption><video data-group="rise" src="omni_c7_rise.mp4" playsinline controls preload="metadata"></video>
+        <div class="m">首格差 2.9 · 末格差 2.9 · 背景晃動 2.2</div></figure>
+    </div>
+    <p class="verdict">Omni 兩端都準，鏡頭也更穩。它先立起紙偶、背景畫再淡入，順序和 Grok 倒放的效果相反，但都說得通。</p>
+  </section>
+
+  <section>
+    <h2>翻頁：第七章翻走，留下空白</h2>
+    <button class="play" data-group="turn">▶ 一起播</button>
+    <div class="pair">
+      <figure><figcaption>Grok：c7_turn.mp4（只釘首格）</figcaption><video data-group="turn" src="../assets/c7_turn.mp4" muted playsinline controls preload="metadata"></video>
+        <div class="m">首格差 2.1 · 末格差 9.8 · 背景晃動 11.4</div></figure>
+      <figure><figcaption>Omni：omni_c7_turn.mp4（末格＝空白母版）</figcaption><video data-group="turn" src="omni_c7_turn.mp4" playsinline controls preload="metadata"></video>
+        <div class="m">首格差 3.2 · 末格差 2.4 · 背景晃動 2.4</div></figure>
+    </div>
+    <p class="verdict">都翻對了一次。Omni 的結尾就是我們給的空白母版，Grok 的結尾「接近空白」但書和光都偏了（這就是影片版要靠淡入去蓋接縫的原因）。</p>
+  </section>
+
+  <section>
+    <h2>環境片：箭繼續射進草人</h2>
+    <button class="play" data-group="amb">▶ 一起播</button>
+    <div class="pair">
+      <figure><figcaption>Grok：c7_ambient.mp4</figcaption><video data-group="amb" src="../assets/c7_ambient.mp4" muted playsinline controls preload="metadata"></video></figure>
+      <figure><figcaption>Omni：omni_c7_ambient.mp4</figcaption><video data-group="amb" src="omni_c7_ambient.mp4" playsinline controls preload="metadata"></video></figure>
+    </div>
+    <p class="verdict">各錯一種：Grok 保住了背景畫，但箭插得像扇子，連曹操自己的望樓都中箭（射錯邊）；
+      Omni 的箭是真的「飛進來」再插上，動作好看很多，但背景畫上原本畫的箭在 2 秒內被抹掉了（重畫了背景），地上還多一支散箭。</p>
+  </section>
+
+  <section>
+    <h2>數字總表</h2>
+    <table>
+      <tr><th>測項</th><th>一方</th><th>首格差</th><th>末格差</th><th>背景晃動</th><th>動作峰</th><th>聲音</th></tr>
+      <tr><td>rise</td><td>Grok</td><td>13.5</td><td>2.1</td><td>6.2</td><td>2</td><td>無</td></tr>
+      <tr><td></td><td>Omni</td><td>2.9</td><td>2.9</td><td>2.2</td><td>2</td><td>有</td></tr>
+      <tr><td>turn</td><td>Grok</td><td>2.1</td><td>9.8</td><td>11.4</td><td>2</td><td>無</td></tr>
+      <tr><td></td><td>Omni</td><td>3.2</td><td>2.4</td><td>2.4</td><td>1</td><td>有</td></tr>
+      <tr><td>ambient</td><td>Grok</td><td>2.1</td><td>4.9</td><td>1.8</td><td>0</td><td>無</td></tr>
+      <tr><td></td><td>Omni</td><td>3.6</td><td>5.3</td><td>1.5</td><td>2</td><td>有</td></tr>
+      <tr><td>c6→c7</td><td>Grok（兩支）</td><td>2.0</td><td>2.1</td><td>6.5</td><td>7</td><td>無</td></tr>
+      <tr><td></td><td>Omni 第一抽</td><td>3.2</td><td>3.0</td><td>2.1</td><td>2</td><td>有</td></tr>
+      <tr><td></td><td>Omni 第二抽</td><td>3.2</td><td>3.1</td><td>2.2</td><td>4</td><td>有</td></tr>
+    </table>
+    <p class="m">「差」＝該端影格與指定圖在 320×180 的平均絕對差（0–255）；參考：c6 對 c7 是 18.7，c7 對空白母版是 20.2。「背景晃動」＝書以外的桌面與牆面相對第 0 格的最大漂移。</p>
+    <details><summary>逐格對照圖</summary>
+      <img src="sheet_direct.jpg" alt="c6 到 c7 一鏡到底對照，Omni 第一抽"><img src="sheet_direct_reroll.jpg" alt="c6 到 c7 一鏡到底對照，Omni 第二抽">
+      <img src="sheet_rise.jpg" alt="升起對照"><img src="sheet_turn.jpg" alt="翻頁對照"><img src="sheet_ambient.jpg" alt="環境片對照">
+    </details>
+  </section>
+</main>
+<script>
+  // Grok's c6->c7 is two clips: chain them
+  for (const v of document.querySelectorAll('video[data-playlist]')) {
+    const list = v.dataset.playlist.split(',');
+    v.dataset.i = 0;
+    v.addEventListener('ended', () => {
+      const i = +v.dataset.i + 1;
+      if (i < list.length) { v.dataset.i = i; v.src = list[i]; v.play(); } else { v.dataset.i = 0; v.src = list[0]; }
+    });
+  }
+  for (const b of document.querySelectorAll('button.play')) {
+    b.onclick = () => {
+      const vs = [...document.querySelectorAll(`video[data-group="${b.dataset.group}"]`)];
+      for (const v of vs) { if (v.dataset.playlist) { v.dataset.i = 0; v.src = v.dataset.playlist.split(',')[0]; } v.currentTime = 0; v.play(); }
+    };
+  }
+</script>
+</body>
+</html>
